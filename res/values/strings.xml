@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GeoQuake</string>
+    <string name="mapkey">AIzaSyDAWaa6FBKE1d7LMKA4lqdo7S2G9ZROHBs</string>
+    <string name="usgs_url">http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/</string>
+    <string name="loading_data">Loading data.</string>
+    <string name="loading_data_long">Loading data, this may take a few seconds.</string>
+    <string name="close">Close</string>
+    <string name="no_network">No WiFi or Mobile Connection Found. Try again later.</string>
+
+    <string-array name="quake_types">
+        <item>Significant Earthquakes</item>
+        <item>M4.5+ Earthquakes</item>
+        <item>M2.5+ Earthquakes</item>
+        <item>M1.0+ Earthquakes</item>
+        <item>All Earthquakes</item>
+    </string-array>
+
+    <string-array name="duration_types">
+        <item>Past Hour</item>
+        <item>Past Day</item>
+        <item>Past 7 Days</item>
+        <!-- <item>Past 30 Days</item>  -->
+    </string-array>
+
+    <!-- Past Hour, Updated Every Minute -->
+    <string name="significant_hour">significant_hour.geojson</string>
+    <string name="_4.5_hour">4.5_hour.geojson</string>
+    <string name="_2.5_hour">2.5_hour.geojson</string>
+    <string name="_1.0_hour">1.0_hour.geojson</string>
+    <string name="all_hour">all_hour.geojson</string>
+
+    <!-- Past Day, Updated Every Minute -->
+    <string name="significant_day">significant_day.geojson</string>
+    <string name="_4.5_day">4.5_day.geojson</string>
+    <string name="_2.5_day">2.5_day.geojson</string>
+    <string name="_1.0_day">1.0_day.geojson</string>
+    <string name="all_day">all_day.geojson</string>
+
+    <!-- Past 7 Days, Updated Every Minute -->
+    <string name="significant_week">significant_week.geojson</string>
+    <string name="_4.5_week">4.5_week.geojson</string>
+    <string name="_2.5_week">2.5_week.geojson</string>
+    <string name="_1.0_week">1.0_week.geojson</string>
+    <string name="all_week">all_week.geojson</string>
+
+    <!-- Past 30 Days, Updated Every Minute -->
+    <string name="significant_month">significant_month.geojson</string>
+    <string name="_4.5_month">4.5_month.geojson</string>
+    <string name="_2.5_month">2.5_month.geojson</string>
+    <string name="_1.0_month">1.0_month.geojson</string>
+    <string name="all_month">all_month.geojson</string>
+
+</resources>
