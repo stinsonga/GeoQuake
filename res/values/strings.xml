@@ -51,4 +51,6 @@
     <string name="_1.0_month">1.0_month.geojson</string>
     <string name="all_month">all_month.geojson</string>
 
+    <integer name="google_play_services_version">19</integer>
+
 </resources>
