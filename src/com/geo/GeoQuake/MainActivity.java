@@ -39,9 +39,6 @@ public class MainActivity extends Activity {
     RelativeLayout mOptsHolder;
 
     private GoogleMap mMap;
-    private GoogleMapOptions mMapOptions;
-
-    private boolean optsVisible = true;
 
     private final int TOAST_SHORT = 200;
     private final int TOAST_LONG = 2000;
@@ -123,11 +120,6 @@ public class MainActivity extends Activity {
             }
         });
 
-
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(0,0), 10));
-//        mMap.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
-
-
     }
 
 
@@ -148,6 +140,9 @@ public class MainActivity extends Activity {
         return opts;
     }
 
+    /**
+     * Contains the basics for setting up the map.
+     */
     private void setUpMap() {
         if (mMap == null) {
             mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.gmap))
@@ -206,7 +201,7 @@ public class MainActivity extends Activity {
                                     @Override
                                     public void onInfoWindowClick(Marker marker) {
                                         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                                        builder.setMessage("derp").setNegativeButton(mContext.getString(R.string.close), new DialogInterface.OnClickListener() {
+                                        builder.setMessage("").setNegativeButton(mContext.getString(R.string.close), new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 //
@@ -229,7 +224,11 @@ public class MainActivity extends Activity {
         }
     }
 
-
+    /**
+     *
+     * @param url The url we'll use to fetch the data
+     * @return A JSONObject containing the requested data
+     */
     private JSONObject getJSON(URL url) {
         HttpClient client = new DefaultHttpClient();
         HttpResponse response;
@@ -251,6 +250,11 @@ public class MainActivity extends Activity {
         }
     }
 
+    /**
+     * This towering method could use some honing
+     *
+     * @return a string representing the proper fragment to pass to the URL string
+     */
     private String getURLFrag() {
         int quakeSelection = mQuakeTypeSpinner.getSelectedItemPosition();
         int durationSelection = mDurationTypeSpinner.getSelectedItemPosition();
@@ -291,8 +295,9 @@ public class MainActivity extends Activity {
                 return mContext.getString(R.string.all_week);
             }
         }
+
         /*
-        Removed the past month option, due to OOM issues.
+        Removed the past month option, due to OOM issues. Code is left here, for a future optimization update when it may be enabled again.
 
          */
 //        else if(durationSelection == 3){
@@ -312,6 +317,9 @@ public class MainActivity extends Activity {
 
     }
 
+    /**
+     * Generates the appropriate toast, depending on the anticipated time of the request.
+     */
     private void fireToast() {
         Toast toast;
         if (mDurationTypeSpinner.getSelectedItemPosition() == 2 && mQuakeTypeSpinner.getSelectedItemPosition() == 4) {
@@ -322,12 +330,19 @@ public class MainActivity extends Activity {
         toast.show();
     }
 
+    /**
+     * Generates the long toast message
+     */
     private void connectToast() {
         Toast toast;
-        toast = Toast.makeText(mContext, mContext.getString(R.string.no_network), TOAST_LONG);
+        toast = Toast.makeText(mContext, getResources().getString(R.string.no_network), TOAST_LONG);
         toast.show();
     }
 
+    /**
+     *
+     * @return true if the network connection is ok, false otherwise
+     */
     private boolean checkNetwork() {
         try {
             ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -342,11 +357,6 @@ public class MainActivity extends Activity {
             e.printStackTrace();
             return false;
         }
-
-    }
-
-
-    private void infoClick(Marker marker) {
 
     }
 
