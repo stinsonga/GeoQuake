@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -28,6 +29,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 
 
 public class MainActivity extends Activity {
@@ -37,6 +39,7 @@ public class MainActivity extends Activity {
     Button mOptButton;
     Button mOptButtonOff;
     RelativeLayout mOptsHolder;
+    HashMap<String, String> markerInfo = new HashMap<String, String>();
 
     private GoogleMap mMap;
 
@@ -120,6 +123,7 @@ public class MainActivity extends Activity {
             }
         });
 
+
     }
 
 
@@ -152,7 +156,6 @@ public class MainActivity extends Activity {
                 UiSettings settings = mMap.getUiSettings();
                 settings.setCompassEnabled(true);
                 settings.setMyLocationButtonEnabled(true);
-
             }
         }
     }
@@ -161,7 +164,6 @@ public class MainActivity extends Activity {
         USGC JSON Objects have four keys: features, type, bbox, metadata
 
         Within features are the main data points of interest for this application: type, properties, geometry, id
-
 
      */
     private void processJSON() {
@@ -196,17 +198,25 @@ public class MainActivity extends Activity {
                                 JSONObject geometryObject = featuresObject.getJSONObject("geometry");
                                 JSONArray coordinatesArray = geometryObject.getJSONArray("coordinates");
                                 LatLng coords = new LatLng(coordinatesArray.getDouble(1), coordinatesArray.getDouble(0));
-                                mMap.addMarker(new MarkerOptions().position(coords).title(propertiesObject.optString("place")).snippet(propertiesObject.optString("title")));
+
+                                Marker m = mMap.addMarker(new MarkerOptions().position(coords).title(propertiesObject.optString("place")).snippet(getResources().getString(R.string.magnitude)+propertiesObject.optString("mag")));//.snippet(propertiesObject.optString("title")));
+                                markerInfo.put(m.getId(), propertiesObject.optString("url"));
+
                                 mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                                     @Override
                                     public void onInfoWindowClick(Marker marker) {
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                                        builder.setMessage("").setNegativeButton(mContext.getString(R.string.close), new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                //
-                                            }
-                                        }).create();
+                                        Intent intent = new Intent(MainActivity.this, WebInfoActivity.class);
+                                        intent.putExtra("url", getURLFromMarker(marker.getId()));
+                                        startActivity(intent);
+
+
+//                                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+//                                        builder.setMessage("").setNegativeButton(mContext.getString(R.string.close), new DialogInterface.OnClickListener() {
+//                                            @Override
+//                                            public void onClick(DialogInterface dialog, int which) {
+//                                                //
+//                                            }
+//                                        }).create();
 
                                     }
                                 });
@@ -358,6 +368,15 @@ public class MainActivity extends Activity {
             return false;
         }
 
+    }
+
+    /**
+     *
+     * @param id The map marker id
+     * @return URL value in hashmap
+     */
+    private String getURLFromMarker(String id){
+        return markerInfo.get(id);
     }
 
 }

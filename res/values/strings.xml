@@ -7,6 +7,7 @@
     <string name="loading_data_long">Loading data, this may take a few seconds.</string>
     <string name="close">Close</string>
     <string name="no_network">No WiFi or Mobile Connection Found. Try again later.</string>
+    <string name="magnitude">Magnitude: </string>
 
     <string-array name="quake_types">
         <item>Significant Earthquakes</item>
