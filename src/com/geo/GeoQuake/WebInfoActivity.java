@@ -6,9 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebView;
 
-/**
- * Created by gaius on 2014-08-21.
- */
+
 public class WebInfoActivity extends Activity {
 
     WebView webView;
@@ -35,7 +33,6 @@ public class WebInfoActivity extends Activity {
 
     protected void onDestroy(){
         super.onDestroy();
-        Log.i("destroyed","destroyed");
     }
 
 }
