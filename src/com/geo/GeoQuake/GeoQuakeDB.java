@@ -11,8 +11,11 @@ public class GeoQuakeDB extends SQLiteOpenHelper{
     private static final int DB_VERSION = 1;
     private static final String DB_NAME = "GeoQuake";
     private static final String TABLE_NAME = "quakes";
+    //Other columns to be defined!
     private static final String QUAKE_TYPE = "quake_type";
     private static final String QUAKE_DATA = "quake_data";
+
+
 
     public GeoQuakeDB(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
