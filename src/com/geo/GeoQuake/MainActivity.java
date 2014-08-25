@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -153,6 +155,19 @@ public class MainActivity extends Activity {
                     .getMap();
             if (mMap != null) {
                 mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                mMap.setMyLocationEnabled(true);
+
+                mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener(){
+                    @Override
+                    public void onMyLocationChange(Location arg0){
+                        LatLng latLng = new LatLng(arg0.getLatitude(), arg0.getLongitude());
+                        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, getApplicationContext().getResources().getInteger(R.integer.zoom_level));
+                        mMap.animateCamera(cameraUpdate);
+                        mMap.setOnMyLocationChangeListener(null);
+
+                    }
+                });
+
                 UiSettings settings = mMap.getUiSettings();
                 settings.setCompassEnabled(true);
                 settings.setMyLocationButtonEnabled(true);
