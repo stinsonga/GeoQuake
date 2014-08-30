@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
+import android.support.v4.widget.DrawerLayout;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -43,6 +44,10 @@ public class MainActivity extends Activity {
     RelativeLayout mOptsHolder;
     HashMap<String, String> markerInfo = new HashMap<String, String>();
 
+    //Side Nav
+    DrawerLayout mDrawerLayout;
+    ListView mNavList;
+
     private GoogleMap mMap;
 
     private final int TOAST_SHORT = 200;
@@ -70,6 +75,19 @@ public class MainActivity extends Activity {
         mOptButton = (Button) findViewById(R.id.opt_button);
         mOptButtonOff = (Button) findViewById(R.id.opt_button_off);
         mOptsHolder = (RelativeLayout) findViewById(R.id.opts_holder);
+
+        //Side Nav
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.navigation_menu);
+        mNavList = (ListView) findViewById(R.id.drawer_listview);
+        //TODO: Set adapter for drawer
+//        mNavList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.future_list_view, list_name));
+//        mNavList.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
+
 
         if (checkNetwork()) {
             setUpMap();
