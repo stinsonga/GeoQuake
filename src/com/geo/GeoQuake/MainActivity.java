@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -45,6 +46,7 @@ public class MainActivity extends Activity {
     HashMap<String, String> markerInfo = new HashMap<String, String>();
 
     //Side Nav
+    String[] mMenuItems = {"1","2","3"};
     DrawerLayout mDrawerLayout;
     ListView mNavList;
 
@@ -59,8 +61,6 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main);
 
         mContext = getApplicationContext();
-
-        getActionBar().hide();
 
         mQuakeTypeSpinner = (Spinner) findViewById(R.id.quake_type_spinner);
         ArrayAdapter<CharSequence> quakeTypeAdapter = ArrayAdapter.createFromResource(this, R.array.quake_types, android.R.layout.simple_spinner_dropdown_item);
@@ -79,15 +79,19 @@ public class MainActivity extends Activity {
         //Side Nav
         mDrawerLayout = (DrawerLayout) findViewById(R.id.navigation_menu);
         mNavList = (ListView) findViewById(R.id.drawer_listview);
-        //TODO: Set adapter for drawer
-//        mNavList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.future_list_view, list_name));
-//        mNavList.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
+        mNavList.setAdapter(new ArrayAdapter<String>(this, R.layout.nav_drawer_item, getResources().getStringArray(R.array.menu_options)));
+        mNavList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        //
 
         if (checkNetwork()) {
             setUpMap();
@@ -96,12 +100,12 @@ public class MainActivity extends Activity {
             connectToast();
         }
 
-
         mOptButtonOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mOptsHolder.setVisibility(View.GONE);
                 mOptButton.setVisibility(View.VISIBLE);
+                getActionBar().hide();
             }
         });
 
@@ -110,6 +114,7 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 mOptButton.setVisibility(View.GONE);
                 mOptsHolder.setVisibility(View.VISIBLE);
+                getActionBar().show();
             }
         });
 
@@ -174,7 +179,6 @@ public class MainActivity extends Activity {
             if (mMap != null) {
                 mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
                 mMap.setMyLocationEnabled(true);
-
                 mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener(){
                     @Override
                     public void onMyLocationChange(Location arg0){
