@@ -9,6 +9,10 @@
     <string name="no_network">No WiFi or Mobile Connection Found. Try again later.</string>
     <string name="magnitude">Magnitude: </string>
 
+    <string name="quake_list">Quake List</string>
+    <string name="map_view">Map View</string>
+    <string name="app_settings">Settings</string>
+
     <string-array name="menu_options">
         <item>Quake List</item>
         <item>Map View</item>

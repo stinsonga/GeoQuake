@@ -1,13 +1,9 @@
 package com.geo.GeoQuake;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -36,7 +32,7 @@ import java.net.URL;
 import java.util.HashMap;
 
 
-public class MainActivity extends Activity {
+public class MapActivity extends Activity {
     Context mContext;
     Spinner mQuakeTypeSpinner;
     Spinner mDurationTypeSpinner;
@@ -44,11 +40,6 @@ public class MainActivity extends Activity {
     Button mOptButtonOff;
     RelativeLayout mOptsHolder;
     HashMap<String, String> markerInfo = new HashMap<String, String>();
-
-    //Side Nav
-    String[] mMenuItems = {"1","2","3"};
-    DrawerLayout mDrawerLayout;
-    ListView mNavList;
 
     private GoogleMap mMap;
 
@@ -58,7 +49,7 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.map_activity_layout);
 
         mContext = getApplicationContext();
 
@@ -75,23 +66,6 @@ public class MainActivity extends Activity {
         mOptButton = (Button) findViewById(R.id.opt_button);
         mOptButtonOff = (Button) findViewById(R.id.opt_button_off);
         mOptsHolder = (RelativeLayout) findViewById(R.id.opts_holder);
-
-        //Side Nav
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.navigation_menu);
-        mNavList = (ListView) findViewById(R.id.drawer_listview);
-        mNavList.setAdapter(new ArrayAdapter<String>(this, R.layout.nav_drawer_item, getResources().getStringArray(R.array.menu_options)));
-        mNavList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-        //
 
         if (checkNetwork()) {
             setUpMap();
@@ -242,18 +216,10 @@ public class MainActivity extends Activity {
                                 mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                                     @Override
                                     public void onInfoWindowClick(Marker marker) {
-                                        Intent intent = new Intent(MainActivity.this, WebInfoActivity.class);
+                                        Intent intent = new Intent(MapActivity.this, WebInfoActivity.class);
                                         intent.putExtra("url", getURLFromMarker(marker.getId()));
                                         startActivity(intent);
 
-
-//                                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-//                                        builder.setMessage("").setNegativeButton(mContext.getString(R.string.close), new DialogInterface.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(DialogInterface dialog, int which) {
-//                                                //
-//                                            }
-//                                        }).create();
 
                                     }
                                 });
