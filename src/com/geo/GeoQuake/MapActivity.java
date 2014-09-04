@@ -43,6 +43,8 @@ public class MapActivity extends Activity {
 
     private GoogleMap mMap;
 
+    GeoQuakeDB geoQuakeDB;
+
     private final int TOAST_SHORT = 200;
     private final int TOAST_LONG = 2000;
 
@@ -52,6 +54,7 @@ public class MapActivity extends Activity {
         setContentView(R.layout.map_activity_layout);
 
         mContext = getApplicationContext();
+        geoQuakeDB = new GeoQuakeDB(mContext);
 
         mQuakeTypeSpinner = (Spinner) findViewById(R.id.quake_type_spinner);
         ArrayAdapter<CharSequence> quakeTypeAdapter = ArrayAdapter.createFromResource(this, R.array.quake_types, android.R.layout.simple_spinner_dropdown_item);
@@ -177,8 +180,41 @@ public class MapActivity extends Activity {
         Within features are the main data points of interest for this application: type, properties, geometry, id
 
      */
-    private void processJSON() {
+
+    private void placeMarkers(JSONObject jsonObject){
         mMap.clear();
+        try {
+            if (jsonObject != null) {
+                JSONArray jFeatures = jsonObject.optJSONArray("features");
+                for (int i = 0; i < jFeatures.length(); i++) {
+                    JSONObject featuresObject = jFeatures.getJSONObject(i);
+                    final JSONObject propertiesObject = featuresObject.getJSONObject("properties");
+                    JSONObject geometryObject = featuresObject.getJSONObject("geometry");
+                    JSONArray coordinatesArray = geometryObject.getJSONArray("coordinates");
+                    LatLng coords = new LatLng(coordinatesArray.getDouble(1), coordinatesArray.getDouble(0));
+
+                    Marker m = mMap.addMarker(new MarkerOptions().position(coords).title(propertiesObject.optString("place")).snippet(getResources().getString(R.string.magnitude)+propertiesObject.optString("mag")));//.snippet(propertiesObject.optString("title")));
+                    markerInfo.put(m.getId(), propertiesObject.optString("url"));
+
+                    mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                        @Override
+                        public void onInfoWindowClick(Marker marker) {
+                            Intent intent = new Intent(MapActivity.this, WebInfoActivity.class);
+                            intent.putExtra("url", getURLFromMarker(marker.getId()));
+                            startActivity(intent);
+
+
+                        }
+                    });
+                }
+            }
+        } catch (JSONException me) {
+            me.printStackTrace();
+        }
+    }
+
+    private void processJSON() {
+        geoQuakeDB.checkExists(getURLFrag());
         fireToast();
         try {
             new AsyncTask<URL, Void, JSONObject>() {
@@ -200,34 +236,8 @@ public class MapActivity extends Activity {
                 @Override
                 protected void onPostExecute(JSONObject jsonObject) {
                     super.onPostExecute(jsonObject);
-                    try {
-                        if (jsonObject != null) {
-                            JSONArray jFeatures = jsonObject.optJSONArray("features");
-                            for (int i = 0; i < jFeatures.length(); i++) {
-                                JSONObject featuresObject = jFeatures.getJSONObject(i);
-                                final JSONObject propertiesObject = featuresObject.getJSONObject("properties");
-                                JSONObject geometryObject = featuresObject.getJSONObject("geometry");
-                                JSONArray coordinatesArray = geometryObject.getJSONArray("coordinates");
-                                LatLng coords = new LatLng(coordinatesArray.getDouble(1), coordinatesArray.getDouble(0));
-
-                                Marker m = mMap.addMarker(new MarkerOptions().position(coords).title(propertiesObject.optString("place")).snippet(getResources().getString(R.string.magnitude)+propertiesObject.optString("mag")));//.snippet(propertiesObject.optString("title")));
-                                markerInfo.put(m.getId(), propertiesObject.optString("url"));
-
-                                mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-                                    @Override
-                                    public void onInfoWindowClick(Marker marker) {
-                                        Intent intent = new Intent(MapActivity.this, WebInfoActivity.class);
-                                        intent.putExtra("url", getURLFromMarker(marker.getId()));
-                                        startActivity(intent);
-
-
-                                    }
-                                });
-                            }
-                        }
-                    } catch (JSONException me) {
-                        me.printStackTrace();
-                    }
+                    //
+                    placeMarkers(jsonObject);
 
                 }
             }.execute(new URL(mContext.getString(R.string.usgs_url) + getURLFrag()));
