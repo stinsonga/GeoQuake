@@ -1,1 +1,10 @@
+
+bin/
 gen/
+*.apk
+*.ap_
+*.class
+*.dex
+local.properties
+.idea/
+.DS_Store 
