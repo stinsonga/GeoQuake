@@ -1,11 +1,20 @@
 
+# Generated files
 bin/
 gen/
+
+# IDE-specific stuff
+.idea/
+*.iml
+
 *.apk
 *.ap_
 *.class
 *.dex
 local.properties
-.idea/
+
+# OSX files that love to clog your folders
 .DS_Store
-*.iml
+
+# API key value... bring your own ;)
+res/values/api_key.xml

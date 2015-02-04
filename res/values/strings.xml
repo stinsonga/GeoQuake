@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">GeoQuake</string>
-    <string name="mapkey">AIzaSyDAWaa6FBKE1d7LMKA4lqdo7S2G9ZROHBs</string>
     <string name="usgs_url">http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/</string>
     <string name="loading_data">Loading data.</string>
     <string name="loading_data_long">Loading data, this may take a few seconds.</string>
