@@ -14,6 +14,7 @@
             android:id="@+id/opt_button"
             android:visibility="gone"
             android:text="^"
+            android:onClick="onClick"
             >
 
     </Button>
@@ -27,6 +28,7 @@
                 android:layout_height="70dp"
                 android:layout_alignParentLeft="true"
                 android:id="@+id/opt_button_off"
+                android:onClick="onClick"
                 >
 
         </Button>

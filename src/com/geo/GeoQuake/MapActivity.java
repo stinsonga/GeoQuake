@@ -22,9 +22,6 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.net.MalformedURLException;
@@ -32,7 +29,7 @@ import java.net.URL;
 import java.util.HashMap;
 
 
-public class MapActivity extends Activity {
+public class MapActivity extends Activity implements View.OnClickListener{
     Context mContext;
     Spinner mQuakeTypeSpinner;
     Spinner mDurationTypeSpinner;
@@ -42,11 +39,9 @@ public class MapActivity extends Activity {
     HashMap<String, String> markerInfo = new HashMap<String, String>();
 
     private GoogleMap mMap;
-
     GeoQuakeDB geoQuakeDB;
 
-    private final int TOAST_SHORT = 200;
-    private final int TOAST_LONG = 2000;
+    FeatureCollection mFeatureCollection;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,24 +71,6 @@ public class MapActivity extends Activity {
         } else {
             connectToast();
         }
-
-        mOptButtonOff.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mOptsHolder.setVisibility(View.GONE);
-                mOptButton.setVisibility(View.VISIBLE);
-                getActionBar().hide();
-            }
-        });
-
-        mOptButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mOptButton.setVisibility(View.GONE);
-                mOptsHolder.setVisibility(View.VISIBLE);
-                getActionBar().show();
-            }
-        });
 
         mDurationTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -130,14 +107,33 @@ public class MapActivity extends Activity {
 
 
     @Override
+    public void onClick(View view){
+        switch(view.getId()){
+            case (R.id.opt_button):
+                mOptButton.setVisibility(View.GONE);
+                mOptsHolder.setVisibility(View.VISIBLE);
+                getActionBar().show();
+                break;
+            case(R.id.opt_button_off):
+                mOptsHolder.setVisibility(View.GONE);
+                mOptButton.setVisibility(View.VISIBLE);
+                getActionBar().hide();
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-        if (checkNetwork()) {
-            setUpMap();
-            processJSON();
-        } else {
-            connectToast();
-        }
+//        if (checkNetwork()) {
+//            setUpMap();
+//            processJSON();
+//        } else {
+//            connectToast();
+//        }
     }
 
     public GoogleMapOptions mapOptions() {
@@ -180,21 +176,14 @@ public class MapActivity extends Activity {
         Within features are the main data points of interest for this application: type, properties, geometry, id
 
      */
-
-    private void placeMarkers(JSONObject jsonObject){
+    private void placeMarkers(){
         mMap.clear();
         try {
-            if (jsonObject != null) {
-                JSONArray jFeatures = jsonObject.optJSONArray("features");
-                for (int i = 0; i < jFeatures.length(); i++) {
-                    JSONObject featuresObject = jFeatures.getJSONObject(i);
-                    final JSONObject propertiesObject = featuresObject.getJSONObject("properties");
-                    JSONObject geometryObject = featuresObject.getJSONObject("geometry");
-                    JSONArray coordinatesArray = geometryObject.getJSONArray("coordinates");
-                    LatLng coords = new LatLng(coordinatesArray.getDouble(1), coordinatesArray.getDouble(0));
-
-                    Marker m = mMap.addMarker(new MarkerOptions().position(coords).title(propertiesObject.optString("place")).snippet(getResources().getString(R.string.magnitude)+propertiesObject.optString("mag")));//.snippet(propertiesObject.optString("title")));
-                    markerInfo.put(m.getId(), propertiesObject.optString("url"));
+            if(mFeatureCollection != null){
+                for(Feature feature : mFeatureCollection.getFeatures()){
+                    LatLng coords = new LatLng(feature.getLatitude(), feature.getLongitude());
+                    Marker m = mMap.addMarker(new MarkerOptions().position(coords).title(feature.getProperties().getPlace()).snippet(getResources().getString(R.string.magnitude)+feature.getProperties().getMag()));
+                    markerInfo.put(m.getId(), feature.getProperties().getUrl());
 
                     mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                         @Override
@@ -208,18 +197,17 @@ public class MapActivity extends Activity {
                     });
                 }
             }
-        } catch (JSONException me) {
+        } catch (Exception me) {
             me.printStackTrace();
         }
     }
 
     private void processJSON() {
-        geoQuakeDB.checkExists(getURLFrag());
         fireToast();
         try {
-            new AsyncTask<URL, Void, JSONObject>() {
+            new AsyncTask<URL, Void, FeatureCollection>() {
                 @Override
-                protected JSONObject doInBackground(URL... params) {
+                protected FeatureCollection doInBackground(URL... params) {
                     try {
                         return getJSON(new URL(mContext.getString(R.string.usgs_url) + getURLFrag()));
                     } catch (MalformedURLException me) {
@@ -234,10 +222,10 @@ public class MapActivity extends Activity {
                 }
 
                 @Override
-                protected void onPostExecute(JSONObject jsonObject) {
-                    super.onPostExecute(jsonObject);
-                    //
-                    placeMarkers(jsonObject);
+                protected void onPostExecute(FeatureCollection featureCollection) {
+                    super.onPostExecute(featureCollection);
+                    mFeatureCollection = featureCollection;
+                    placeMarkers();
 
                 }
             }.execute(new URL(mContext.getString(R.string.usgs_url) + getURLFrag()));
@@ -252,7 +240,7 @@ public class MapActivity extends Activity {
      * @param url The url we'll use to fetch the data
      * @return A JSONObject containing the requested data
      */
-    private JSONObject getJSON(URL url) {
+    private FeatureCollection getJSON(URL url) {
         HttpClient client = new DefaultHttpClient();
         HttpResponse response;
         try {
@@ -262,7 +250,7 @@ public class MapActivity extends Activity {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 response.getEntity().writeTo(out);
                 out.close();
-                return new JSONObject(out.toString());
+                return new FeatureCollection(out.toString());
             } else {
                 response.getEntity().getContent().close();
                 return null;
@@ -346,9 +334,9 @@ public class MapActivity extends Activity {
     private void fireToast() {
         Toast toast;
         if (mDurationTypeSpinner.getSelectedItemPosition() == 2 && mQuakeTypeSpinner.getSelectedItemPosition() == 4) {
-            toast = Toast.makeText(mContext, mContext.getString(R.string.loading_data_long), TOAST_LONG);
+            toast = Toast.makeText(mContext, mContext.getString(R.string.loading_data_long), Toast.LENGTH_LONG);
         } else {
-            toast = Toast.makeText(mContext, mContext.getString(R.string.loading_data), TOAST_SHORT);
+            toast = Toast.makeText(mContext, mContext.getString(R.string.loading_data), Toast.LENGTH_SHORT);
         }
         toast.show();
     }
@@ -358,7 +346,7 @@ public class MapActivity extends Activity {
      */
     private void connectToast() {
         Toast toast;
-        toast = Toast.makeText(mContext, getResources().getString(R.string.no_network), TOAST_LONG);
+        toast = Toast.makeText(mContext, getResources().getString(R.string.no_network), Toast.LENGTH_LONG);
         toast.show();
     }
 
