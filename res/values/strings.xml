@@ -11,6 +11,7 @@
     <string name="quake_list">Quake List</string>
     <string name="map_view">Map View</string>
     <string name="app_settings">Settings</string>
+    <string name="hide_action_bar">Hide Action Bar?</string>
 
     <string-array name="menu_options">
         <item>Quake List</item>

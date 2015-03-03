@@ -1,56 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout
+<android.support.v4.widget.DrawerLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/main_root"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
-    <Button
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_alignParentLeft="true"
-            android:id="@+id/opt_button"
-            android:visibility="gone"
-            android:text="^"
-            android:onClick="onClick"
-            >
-
-    </Button>
-    <RelativeLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+    <FrameLayout
+            android:id="@+id/content_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    <TabWidget android:id="@android:id/tabs"
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:background="@color/tab_select_color"/>
+    <FrameLayout
+            android:id="@android:id/tabcontent"
             android:layout_width="fill_parent"
-            android:layout_height="70dp"
-            android:id="@+id/opts_holder"
+            android:layout_height="fill_parent">
+        <FrameLayout
+                android:id="@+id/tab_1"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" />
+        <FrameLayout
+                android:id="@+id/tab_2"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" />
+    </FrameLayout>
+    <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/main_root"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
             >
-        <Button
-                android:layout_width="35dp"
-                android:layout_height="70dp"
-                android:layout_alignParentLeft="true"
-                android:id="@+id/opt_button_off"
-                android:onClick="onClick"
-                >
 
-        </Button>
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:id="@+id/gmap"
+                  android:name="com.google.android.gms.maps.MapFragment"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"/>
+
+    </LinearLayout>
+    <LinearLayout android:orientation="vertical"
+                  android:layout_width="fill_parent"
+                  android:layout_height="match_parent"
+                  android:layout_gravity="start"
+                  android:padding="7dp">
         <Spinner android:layout_width="match_parent"
                  android:layout_height="35dp"
                  android:id="@+id/quake_type_spinner"
-                 android:layout_toRightOf="@id/opt_button_off"
                 >
         </Spinner>
         <Spinner android:layout_width="match_parent"
                  android:layout_height="35dp"
-                 android:layout_below="@id/quake_type_spinner"
                  android:id="@+id/duration_type_spinner"
-                 android:layout_toRightOf="@id/opt_button_off"
                 >
         </Spinner>
-    </RelativeLayout>
-
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/gmap"
-              android:name="com.google.android.gms.maps.MapFragment"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"/>
-
-</LinearLayout>
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="horizontal">
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="@string/hide_action_bar"/>
+            <CheckBox android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/actionbar_toggle_checkbox"
+                      android:gravity="end"/>
+        </LinearLayout>
+        <View
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+    </LinearLayout>
+</android.support.v4.widget.DrawerLayout>

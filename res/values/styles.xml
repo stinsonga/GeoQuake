@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="actionbar_color">#2E0854</color>
+    <color name="tab_select_color">#300A57</color>
+
+    <style name="GeoAppTheme" parent="android:Theme.Holo">
+        <item name="android:actionBarStyle">@style/ActionBarStylinAndProfilin</item>
+    </style>
+
+    <style name="ActionBarStylinAndProfilin" parent="android:Widget.Holo.ActionBar">
+        <item name="android:background">@color/actionbar_color</item>
+    </style>
+</resources>

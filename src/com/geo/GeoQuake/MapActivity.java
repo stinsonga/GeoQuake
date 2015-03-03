@@ -29,13 +29,11 @@ import java.net.URL;
 import java.util.HashMap;
 
 
-public class MapActivity extends Activity implements View.OnClickListener{
+public class MapActivity extends Activity implements AdapterView.OnItemSelectedListener{
     Context mContext;
     Spinner mQuakeTypeSpinner;
     Spinner mDurationTypeSpinner;
-    Button mOptButton;
-    Button mOptButtonOff;
-    RelativeLayout mOptsHolder;
+    CheckBox mActionBarCheckbox;
     HashMap<String, String> markerInfo = new HashMap<String, String>();
 
     private GoogleMap mMap;
@@ -51,6 +49,17 @@ public class MapActivity extends Activity implements View.OnClickListener{
         mContext = getApplicationContext();
         geoQuakeDB = new GeoQuakeDB(mContext);
 
+        mActionBarCheckbox = (CheckBox) findViewById(R.id.actionbar_toggle_checkbox);
+        mActionBarCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    getActionBar().hide();
+                } else {
+                    getActionBar().show();
+                }
+            }
+        });
         mQuakeTypeSpinner = (Spinner) findViewById(R.id.quake_type_spinner);
         ArrayAdapter<CharSequence> quakeTypeAdapter = ArrayAdapter.createFromResource(this, R.array.quake_types, android.R.layout.simple_spinner_dropdown_item);
         mQuakeTypeSpinner.setAdapter(quakeTypeAdapter);
@@ -61,10 +70,6 @@ public class MapActivity extends Activity implements View.OnClickListener{
         mDurationTypeSpinner.setAdapter(durationAdapter);
         mDurationTypeSpinner.setSelection(0);
 
-        mOptButton = (Button) findViewById(R.id.opt_button);
-        mOptButtonOff = (Button) findViewById(R.id.opt_button_off);
-        mOptsHolder = (RelativeLayout) findViewById(R.id.opts_holder);
-
         if (checkNetwork()) {
             setUpMap();
             processJSON();
@@ -72,56 +77,30 @@ public class MapActivity extends Activity implements View.OnClickListener{
             connectToast();
         }
 
-        mDurationTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (checkNetwork()) {
-                    processJSON();
-                } else {
-                    connectToast();
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-
-        mQuakeTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (checkNetwork()) {
-                    processJSON();
-                } else {
-                    connectToast();
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
+        mDurationTypeSpinner.setOnItemSelectedListener(this);
+        mQuakeTypeSpinner.setOnItemSelectedListener(this);
 
 
     }
 
-
     @Override
-    public void onClick(View view){
-        switch(view.getId()){
-            case (R.id.opt_button):
-                mOptButton.setVisibility(View.GONE);
-                mOptsHolder.setVisibility(View.VISIBLE);
-                getActionBar().show();
-                break;
-            case(R.id.opt_button_off):
-                mOptsHolder.setVisibility(View.GONE);
-                mOptButton.setVisibility(View.VISIBLE);
-                getActionBar().hide();
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
+        switch(parent.getId()){
+            case(R.id.quake_type_spinner):case(R.id.duration_type_spinner):
+                if (checkNetwork()) {
+                    processJSON();
+                } else {
+                    connectToast();
+                }
                 break;
             default:
                 break;
+
         }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent){
 
     }
 
@@ -170,11 +149,8 @@ public class MapActivity extends Activity implements View.OnClickListener{
         }
     }
 
-    /*
-        USGC JSON Objects have four keys: features, type, bbox, metadata
-
-        Within features are the main data points of interest for this application: type, properties, geometry, id
-
+    /**
+     * The method that does the work of placing the markers on the map. Yes.
      */
     private void placeMarkers(){
         mMap.clear();
