@@ -5,27 +5,6 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         >
-    <FrameLayout
-            android:id="@+id/content_frame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    <TabWidget android:id="@android:id/tabs"
-               android:layout_width="fill_parent"
-               android:layout_height="wrap_content"
-               android:background="@color/tab_select_color"/>
-    <FrameLayout
-            android:id="@android:id/tabcontent"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-        <FrameLayout
-                android:id="@+id/tab_1"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent" />
-        <FrameLayout
-                android:id="@+id/tab_2"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent" />
-    </FrameLayout>
     <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/main_root"
