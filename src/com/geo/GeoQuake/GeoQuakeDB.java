@@ -22,29 +22,35 @@ public class GeoQuakeDB extends SQLiteOpenHelper{
     private static final String QUAKE_DATA = "quake_data";
     private static final String QUAKE_DATE = "quake_date";
     //Quake types
-    private static final String HOUR_ALL = "hour_all";
-    private static final String HOUR_1 = "hour_1";
-    private static final String HOUR_25 = "hour_25";
-    private static final String HOUR_45 = "hour_45";
-    private static final String HOUR_SIG = "hour_significant";
+    public static final String HOUR_ALL = "hour_all";
+    public static final String HOUR_1 = "hour_1";
+    public static final String HOUR_25 = "hour_25";
+    public static final String HOUR_45 = "hour_45";
+    public static final String HOUR_SIG = "hour_significant";
 
-    private static final String DAY_ALL = "day_all";
-    private static final String DAY_1 = "day_1";
-    private static final String DAY_25 = "day_25";
-    private static final String DAY_45 = "day_45";
-    private static final String DAY_SIG = "day_significant";
+    public static final String DAY_ALL = "day_all";
+    public static final String DAY_1 = "day_1";
+    public static final String DAY_25 = "day_25";
+    public static final String DAY_45 = "day_45";
+    public static final String DAY_SIG = "day_significant";
 
-    private static final String WEEK_ALL = "week_all";
-    private static final String WEEK_1 = "week_1";
-    private static final String WEEK_25 = "week_25";
-    private static final String WEEK_45 = "week_45";
-    private static final String WEEK_SIG = "week_significant";
+    public static final String WEEK_ALL = "week_all";
+    public static final String WEEK_1 = "week_1";
+    public static final String WEEK_25 = "week_25";
+    public static final String WEEK_45 = "week_45";
+    public static final String WEEK_SIG = "week_significant";
 
-    private static final String MONTH_ALL = "month_all";
-    private static final String MONTH_1 = "month_1";
-    private static final String MONTH_25 = "month_25";
-    private static final String MONTH_45 = "month_45";
-    private static final String MONTH_SIG = "month_significant";
+    public static final String MONTH_ALL = "month_all";
+    public static final String MONTH_1 = "month_1";
+    public static final String MONTH_25 = "month_25";
+    public static final String MONTH_45 = "month_45";
+    public static final String MONTH_SIG = "month_significant";
+
+    public static final String[] ALL_TYPES_ARRAY = {HOUR_ALL, HOUR_1, HOUR_25, HOUR_45, HOUR_SIG, DAY_ALL, DAY_1,
+            DAY_25, DAY_45, DAY_SIG, WEEK_ALL, WEEK_1, WEEK_25, WEEK_45, WEEK_SIG};
+
+    public static final String REFRESH_LIMITER = "refresh_limiter";
+    public static final long REFRESH_LIMITER_TIME = 10000;
 
     public GeoQuakeDB(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -124,6 +130,13 @@ public class GeoQuakeDB extends SQLiteOpenHelper{
      */
     public static boolean compareTime(long prefTime, long time){
         return (Long.parseLong(getTime()) - time) > prefTime;
+    }
+
+    /**
+     * Time comparisons specifically for the refresh limiter
+     */
+    public static boolean checkRefreshLimit(long currentTime, long previousTime){
+        return (currentTime - previousTime) >= REFRESH_LIMITER_TIME;
     }
 
 

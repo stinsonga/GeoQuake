@@ -3,13 +3,14 @@ package com.geo.GeoQuake;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
+import android.view.*;
 import android.widget.*;
 import android.support.v4.widget.DrawerLayout;
 import com.google.android.gms.maps.*;
@@ -35,9 +36,13 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     Spinner mDurationTypeSpinner;
     CheckBox mActionBarCheckbox;
     HashMap<String, String> markerInfo = new HashMap<String, String>();
+    SharedPreferences mSharedPreferences;
+    boolean mInitiateRefresh = false;
+    DrawerLayout mDrawerLayout;
 
     private GoogleMap mMap;
     GeoQuakeDB geoQuakeDB;
+
 
     FeatureCollection mFeatureCollection;
 
@@ -47,7 +52,9 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         setContentView(R.layout.map_activity_layout);
 
         mContext = getApplicationContext();
+        mSharedPreferences = getPreferences(0);
         geoQuakeDB = new GeoQuakeDB(mContext);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         mActionBarCheckbox = (CheckBox) findViewById(R.id.actionbar_toggle_checkbox);
         mActionBarCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -102,6 +109,49 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     @Override
     public void onNothingSelected(AdapterView<?> parent){
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.map_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                if (GeoQuakeDB.checkRefreshLimit(Long.parseLong(GeoQuakeDB.getTime()),
+                        mSharedPreferences.getLong(GeoQuakeDB.REFRESH_LIMITER, 0))) {
+                    Log.i("ok to refresh?", "YES");
+                    SharedPreferences.Editor editor = mSharedPreferences.edit();
+                    editor.putLong(GeoQuakeDB.REFRESH_LIMITER, Long.parseLong(GeoQuakeDB.getTime()));
+                    editor.apply();
+                    //initiateRefresh(true);
+                } else {
+                    Log.i("ok to refresh?", "NO");
+                    Toast.makeText(mContext, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
+                    Log.i("can refresh again at: ", ""+mSharedPreferences.getLong(GeoQuakeDB.REFRESH_LIMITER,
+                            0)+GeoQuakeDB.REFRESH_LIMITER_TIME);
+                    Log.i("current time: ", GeoQuakeDB.getTime());
+                }
+                break;
+            case R.id.action_settings:
+                if(mDrawerLayout.isDrawerOpen(Gravity.LEFT)){
+                    mDrawerLayout.closeDrawer(Gravity.LEFT);
+                } else{
+                    mDrawerLayout.openDrawer(Gravity.LEFT);
+                }
+                break;
+            case R.id.action_list:
+                Intent intent = new Intent(this, ListQuakes.class);
+                startActivity(intent);
+                break;
+            default:
+                break;
+        }
+        return false;
     }
 
     @Override
