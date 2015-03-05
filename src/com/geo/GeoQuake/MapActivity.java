@@ -8,13 +8,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTabHost;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTabHost;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -32,7 +29,7 @@ import java.net.URL;
 import java.util.HashMap;
 
 
-public class MapActivity extends FragmentActivity implements AdapterView.OnItemSelectedListener{
+public class MapActivity extends Activity implements AdapterView.OnItemSelectedListener{
     Context mContext;
     Spinner mQuakeTypeSpinner;
     Spinner mDurationTypeSpinner;

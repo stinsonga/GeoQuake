@@ -21,8 +21,30 @@ public class GeoQuakeDB extends SQLiteOpenHelper{
     private static final String QUAKE_TYPE = "quake_type";
     private static final String QUAKE_DATA = "quake_data";
     private static final String QUAKE_DATE = "quake_date";
+    //Quake types
+    private static final String HOUR_ALL = "hour_all";
+    private static final String HOUR_1 = "hour_1";
+    private static final String HOUR_25 = "hour_25";
+    private static final String HOUR_45 = "hour_45";
+    private static final String HOUR_SIG = "hour_significant";
 
+    private static final String DAY_ALL = "day_all";
+    private static final String DAY_1 = "day_1";
+    private static final String DAY_25 = "day_25";
+    private static final String DAY_45 = "day_45";
+    private static final String DAY_SIG = "day_significant";
 
+    private static final String WEEK_ALL = "week_all";
+    private static final String WEEK_1 = "week_1";
+    private static final String WEEK_25 = "week_25";
+    private static final String WEEK_45 = "week_45";
+    private static final String WEEK_SIG = "week_significant";
+
+    private static final String MONTH_ALL = "month_all";
+    private static final String MONTH_1 = "month_1";
+    private static final String MONTH_25 = "month_25";
+    private static final String MONTH_45 = "month_45";
+    private static final String MONTH_SIG = "month_significant";
 
     public GeoQuakeDB(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -36,74 +58,73 @@ public class GeoQuakeDB extends SQLiteOpenHelper{
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
-    /*
-    * @stuff Data sent from the view to be written to DB
-    *
-    */
-    public void setData(String quake_type, String quake_data){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = new Date();
+
+    public void setData(String type, String data) {
+        Log.i("setData date(approx)", getTime());
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(QUAKE_TYPE, quake_type);
-        cv.put(QUAKE_DATA, quake_data);
-        cv.put(QUAKE_DATE, dateFormat.format(date));
+        cv.put(QUAKE_TYPE, type);
+        cv.put(QUAKE_DATA, data);
+        cv.put(QUAKE_DATE, getTime());
         db.insert(TABLE_NAME, null, cv);
+        db.close();
     }
-    public ArrayList<String> getData(){
-        ArrayList<String> result=new ArrayList<String>();
-        SQLiteDatabase db=this.getReadableDatabase();
-        Cursor cursor=db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
-        if(cursor.moveToFirst()){
-            do{
-                result.add(cursor.getString(1));
-            }while(cursor.moveToNext());
+
+    public String getData(String query) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String result = "";
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + QUAKE_TYPE + "='" + query + "'", null);
+        if (cursor.moveToFirst()) {
+            do {
+                result = cursor.getString(2);
+            } while (cursor.moveToNext());
+
         }
         return result;
     }
 
-    /*
-      Checking to see if any rows exist of that quake type
+    public String getDateColumn(String query) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String result = "";
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + QUAKE_TYPE + "='" + query + "'", null);
+        if (cursor.moveToFirst()) {
+            do {
+                result = cursor.getString(3);
+            } while (cursor.moveToNext());
 
-     */
-    public boolean checkExists(String quakeType){
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE " +QUAKE_TYPE+ "='" +quakeType+"'", null);
-        int count = 0;
-        if(null != cursor) {
-            cursor.moveToFirst();
-            count = cursor.getInt(0);
-            cursor.close();
         }
-        if(count==0){
-            return true;
-        }else if(count == 1 && isOutOfDate(quakeType)){
-            return true;
-        }else{
-            return false;
-        }
+        return result;
     }
 
-    /*
-
-    Is the row out of date by enough to refresh?
-
-     */
-    public boolean isOutOfDate(String quakeType){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = new Date();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT "+QUAKE_DATE+" FROM " + TABLE_NAME + " WHERE " +QUAKE_TYPE+ "='" +quakeType+"'", null);
-        //TODO: logic to check dates
-        try{
-            Date storedDate = sdf.parse(cursor.getString(3));
-            if(storedDate.getTime() - date.getTime() >= DAY_MILLISECONDS){
-                return true;
-            }
-        }catch (ParseException pe){
-            Log.e("Parse Exception", pe.getMessage());
-        }
-
-        return false;
+    public void updateData(String name, String data) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(QUAKE_DATA, data);
+        cv.put(QUAKE_DATE, getTime());
+        String where = QUAKE_TYPE + "=?";
+        String[] value = {name};
+        db.update(TABLE_NAME, cv, where, value);
     }
+
+    /**
+     * A simple method to get the current time in millis
+     *
+     * @return The current milliseconds converted to a String
+     */
+    public static String getTime(){
+        Date d = new Date();
+        return ""+d.getTime();
+    }
+
+    /**
+     * A method used to compare timestamps, in case we need to update the db
+     *
+     * @param time
+     * @return
+     */
+    public static boolean compareTime(long prefTime, long time){
+        return (Long.parseLong(getTime()) - time) > prefTime;
+    }
+
+
 }
