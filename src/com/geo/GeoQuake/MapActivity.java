@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,17 +30,20 @@ import java.util.HashMap;
 
 public class MapActivity extends Activity implements AdapterView.OnItemSelectedListener{
     Context mContext;
-    Spinner mQuakeTypeSpinner;
-    Spinner mDurationTypeSpinner;
-    CheckBox mActionBarCheckbox;
     HashMap<String, String> markerInfo = new HashMap<String, String>();
     SharedPreferences mSharedPreferences;
-    boolean mInitiateRefresh = false;
+    SharedPreferences.Editor mSharedPreferencesEditor;
+    boolean mRefreshMap = true;
+
     DrawerLayout mDrawerLayout;
+    Spinner mQuakeTypeSpinner;
+    Spinner mDurationTypeSpinner;
+    Spinner mCacheTimeSpinner;
+    CheckBox mActionBarCheckbox;
+    CheckBox mWifiCheckbox;
 
     private GoogleMap mMap;
     GeoQuakeDB geoQuakeDB;
-
 
     FeatureCollection mFeatureCollection;
 
@@ -52,8 +53,10 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         setContentView(R.layout.map_activity_layout);
 
         mContext = getApplicationContext();
-        mSharedPreferences = getPreferences(0);
+        mSharedPreferences = getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
         geoQuakeDB = new GeoQuakeDB(mContext);
+
+        //Side Nav Begin
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         mActionBarCheckbox = (CheckBox) findViewById(R.id.actionbar_toggle_checkbox);
@@ -67,6 +70,20 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
                 }
             }
         });
+
+        mWifiCheckbox = (CheckBox) findViewById(R.id.wifi_checkbox);
+        mWifiCheckbox.setChecked(mSharedPreferences.getBoolean(Utils.WIFI_ONLY, false));
+        mWifiCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mSharedPreferencesEditor = mSharedPreferences.edit();
+                mSharedPreferencesEditor.putBoolean(Utils.WIFI_ONLY, isChecked);
+                mSharedPreferencesEditor.apply();
+                Log.i("wifi_refresh pref changed:", ""+isChecked);
+            }
+        });
+        mCacheTimeSpinner = (Spinner) findViewById(R.id.cache_spinner);
+
         mQuakeTypeSpinner = (Spinner) findViewById(R.id.quake_type_spinner);
         ArrayAdapter<CharSequence> quakeTypeAdapter = ArrayAdapter.createFromResource(this, R.array.quake_types, android.R.layout.simple_spinner_dropdown_item);
         mQuakeTypeSpinner.setAdapter(quakeTypeAdapter);
@@ -77,28 +94,36 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         mDurationTypeSpinner.setAdapter(durationAdapter);
         mDurationTypeSpinner.setSelection(0);
 
-        if (checkNetwork()) {
-            setUpMap();
-            processJSON();
-        } else {
-            connectToast();
-        }
-
         mDurationTypeSpinner.setOnItemSelectedListener(this);
         mQuakeTypeSpinner.setOnItemSelectedListener(this);
+        mCacheTimeSpinner.setOnItemSelectedListener(this);
+        //Side Nav End
+
+        setUpMap();
+        networkCheckFetchData();
+
 
 
     }
 
+    /**
+     * Side-nav onItemSelect handler
+     *
+     * @param parent
+     * @param view
+     * @param position
+     * @param id
+     */
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
         switch(parent.getId()){
             case(R.id.quake_type_spinner):case(R.id.duration_type_spinner):
-                if (checkNetwork()) {
-                    processJSON();
-                } else {
-                    connectToast();
-                }
+                mRefreshMap = true;
+                networkCheckFetchData();
+                break;
+            case(R.id.cache_spinner):
+                Utils.changeCache(mCacheTimeSpinner.getSelectedItemPosition(), mSharedPreferences,
+                        getResources().getStringArray(R.array.cache_values));
                 break;
             default:
                 break;
@@ -123,17 +148,18 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         switch (item.getItemId()) {
             case R.id.action_refresh:
                 if (GeoQuakeDB.checkRefreshLimit(Long.parseLong(GeoQuakeDB.getTime()),
-                        mSharedPreferences.getLong(GeoQuakeDB.REFRESH_LIMITER, 0))) {
+                        mSharedPreferences.getLong(Utils.REFRESH_LIMITER, 0))) {
                     Log.i("ok to refresh?", "YES");
                     SharedPreferences.Editor editor = mSharedPreferences.edit();
-                    editor.putLong(GeoQuakeDB.REFRESH_LIMITER, Long.parseLong(GeoQuakeDB.getTime()));
+                    editor.putLong(Utils.REFRESH_LIMITER, Long.parseLong(GeoQuakeDB.getTime()));
                     editor.apply();
-                    //initiateRefresh(true);
+                    mRefreshMap = true;
+                    networkCheckFetchData();
                 } else {
                     Log.i("ok to refresh?", "NO");
                     Toast.makeText(mContext, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
-                    Log.i("can refresh again at: ", ""+mSharedPreferences.getLong(GeoQuakeDB.REFRESH_LIMITER,
-                            0)+GeoQuakeDB.REFRESH_LIMITER_TIME);
+                    Log.i("can refresh again at: ", ""+mSharedPreferences.getLong(Utils.REFRESH_LIMITER,
+                            0)+Utils.REFRESH_LIMITER_TIME);
                     Log.i("current time: ", GeoQuakeDB.getTime());
                 }
                 break;
@@ -165,6 +191,14 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
 //        }
     }
 
+    public void networkCheckFetchData(){
+        if (Utils.checkNetwork(mContext)) {
+            fetchData();
+        } else {
+            connectToast();
+        }
+    }
+
     public GoogleMapOptions mapOptions() {
         GoogleMapOptions opts = new GoogleMapOptions();
         opts.mapType(GoogleMap.MAP_TYPE_HYBRID).compassEnabled(true);
@@ -175,27 +209,32 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
      * Contains the basics for setting up the map.
      */
     private void setUpMap() {
-        if (mMap == null) {
-            mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.gmap))
-                    .getMap();
-            if (mMap != null) {
-                mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                mMap.setMyLocationEnabled(true);
-                mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener(){
-                    @Override
-                    public void onMyLocationChange(Location arg0){
-                        LatLng latLng = new LatLng(arg0.getLatitude(), arg0.getLongitude());
-                        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, getApplicationContext().getResources().getInteger(R.integer.zoom_level));
-                        mMap.animateCamera(cameraUpdate);
-                        mMap.setOnMyLocationChangeListener(null);
+        if (Utils.checkNetwork(mContext)) {
+            if (mMap == null) {
+                mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.gmap))
+                        .getMap();
+                if (mMap != null) {
+                    mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                    mMap.setMyLocationEnabled(true);
+                    mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+                        @Override
+                        public void onMyLocationChange(Location arg0) {
+                            LatLng latLng = new LatLng(arg0.getLatitude(), arg0.getLongitude());
+                            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, getApplicationContext().getResources().getInteger(R.integer.zoom_level));
+                            mMap.animateCamera(cameraUpdate);
+                            mMap.setOnMyLocationChangeListener(null);
 
-                    }
-                });
+                        }
+                    });
 
-                UiSettings settings = mMap.getUiSettings();
-                settings.setCompassEnabled(true);
-                settings.setMyLocationButtonEnabled(true);
+                    UiSettings settings = mMap.getUiSettings();
+                    settings.setCompassEnabled(true);
+                    settings.setMyLocationButtonEnabled(true);
+                }
             }
+
+        } else {
+            connectToast();
         }
     }
 
@@ -228,7 +267,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         }
     }
 
-    private void processJSON() {
+    private void fetchData() {
         fireToast();
         try {
             new AsyncTask<URL, Void, FeatureCollection>() {
@@ -251,7 +290,10 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
                 protected void onPostExecute(FeatureCollection featureCollection) {
                     super.onPostExecute(featureCollection);
                     mFeatureCollection = featureCollection;
-                    placeMarkers();
+                    if(mRefreshMap){
+                        placeMarkers();
+                        mRefreshMap = false;
+                    }
 
                 }
             }.execute(new URL(mContext.getString(R.string.usgs_url) + getURLFrag()));
@@ -288,7 +330,8 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     }
 
     /**
-     * This towering method could use some honing
+     * This towering method could use some honing. Might want to switch to just using static class vars for this, instead
+     * of accessing Resources all the time.
      *
      * @return a string representing the proper fragment to pass to the URL string
      */
@@ -374,27 +417,6 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         Toast toast;
         toast = Toast.makeText(mContext, getResources().getString(R.string.no_network), Toast.LENGTH_LONG);
         toast.show();
-    }
-
-    /**
-     *
-     * @return true if the network connection is ok, false otherwise
-     */
-    private boolean checkNetwork() {
-        try {
-            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-            NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-            if (wifi.isConnected() || mobile.isConnected()) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-
     }
 
     /**

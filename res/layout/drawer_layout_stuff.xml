@@ -15,14 +15,55 @@
     </Spinner>
     <LinearLayout android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:orientation="horizontal">
+                  android:orientation="horizontal"
+                  android:padding="7dp">
         <TextView android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:text="@string/hide_action_bar"/>
+                  android:text="@string/hide_action_bar"
+                  android:gravity="start"/>
         <CheckBox android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:id="@+id/actionbar_toggle_checkbox"
                   android:gravity="end"/>
+    </LinearLayout>
+    <LinearLayout android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+                  android:padding="7dp">
+        <TextView android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:text="@string/cache_label"
+                  android:layout_weight="0.5"
+                  android:gravity="start"
+                  android:textSize="16sp"
+                  android:id="@+id/cache_label"/>
+        <Spinner android:layout_width="0dp"
+                 android:layout_height="wrap_content"
+                 android:prompt="@string/cache_prompt"
+                 android:entries="@array/cache_options"
+                 android:spinnerMode="dropdown"
+                 android:layout_weight="0.5"
+                 android:gravity="end"
+                 android:id="@+id/cache_spinner"/>
+
+    </LinearLayout>
+    <LinearLayout android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+                  android:padding="7dp">
+        <TextView android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:text="@string/wifi_refresh_only_label"
+                  android:layout_weight="0.5"
+                  android:gravity="start"
+                  android:textSize="16sp"
+                  android:id="@+id/wifi_label"/>
+        <CheckBox android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:layout_weight="0.5"
+                  android:gravity="end"
+                  android:id="@+id/wifi_checkbox"/>
+
     </LinearLayout>
     <View
             android:layout_width="wrap_content"

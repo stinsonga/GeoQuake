@@ -10,7 +10,6 @@
 
     <string name="quake_list">Quake List</string>
     <string name="map_view">Map View</string>
-    <string name="hide_action_bar">Hide Action Bar?</string>
 
     <string name="map_tab_label">Map</string>
     <string name="list_tab_label">Quake List</string>
@@ -22,30 +21,9 @@
     <string name="menu_my_location">My Location</string>
     <string name="menu_list_view">List View</string>
     <string name="menu_map_view">Map View</string>
+    <string name="about_geoquake">About GeoQuake</string>
 
     <string name="refresh_warning">Please wait a few seconds before manually refreshing again.</string>
-
-
-    <string-array name="menu_options">
-        <item>Quake List</item>
-        <item>Map View</item>
-        <item>Settings</item>
-    </string-array>
-
-    <string-array name="quake_types">
-        <item>Significant Earthquakes</item>
-        <item>M4.5+ Earthquakes</item>
-        <item>M2.5+ Earthquakes</item>
-        <item>M1.0+ Earthquakes</item>
-        <item>All Earthquakes</item>
-    </string-array>
-
-    <string-array name="duration_types">
-        <item>Past Hour</item>
-        <item>Past Day</item>
-        <item>Past 7 Days</item>
-        <!-- <item>Past 30 Days</item>  -->
-    </string-array>
 
     <!-- Past Hour, Updated Every Minute -->
     <string name="significant_hour">significant_hour.geojson</string>
@@ -74,6 +52,50 @@
     <string name="_2.5_month">2.5_month.geojson</string>
     <string name="_1.0_month">1.0_month.geojson</string>
     <string name="all_month">all_month.geojson</string>
+
+    <!-- Settings -->
+    <string name="hide_action_bar">Hide Action Bar?</string>
+
+    <string-array name="quake_types">
+        <item>Significant Earthquakes</item>
+        <item>M4.5+ Earthquakes</item>
+        <item>M2.5+ Earthquakes</item>
+        <item>M1.0+ Earthquakes</item>
+        <item>All Earthquakes</item>
+    </string-array>
+
+    <string-array name="duration_types">
+        <item>Past Hour</item>
+        <item>Past Day</item>
+        <item>Past 7 Days</item>
+        <!-- <item>Past 30 Days</item>  -->
+    </string-array>
+
+    <string name="cache_label">Data Refresh</string>
+    <string name="cache_prompt">Select a Time</string>
+    <string-array name="cache_options">
+        <item>Select a Time</item>
+        <item>5 Minutes</item>
+        <item>10 Minutes</item>
+        <item>15 Minutes</item>
+        <item>30 Minutes</item>
+        <item>1 Hour</item>
+        <item>1 Day</item>
+    </string-array>
+    <string name="cache_changed">Cache Changed to </string>
+
+    <string-array name="cache_values">
+        <item>300000</item>
+        <item>300000</item>
+        <item>600000</item>
+        <item>900000</item>
+        <item>1800000</item>
+        <item>3600000</item>
+        <item>86400000</item>
+    </string-array>
+
+    <string name="wifi_refresh_only_label">WiFi Refresh Only</string>
+
 
 
 </resources>
