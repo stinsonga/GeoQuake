@@ -47,6 +47,11 @@
                  android:id="@+id/cache_spinner"/>
 
     </LinearLayout>
+    <!-- The below View pushes the other items to the bottom -->
+    <View
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
     <LinearLayout android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
                   android:orientation="horizontal"
@@ -65,9 +70,6 @@
                   android:id="@+id/wifi_checkbox"/>
 
     </LinearLayout>
-    <View
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+
 
 </LinearLayout>

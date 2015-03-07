@@ -102,8 +102,6 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         setUpMap();
         networkCheckFetchData();
 
-
-
     }
 
     /**
@@ -195,7 +193,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         if (Utils.checkNetwork(mContext)) {
             fetchData();
         } else {
-            connectToast();
+            Utils.connectToast(mContext);
         }
     }
 
@@ -234,7 +232,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
             }
 
         } else {
-            connectToast();
+            Utils.connectToast(mContext);
         }
     }
 
@@ -268,13 +266,15 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     }
 
     private void fetchData() {
-        fireToast();
+        Utils.fireToast(mDurationTypeSpinner.getSelectedItemPosition(), mQuakeTypeSpinner.getSelectedItemPosition(), mContext);
         try {
             new AsyncTask<URL, Void, FeatureCollection>() {
                 @Override
                 protected FeatureCollection doInBackground(URL... params) {
                     try {
-                        return getJSON(new URL(mContext.getString(R.string.usgs_url) + getURLFrag()));
+                        return getJSON(new URL(mContext.getString(R.string.usgs_url) + Utils.getURLFrag(
+                                mQuakeTypeSpinner.getSelectedItemPosition(),
+                                mDurationTypeSpinner.getSelectedItemPosition(), mContext)));
                     } catch (MalformedURLException me) {
                         return null;
                     }
@@ -296,7 +296,8 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
                     }
 
                 }
-            }.execute(new URL(mContext.getString(R.string.usgs_url) + getURLFrag()));
+            }.execute(new URL(mContext.getString(R.string.usgs_url) + Utils.getURLFrag(mQuakeTypeSpinner.getSelectedItemPosition(),
+            mDurationTypeSpinner.getSelectedItemPosition(), mContext)));
         } catch (MalformedURLException me) {
             Log.e(me.getMessage(), "URL Problem...");
 
@@ -329,95 +330,6 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         }
     }
 
-    /**
-     * This towering method could use some honing. Might want to switch to just using static class vars for this, instead
-     * of accessing Resources all the time.
-     *
-     * @return a string representing the proper fragment to pass to the URL string
-     */
-    private String getURLFrag() {
-        int quakeSelection = mQuakeTypeSpinner.getSelectedItemPosition();
-        int durationSelection = mDurationTypeSpinner.getSelectedItemPosition();
-        if (durationSelection == 0) {
-            if (quakeSelection == 0) {
-                return mContext.getString(R.string.significant_hour);
-            } else if (quakeSelection == 1) {
-                return mContext.getString(R.string._4_5_hour);
-            } else if (quakeSelection == 2) {
-                return mContext.getString(R.string._2_5_hour);
-            } else if (quakeSelection == 3) {
-                return mContext.getString(R.string._1_0_hour);
-            } else if (quakeSelection == 4) {
-                return mContext.getString(R.string.all_hour);
-            }
-        } else if (durationSelection == 1) {
-            if (quakeSelection == 0) {
-                return mContext.getString(R.string.significant_day);
-            } else if (quakeSelection == 1) {
-                return mContext.getString(R.string._4_5_day);
-            } else if (quakeSelection == 2) {
-                return mContext.getString(R.string._2_5_day);
-            } else if (quakeSelection == 3) {
-                return mContext.getString(R.string._1_0_day);
-            } else if (quakeSelection == 4) {
-                return mContext.getString(R.string.all_day);
-            }
-        } else if (durationSelection == 2) {
-            if (quakeSelection == 0) {
-                return mContext.getString(R.string.significant_week);
-            } else if (quakeSelection == 1) {
-                return mContext.getString(R.string._4_5_week);
-            } else if (quakeSelection == 2) {
-                return mContext.getString(R.string._2_5_week);
-            } else if (quakeSelection == 3) {
-                return mContext.getString(R.string._1_0_week);
-            } else if (quakeSelection == 4) {
-                return mContext.getString(R.string.all_week);
-            }
-        }
-
-        /*
-        Removed the past month option, due to OOM issues. Code is left here, for a future optimization update when it may be enabled again.
-
-         */
-//        else if(durationSelection == 3){
-//            if(quakeSelection == 0){
-//                return mContext.getString(R.string.significant_month);
-//            }else if(quakeSelection == 1){
-//                return mContext.getString(R.string._4_5_month);
-//            }else if(quakeSelection == 2){
-//                return mContext.getString(R.string._2_5_month);
-//            }else if(quakeSelection == 3){
-//                return mContext.getString(R.string._1_0_month);
-//            }else if(quakeSelection == 4){
-//                return mContext.getString(R.string.all_month);
-//            }
-//        }
-        return mContext.getString(R.string.significant_week);
-
-    }
-
-    /**
-     * Generates the appropriate toast, depending on the anticipated time of the request.
-     */
-    private void fireToast() {
-        Toast toast;
-        if (mDurationTypeSpinner.getSelectedItemPosition() == 2 && mQuakeTypeSpinner.getSelectedItemPosition() == 4) {
-            toast = Toast.makeText(mContext, mContext.getString(R.string.loading_data_long), Toast.LENGTH_LONG);
-        } else {
-            toast = Toast.makeText(mContext, mContext.getString(R.string.loading_data), Toast.LENGTH_SHORT);
-        }
-        toast.show();
-    }
-
-    /**
-     * Generates the long toast message
-     */
-    private void connectToast() {
-        Toast toast;
-        toast = Toast.makeText(mContext, getResources().getString(R.string.no_network), Toast.LENGTH_LONG);
-        toast.show();
-    }
 
     /**
      *

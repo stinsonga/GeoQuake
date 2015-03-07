@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Created by gaius on 15-03-05.
@@ -121,5 +122,95 @@ public class Utils {
                 break;
         }
     }
+
+    /**
+     * This towering method could use some honing. Might want to switch to just using static class vars for this, instead
+     * of accessing Resources all the time.
+     *
+     * @return a string representing the proper fragment to pass to the URL string
+     */
+    public static String getURLFrag(int quakeSelection, int durationSelection, Context context) {
+        if (durationSelection == 0) {
+            if (quakeSelection == 0) {
+                return context.getString(R.string.significant_hour);
+            } else if (quakeSelection == 1) {
+                return context.getString(R.string._4_5_hour);
+            } else if (quakeSelection == 2) {
+                return context.getString(R.string._2_5_hour);
+            } else if (quakeSelection == 3) {
+                return context.getString(R.string._1_0_hour);
+            } else if (quakeSelection == 4) {
+                return context.getString(R.string.all_hour);
+            }
+        } else if (durationSelection == 1) {
+            if (quakeSelection == 0) {
+                return context.getString(R.string.significant_day);
+            } else if (quakeSelection == 1) {
+                return context.getString(R.string._4_5_day);
+            } else if (quakeSelection == 2) {
+                return context.getString(R.string._2_5_day);
+            } else if (quakeSelection == 3) {
+                return context.getString(R.string._1_0_day);
+            } else if (quakeSelection == 4) {
+                return context.getString(R.string.all_day);
+            }
+        } else if (durationSelection == 2) {
+            if (quakeSelection == 0) {
+                return context.getString(R.string.significant_week);
+            } else if (quakeSelection == 1) {
+                return context.getString(R.string._4_5_week);
+            } else if (quakeSelection == 2) {
+                return context.getString(R.string._2_5_week);
+            } else if (quakeSelection == 3) {
+                return context.getString(R.string._1_0_week);
+            } else if (quakeSelection == 4) {
+                return context.getString(R.string.all_week);
+            }
+        }
+
+        /*
+        Removed the past month option, due to OOM issues. Code is left here, for a future optimization update when it may be enabled again.
+
+         */
+//        else if(durationSelection == 3){
+//            if(quakeSelection == 0){
+//                return mContext.getString(R.string.significant_month);
+//            }else if(quakeSelection == 1){
+//                return mContext.getString(R.string._4_5_month);
+//            }else if(quakeSelection == 2){
+//                return mContext.getString(R.string._2_5_month);
+//            }else if(quakeSelection == 3){
+//                return mContext.getString(R.string._1_0_month);
+//            }else if(quakeSelection == 4){
+//                return mContext.getString(R.string.all_month);
+//            }
+//        }
+        return context.getString(R.string.significant_week);
+
+    }
+
+    /**
+     * Generates the appropriate toast, depending on the anticipated time of the request.
+     */
+    public static void fireToast(int duration, int quake, Context context) {
+        Toast toast;
+        if (duration == 2 && quake == 4) {
+            toast = Toast.makeText(context, context.getString(R.string.loading_data_long), Toast.LENGTH_LONG);
+        } else {
+            toast = Toast.makeText(context, context.getString(R.string.loading_data), Toast.LENGTH_SHORT);
+        }
+        toast.show();
+    }
+
+    /**
+     * Generates the long toast message
+     */
+    public static void connectToast(Context context) {
+        Toast toast;
+        toast = Toast.makeText(context, context.getResources().getString(R.string.no_network), Toast.LENGTH_LONG);
+        toast.show();
+    }
+
+
 
 }
