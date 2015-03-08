@@ -1,8 +1,5 @@
 package com.geo.GeoQuake;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 import android.content.ContentValues;
