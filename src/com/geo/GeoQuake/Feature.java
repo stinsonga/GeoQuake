@@ -4,7 +4,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by gaius on 15-03-02.
+ * Contained within a FeatureCollection
+ *
  */
 public class Feature {
 
