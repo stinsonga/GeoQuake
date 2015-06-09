@@ -80,7 +80,6 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
                 mSharedPreferencesEditor = mSharedPreferences.edit();
                 mSharedPreferencesEditor.putBoolean(Utils.WIFI_ONLY, isChecked);
                 mSharedPreferencesEditor.apply();
-                Log.i("wifi_refresh pref changed:", ""+isChecked);
             }
         });
         mCacheTimeSpinner = (Spinner) findViewById(R.id.cache_spinner);
@@ -246,6 +245,16 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
             if(mFeatureCollection != null){
                 for(Feature feature : mFeatureCollection.getFeatures()){
                     LatLng coords = new LatLng(feature.getLatitude(), feature.getLongitude());
+                    if (feature.getProperties().getMag() <= 1.00){
+                        //set icon
+                    } else if(feature.getProperties().getMag() <= 2.50){
+                        //set icon
+                    } else if(feature.getProperties().getMag() <= 4.50){
+                        //set icon
+                    } else {
+                        //set icon
+                    }
+
                     Marker m = mMap.addMarker(new MarkerOptions().position(coords).title(feature.getProperties().getPlace()).snippet(getResources().getString(R.string.magnitude)+feature.getProperties().getMag()));
                     markerInfo.put(m.getId(), feature.getProperties().getUrl());
 
