@@ -145,18 +145,13 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
             case R.id.action_refresh:
                 if (GeoQuakeDB.checkRefreshLimit(Long.parseLong(GeoQuakeDB.getTime()),
                         mSharedPreferences.getLong(Utils.REFRESH_LIMITER, 0))) {
-                    Log.i("ok to refresh?", "YES");
                     SharedPreferences.Editor editor = mSharedPreferences.edit();
                     editor.putLong(Utils.REFRESH_LIMITER, Long.parseLong(GeoQuakeDB.getTime()));
                     editor.apply();
                     mRefreshMap = true;
                     networkCheckFetchData();
                 } else {
-                    Log.i("ok to refresh?", "NO");
                     Toast.makeText(mContext, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
-                    Log.i("can refresh again at: ", ""+mSharedPreferences.getLong(Utils.REFRESH_LIMITER,
-                            0)+Utils.REFRESH_LIMITER_TIME);
-                    Log.i("current time: ", GeoQuakeDB.getTime());
                 }
                 break;
             case R.id.action_settings:

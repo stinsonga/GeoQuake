@@ -58,7 +58,6 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
                 mSharedPreferencesEditor = mSharedPreferences.edit();
                 mSharedPreferencesEditor.putBoolean(Utils.WIFI_ONLY, isChecked);
                 mSharedPreferencesEditor.apply();
-                Log.i("wifi_refresh pref changed:", ""+isChecked);
             }
         });
         mCacheTimeSpinner = (Spinner) findViewById(R.id.cache_spinner);
@@ -77,6 +76,8 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         mQuakeTypeSpinner.setOnItemSelectedListener(this);
         mCacheTimeSpinner.setOnItemSelectedListener(this);
         //Side Nav End
+
+
 
     }
 
@@ -100,17 +101,12 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
             case R.id.action_refresh:
                 if (GeoQuakeDB.checkRefreshLimit(Long.parseLong(GeoQuakeDB.getTime()),
                         mSharedPreferences.getLong(Utils.REFRESH_LIMITER, 0))) {
-                    Log.i("ok to refresh?", "YES");
                     SharedPreferences.Editor editor = mSharedPreferences.edit();
                     editor.putLong(Utils.REFRESH_LIMITER, Long.parseLong(GeoQuakeDB.getTime()));
                     editor.apply();
                     //
                 } else {
-                    Log.i("ok to refresh?", "NO");
                     Toast.makeText(mContext, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
-                    Log.i("can refresh again at: ", ""+mSharedPreferences.getLong(Utils.REFRESH_LIMITER,
-                            0)+Utils.REFRESH_LIMITER_TIME);
-                    Log.i("current time: ", GeoQuakeDB.getTime());
                 }
                 break;
             case R.id.action_settings:
