@@ -12,9 +12,7 @@ import android.view.*;
 import android.widget.*;
 import android.support.v4.widget.DrawerLayout;
 import com.google.android.gms.maps.*;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.*;
 //TODO: deal with deprecated imports
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -245,17 +243,18 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
             if(mFeatureCollection != null){
                 for(Feature feature : mFeatureCollection.getFeatures()){
                     LatLng coords = new LatLng(feature.getLatitude(), feature.getLongitude());
+                    BitmapDescriptor quakeIcon;
                     if (feature.getProperties().getMag() <= 1.00){
-                        //set icon
+                        //quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake_icon_1_0);
                     } else if(feature.getProperties().getMag() <= 2.50){
-                        //set icon
+                        //quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake_icon_2_5);
                     } else if(feature.getProperties().getMag() <= 4.50){
-                        //set icon
+                        //quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake_icon_4_5);
                     } else {
-                        //set icon
+                        //quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake_icon_major);
                     }
 
-                    Marker m = mMap.addMarker(new MarkerOptions().position(coords).title(feature.getProperties().getPlace()).snippet(getResources().getString(R.string.magnitude)+feature.getProperties().getMag()));
+                    Marker m = mMap.addMarker(new MarkerOptions().position(coords).title(feature.getProperties().getPlace()).snippet(getResources().getString(R.string.magnitude) + feature.getProperties().getMag()));
                     markerInfo.put(m.getId(), feature.getProperties().getUrl());
 
                     mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
