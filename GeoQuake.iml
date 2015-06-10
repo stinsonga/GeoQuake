@@ -25,6 +25,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="google-play-services_lib" exported="" />
-    <orderEntry type="library" exported="" name="libs" level="project" />
+    <orderEntry type="library" exported="" name="google-play-services" level="project" />
   </component>
 </module>
