@@ -182,6 +182,9 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
 //        }
     }
 
+    /**
+     * Checking the network before we bother trying to grab data
+     */
     public void networkCheckFetchData(){
         if (Utils.checkNetwork(mContext)) {
             fetchData();
@@ -190,6 +193,11 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         }
     }
 
+    /**
+     * We're not using this method right now. That's how it goes.
+     *
+     * @return
+     */
     public GoogleMapOptions mapOptions() {
         GoogleMapOptions opts = new GoogleMapOptions();
         opts.mapType(GoogleMap.MAP_TYPE_HYBRID).compassEnabled(true);
