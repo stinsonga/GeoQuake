@@ -39,6 +39,7 @@ public class QuakeData {
      */
     public FeatureCollection fetchData(int quakeDuration, int quakeType, Context context){
         processData(quakeDuration, quakeType, context);
+        //consider a callback here, instead?
         return mFeatureCollection;
     }
 
