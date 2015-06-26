@@ -42,7 +42,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         mActionBarCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     getActionBar().hide();
                 } else {
                     getActionBar().show();
@@ -78,7 +78,6 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         //Side Nav End
 
 
-
     }
 
     @Override
@@ -104,15 +103,14 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
                     SharedPreferences.Editor editor = mSharedPreferences.edit();
                     editor.putLong(Utils.REFRESH_LIMITER, Long.parseLong(GeoQuakeDB.getTime()));
                     editor.apply();
-                    //
                 } else {
                     Toast.makeText(mContext, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.action_settings:
-                if(mDrawerLayout.isDrawerOpen(Gravity.LEFT)){
+                if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
                     mDrawerLayout.closeDrawer(Gravity.LEFT);
-                } else{
+                } else {
                     mDrawerLayout.openDrawer(Gravity.LEFT);
                 }
                 break;
@@ -124,10 +122,11 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        switch(parent.getId()){
-            case(R.id.quake_type_spinner):case(R.id.duration_type_spinner):
+        switch (parent.getId()) {
+            case (R.id.quake_type_spinner):
+            case (R.id.duration_type_spinner):
                 break;
-            case(R.id.cache_spinner):
+            case (R.id.cache_spinner):
                 Utils.changeCache(mCacheTimeSpinner.getSelectedItemPosition(), mSharedPreferences,
                         getResources().getStringArray(R.array.cache_values));
                 break;

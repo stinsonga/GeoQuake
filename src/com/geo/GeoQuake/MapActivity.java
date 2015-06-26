@@ -27,7 +27,7 @@ import java.net.URL;
 import java.util.HashMap;
 
 
-public class MapActivity extends Activity implements AdapterView.OnItemSelectedListener{
+public class MapActivity extends Activity implements AdapterView.OnItemSelectedListener {
     Context mContext;
     HashMap<String, String> markerInfo = new HashMap<String, String>();
     SharedPreferences mSharedPreferences;
@@ -62,7 +62,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         mActionBarCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     getActionBar().hide();
                 } else {
                     getActionBar().show();
@@ -111,13 +111,14 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
      * @param id
      */
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
-        switch(parent.getId()){
-            case(R.id.quake_type_spinner):case(R.id.duration_type_spinner):
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        switch (parent.getId()) {
+            case (R.id.quake_type_spinner):
+            case (R.id.duration_type_spinner):
                 mRefreshMap = true;
                 networkCheckFetchData();
                 break;
-            case(R.id.cache_spinner):
+            case (R.id.cache_spinner):
                 Utils.changeCache(mCacheTimeSpinner.getSelectedItemPosition(), mSharedPreferences,
                         getResources().getStringArray(R.array.cache_values));
                 break;
@@ -128,7 +129,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent){
+    public void onNothingSelected(AdapterView<?> parent) {
 
     }
 
@@ -155,9 +156,9 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
                 }
                 break;
             case R.id.action_settings:
-                if(mDrawerLayout.isDrawerOpen(Gravity.LEFT)){
+                if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
                     mDrawerLayout.closeDrawer(Gravity.LEFT);
-                } else{
+                } else {
                     mDrawerLayout.openDrawer(Gravity.LEFT);
                 }
                 break;
@@ -185,7 +186,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     /**
      * Checking the network before we bother trying to grab data
      */
-    public void networkCheckFetchData(){
+    public void networkCheckFetchData() {
         if (Utils.checkNetwork(mContext)) {
             fetchData();
         } else {
@@ -240,18 +241,18 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     /**
      * The method that does the work of placing the markers on the map. Yes.
      */
-    private void placeMarkers(){
+    private void placeMarkers() {
         mMap.clear();
         try {
-            if(mFeatureCollection != null){
-                for(Feature feature : mFeatureCollection.getFeatures()){
+            if (mFeatureCollection != null) {
+                for (Feature feature : mFeatureCollection.getFeatures()) {
                     LatLng coords = new LatLng(feature.getLatitude(), feature.getLongitude());
                     BitmapDescriptor quakeIcon;
-                    if (feature.getProperties().getMag() <= 1.00){
+                    if (feature.getProperties().getMag() <= 1.00) {
                         //quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake_icon_1_0);
-                    } else if(feature.getProperties().getMag() <= 2.50){
+                    } else if (feature.getProperties().getMag() <= 2.50) {
                         //quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake_icon_2_5);
-                    } else if(feature.getProperties().getMag() <= 4.50){
+                    } else if (feature.getProperties().getMag() <= 4.50) {
                         //quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake_icon_4_5);
                     } else {
                         //quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake_icon_major);
@@ -302,14 +303,14 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
                 protected void onPostExecute(FeatureCollection featureCollection) {
                     super.onPostExecute(featureCollection);
                     mFeatureCollection = featureCollection;
-                    if(mRefreshMap){
+                    if (mRefreshMap) {
                         placeMarkers();
                         mRefreshMap = false;
                     }
 
                 }
             }.execute(new URL(mContext.getString(R.string.usgs_url) + Utils.getURLFrag(mQuakeTypeSpinner.getSelectedItemPosition(),
-            mDurationTypeSpinner.getSelectedItemPosition(), mContext)));
+                    mDurationTypeSpinner.getSelectedItemPosition(), mContext)));
         } catch (MalformedURLException me) {
             Log.e(me.getMessage(), "URL Problem...");
 
@@ -317,7 +318,6 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     }
 
     /**
-     *
      * @param url The url we'll use to fetch the data
      * @return A JSONObject containing the requested data
      */
@@ -344,11 +344,10 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
 
 
     /**
-     *
      * @param id The map marker id
      * @return URL value in hashmap
      */
-    private String getURLFromMarker(String id){
+    private String getURLFromMarker(String id) {
         return markerInfo.get(id);
     }
 
