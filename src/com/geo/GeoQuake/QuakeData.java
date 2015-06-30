@@ -22,13 +22,18 @@ public class QuakeData {
     protected String usgsUrl;
     protected FeatureCollection mFeatureCollection = new FeatureCollection();
     protected DataCallback mDataCallback;
+    protected int mQuakeType;
+    protected int mQuakeDuration;
 
     /**
      * Constructor... takes only the url for USGS, which should be a resource
      * @param usgsUrl
      */
-    public QuakeData(String usgsUrl){
+    public QuakeData(String usgsUrl, int quakeDuration, int quakeType, DataCallback dataCallback){
         this.usgsUrl = usgsUrl;
+        this.mQuakeDuration = quakeDuration;
+        this.mQuakeType = quakeType;
+        this.mDataCallback = dataCallback;
     }
 
     public FeatureCollection getFeatureCollection(){
@@ -37,29 +42,25 @@ public class QuakeData {
 
     /**
      *
-     * @param quakeDuration
-     * @param quakeType
      * @param context
      * @return
      */
-    public void fetchData(int quakeDuration, int quakeType, Context context){
-        processData(quakeDuration, quakeType, context);
+    public void fetchData(Context context){
+        processData(context);
     }
 
     /**
      *
-     * @param quakeDuration
-     * @param quakeType
      * @param context
      */
-    private void processData(int quakeDuration, int quakeType, Context context) {
+    private void processData(Context context) {
         try {
             new AsyncTask<URL, Void, FeatureCollection>() {
                 @Override
                 protected FeatureCollection doInBackground(URL... params) {
                     try {
                         return getJSON(new URL(usgsUrl + Utils.getURLFrag(
-                                quakeType, quakeDuration, context)));
+                                mQuakeType, mQuakeDuration, context)));
                     } catch (MalformedURLException me) {
                         return null;
                     }
@@ -78,8 +79,8 @@ public class QuakeData {
                     mDataCallback.dataCallback();
 
                 }
-            }.execute(new URL(usgsUrl + Utils.getURLFrag(quakeType,
-                    quakeDuration, context)));
+            }.execute(new URL(usgsUrl + Utils.getURLFrag(mQuakeType,
+                    mQuakeDuration, context)));
         } catch (MalformedURLException me) {
             Log.e(me.getMessage(), "URL Problem...");
 

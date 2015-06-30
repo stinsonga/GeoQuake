@@ -281,41 +281,10 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
 
     private void fetchData() {
         Utils.fireToast(mDurationTypeSpinner.getSelectedItemPosition(), mQuakeTypeSpinner.getSelectedItemPosition(), mContext);
-        try {
-            new AsyncTask<URL, Void, FeatureCollection>() {
-                @Override
-                protected FeatureCollection doInBackground(URL... params) {
-                    try {
-                        return getJSON(new URL(mContext.getString(R.string.usgs_url) + Utils.getURLFrag(
-                                mQuakeTypeSpinner.getSelectedItemPosition(),
-                                mDurationTypeSpinner.getSelectedItemPosition(), mContext)));
-                    } catch (MalformedURLException me) {
-                        return null;
-                    }
-
-                }
-
-                @Override
-                protected void onPreExecute() {
-                    super.onPreExecute();
-                }
-
-                @Override
-                protected void onPostExecute(FeatureCollection featureCollection) {
-                    super.onPostExecute(featureCollection);
-                    mFeatureCollection = featureCollection;
-                    if (mRefreshMap) {
-                        placeMarkers();
-                        mRefreshMap = false;
-                    }
-
-                }
-            }.execute(new URL(mContext.getString(R.string.usgs_url) + Utils.getURLFrag(mQuakeTypeSpinner.getSelectedItemPosition(),
-                    mDurationTypeSpinner.getSelectedItemPosition(), mContext)));
-        } catch (MalformedURLException me) {
-            Log.e(me.getMessage(), "URL Problem...");
-
-        }
+        mQuakeData = new QuakeData(mContext.getString(R.string.usgs_url),
+                mDurationTypeSpinner.getSelectedItemPosition(),
+                mQuakeTypeSpinner.getSelectedItemPosition(), this);
+        mQuakeData.fetchData(mContext);
     }
 
     /**
@@ -355,10 +324,17 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     /**
      * Interface callback when fetching data
      */
+    @Override
     public void dataCallback(){
         //update map with data
         mFeatureCollection = mQuakeData.getFeatureCollection();
-        Log.i("callback!", "callback...");
+        if (mRefreshMap) {
+            placeMarkers();
+            //A bit of a hack/fix for initial load, where the bastard spams several callbacks
+            if(mFeatureCollection.getFeatures().size() > 0){
+                mRefreshMap = false;
+            }
+        }
     }
 
 }
