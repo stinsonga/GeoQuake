@@ -21,6 +21,7 @@ public class QuakeData {
 
     protected String usgsUrl;
     protected FeatureCollection mFeatureCollection = new FeatureCollection();
+    protected DataCallback mDataCallback;
 
     /**
      * Constructor... takes only the url for USGS, which should be a resource
@@ -30,6 +31,10 @@ public class QuakeData {
         this.usgsUrl = usgsUrl;
     }
 
+    public FeatureCollection getFeatureCollection(){
+        return mFeatureCollection;
+    }
+
     /**
      *
      * @param quakeDuration
@@ -37,10 +42,8 @@ public class QuakeData {
      * @param context
      * @return
      */
-    public FeatureCollection fetchData(int quakeDuration, int quakeType, Context context){
+    public void fetchData(int quakeDuration, int quakeType, Context context){
         processData(quakeDuration, quakeType, context);
-        //consider a callback here, instead?
-        return mFeatureCollection;
     }
 
     /**
@@ -72,6 +75,7 @@ public class QuakeData {
                 protected void onPostExecute(FeatureCollection featureCollection) {
                     super.onPostExecute(featureCollection);
                     mFeatureCollection = featureCollection;
+                    mDataCallback.dataCallback();
 
                 }
             }.execute(new URL(usgsUrl + Utils.getURLFrag(quakeType,

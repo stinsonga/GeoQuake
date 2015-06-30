@@ -27,7 +27,7 @@ import java.net.URL;
 import java.util.HashMap;
 
 
-public class MapActivity extends Activity implements AdapterView.OnItemSelectedListener {
+public class MapActivity extends Activity implements AdapterView.OnItemSelectedListener, DataCallback {
     Context mContext;
     HashMap<String, String> markerInfo = new HashMap<String, String>();
     SharedPreferences mSharedPreferences;
@@ -45,6 +45,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     GeoQuakeDB geoQuakeDB;
 
     FeatureCollection mFeatureCollection;
+    QuakeData mQuakeData;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -349,6 +350,15 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
      */
     private String getURLFromMarker(String id) {
         return markerInfo.get(id);
+    }
+
+    /**
+     * Interface callback when fetching data
+     */
+    public void dataCallback(){
+        //update map with data
+        mFeatureCollection = mQuakeData.getFeatureCollection();
+        Log.i("callback!", "callback...");
     }
 
 }
