@@ -10,4 +10,8 @@
     <style name="ActionBarStyling" parent="android:Widget.Holo.ActionBar">
         <item name="android:background">@color/actionbar_color</item>
     </style>
+
+    <dimen name="quake_list_font_size">15sp</dimen>
+    <dimen name="quake_list_padding">10dp</dimen>
+    <dimen name="quake_list_margin">10dp</dimen>
 </resources>

@@ -10,12 +10,20 @@ import android.util.Log;
 import android.view.*;
 import android.widget.*;
 
+import com.google.android.gms.appdatasearch.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+
 /**
  * Created by gaius on 2014-08-25.
  */
-public class ListQuakes extends Activity implements AdapterView.OnItemSelectedListener {
+public class ListQuakes extends Activity implements AdapterView.OnItemSelectedListener, DataCallback {
 
-    ListView quakeListView;
+    ListView mQuakeListView;
+    QuakeListAdapter mQuakeListAdapter;
     SharedPreferences mSharedPreferences;
     SharedPreferences.Editor mSharedPreferencesEditor;
     Context mContext;
@@ -26,6 +34,12 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
     Spinner mCacheTimeSpinner;
     CheckBox mActionBarCheckbox;
     CheckBox mWifiCheckbox;
+    boolean mRefreshList = true;
+
+    GeoQuakeDB geoQuakeDB;
+
+    FeatureCollection mFeatureCollection;
+    QuakeData mQuakeData;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,8 +47,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         setContentView(R.layout.list_quakes_layout);
         mSharedPreferences = getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
         mContext = getApplicationContext();
-        quakeListView = (ListView) findViewById(R.id.quakeListView);
-
+        mQuakeListView = (ListView) findViewById(R.id.quakeListView);
         //Side Nav Begin
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -77,6 +90,8 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         mCacheTimeSpinner.setOnItemSelectedListener(this);
         //Side Nav End
 
+        networkCheckFetchData();
+
 
     }
 
@@ -103,6 +118,8 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
                     SharedPreferences.Editor editor = mSharedPreferences.edit();
                     editor.putLong(Utils.REFRESH_LIMITER, Long.parseLong(GeoQuakeDB.getTime()));
                     editor.apply();
+                    mRefreshList = true;
+                    networkCheckFetchData();
                 } else {
                     Toast.makeText(mContext, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
                 }
@@ -140,4 +157,58 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+
+    /**
+     * Checking the network before we bother trying to grab data
+     */
+    public void networkCheckFetchData() {
+        if (Utils.checkNetwork(mContext)) {
+            fetchData();
+        } else {
+            Utils.connectToast(mContext);
+        }
+    }
+
+    private void fetchData() {
+        Utils.fireToast(mDurationTypeSpinner.getSelectedItemPosition(), mQuakeTypeSpinner.getSelectedItemPosition(), mContext);
+        mQuakeData = new QuakeData(mContext.getString(R.string.usgs_url),
+                mDurationTypeSpinner.getSelectedItemPosition(),
+                mQuakeTypeSpinner.getSelectedItemPosition(), this);
+        mQuakeData.fetchData(mContext);
+    }
+
+    /**
+     * Interface callback when fetching data
+     */
+    @Override
+    public void dataCallback(){
+        mFeatureCollection = mQuakeData.getFeatureCollection();
+        setupList();
+    }
+
+    public void setupList(){
+        if (mFeatureCollection != null) {
+            Collections.sort(mFeatureCollection.getFeatures(), new Comparator<Feature>() {
+                @Override
+                public int compare(Feature lhs, Feature rhs) {
+                    return lhs.getProperties().getMag() > rhs.getProperties().getMag() ? -1
+                            : lhs.getProperties().getMag() > rhs.getProperties().getMag() ? 1
+                            : 0;
+                }
+            });
+            //TODO: This could use some cleaning up
+            mQuakeListAdapter = new QuakeListAdapter(mContext, mFeatureCollection.getFeatures());
+            mQuakeListView.setAdapter(mQuakeListAdapter);
+
+            mQuakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent intent = new Intent(ListQuakes.this, WebInfoActivity.class);
+                    intent.putExtra("url", mFeatureCollection.getFeatures().get(position).getProperties().getUrl());
+                    startActivity(intent);
+                }
+            });
+        }
+    }
+
 }

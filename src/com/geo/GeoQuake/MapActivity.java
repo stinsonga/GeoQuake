@@ -268,8 +268,6 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
                             Intent intent = new Intent(MapActivity.this, WebInfoActivity.class);
                             intent.putExtra("url", getURLFromMarker(marker.getId()));
                             startActivity(intent);
-
-
                         }
                     });
                 }

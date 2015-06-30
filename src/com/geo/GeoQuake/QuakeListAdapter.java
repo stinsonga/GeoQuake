@@ -1,6 +1,7 @@
 package com.geo.GeoQuake;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,7 @@ public class QuakeListAdapter extends ArrayAdapter<Feature> {
     ArrayList<Feature> mFeature;
 
     public QuakeListAdapter(Context context, ArrayList<Feature> features){
-        super(context, R.layout.quake_list_item_layout);
+        super(context, R.layout.quake_list_item_layout, features);
         this.mContext = context;
         this.mFeature = features;
     }
@@ -39,12 +40,11 @@ public class QuakeListAdapter extends ArrayAdapter<Feature> {
             viewHolder.locationTextView = (TextView) view.findViewById(R.id.list_location_text);
             view.setTag(viewHolder);
         }
-
         Feature feature = mFeature.get(position);
         if(feature != null){
             ViewHolder vh = (ViewHolder) view.getTag();
-            vh.magnitudeTextView.setText(feature.getProperties().getPlace());
-            vh.locationTextView.setText(""+feature.getProperties().getMag());
+            vh.magnitudeTextView.setText(""+feature.getProperties().getMag());
+            vh.locationTextView.setText(feature.getProperties().getPlace());
         }
 
         return view;
