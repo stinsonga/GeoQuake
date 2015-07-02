@@ -6,19 +6,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.*;
 import android.widget.*;
-
-import com.google.android.gms.appdatasearch.*;
-
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 
 /**
- * Created by gaius on 2014-08-25.
+ * Created by gstinson on 2014-08-25.
  */
 public class ListQuakes extends Activity implements AdapterView.OnItemSelectedListener, DataCallback {
 
