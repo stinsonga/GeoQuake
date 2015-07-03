@@ -41,6 +41,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         setContentView(R.layout.list_quakes_layout);
         mSharedPreferences = getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
         mContext = getApplicationContext();
+        geoQuakeDB = new GeoQuakeDB(mContext);
         mQuakeListView = (ListView) findViewById(R.id.quakeListView);
         //Side Nav Begin
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);

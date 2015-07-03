@@ -36,6 +36,10 @@ public class QuakeData {
         this.mDataCallback = dataCallback;
     }
 
+    /**
+     *
+     * @return
+     */
     public FeatureCollection getFeatureCollection(){
         return mFeatureCollection;
     }

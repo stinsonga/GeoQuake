@@ -274,6 +274,9 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         }
     }
 
+    /**
+     * Send the request to the QuakeData class to grab new data
+     */
     private void fetchData() {
         Utils.fireToast(mDurationTypeSpinner.getSelectedItemPosition(), mQuakeTypeSpinner.getSelectedItemPosition(), mContext);
         mQuakeData = new QuakeData(mContext.getString(R.string.usgs_url),
