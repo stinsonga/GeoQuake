@@ -97,6 +97,7 @@ public class QuakeData {
      * @return A JSONObject containing the requested data
      */
     private FeatureCollection getJSON(URL url) {
+        //TODO: refactor to get rid of deprecated libraries
         HttpClient client = new DefaultHttpClient();
         HttpResponse response;
         try {

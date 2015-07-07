@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.*;
@@ -285,31 +286,6 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         mQuakeData.fetchData(mContext);
     }
 
-    /**
-     * @param url The url we'll use to fetch the data
-     * @return A JSONObject containing the requested data
-     */
-    private FeatureCollection getJSON(URL url) {
-        HttpClient client = new DefaultHttpClient();
-        HttpResponse response;
-        try {
-            response = client.execute(new HttpGet(url.toURI()));
-            StatusLine statusLine = response.getStatusLine();
-            if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                response.getEntity().writeTo(out);
-                out.close();
-                return new FeatureCollection(out.toString());
-            } else {
-                response.getEntity().getContent().close();
-                return null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
 
     /**
      * @param id The map marker id
@@ -333,6 +309,15 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
                 mRefreshMap = false;
             }
         }
+    }
+
+    /**
+     *
+     * @param newConfig
+     */
+    @Override
+    public void onConfigurationChanged(Configuration newConfig){
+        //TODO: deal with orientation changes
     }
 
 }
