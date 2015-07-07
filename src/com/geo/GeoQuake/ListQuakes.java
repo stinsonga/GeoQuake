@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import java.util.Collections;
@@ -89,6 +91,21 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
 
 
     }
+
+    /**
+     *
+     * @param config
+     */
+    @Override
+    public void onConfigurationChanged(Configuration config) {
+        super.onConfigurationChanged(config);
+        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Log.i("config", "landscape");
+        } else if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Log.i("config", "portrait");
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -7,26 +7,19 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import android.support.v4.widget.DrawerLayout;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 //TODO: deal with deprecated imports
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import java.io.ByteArrayOutputStream;
-import java.net.URL;
 import java.util.HashMap;
 
 
 public class MapActivity extends Activity implements AdapterView.OnItemSelectedListener, DataCallback {
     Context mContext;
+    Bundle mBundle;
     HashMap<String, String> markerInfo = new HashMap<String, String>();
     SharedPreferences mSharedPreferences;
     SharedPreferences.Editor mSharedPreferencesEditor;
@@ -51,6 +44,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         setContentView(R.layout.map_activity_layout);
 
         mContext = getApplicationContext();
+        mBundle = new Bundle();
         mSharedPreferences = getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
         geoQuakeDB = new GeoQuakeDB(mContext);
 
@@ -127,11 +121,20 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         }
     }
 
+    /**
+     *
+     * @param parent
+     */
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
 
+    /**
+     *
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
@@ -139,6 +142,11 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     *
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -174,12 +182,6 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     @Override
     protected void onResume() {
         super.onResume();
-//        if (checkNetwork()) {
-//            setUpMap();
-//            processJSON();
-//        } else {
-//            connectToast();
-//        }
     }
 
     /**
@@ -313,11 +315,37 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
 
     /**
      *
-     * @param newConfig
+     * @param config
      */
     @Override
-    public void onConfigurationChanged(Configuration newConfig){
-        //TODO: deal with orientation changes
+    public void onConfigurationChanged(Configuration config) {
+        super.onConfigurationChanged(config);
+        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Log.i("config", "landscape");
+        } else if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Log.i("config", "portrait");
+        }
+    }
+
+    /**
+     *
+     * @param outState
+     */
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBundle("mBundle", mBundle);
+    }
+
+    /**
+     *
+     * @param savedInstanceState
+     */
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        savedInstanceState.getBundle("mBundle");
+        Log.i("restore", "restoree");
     }
 
 }
