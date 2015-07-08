@@ -17,6 +17,7 @@
             android:layout_height="40dp">
             <EditText
                 android:id="@+id/search_edit_text"
+                android:hint="@string/search_hint"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"

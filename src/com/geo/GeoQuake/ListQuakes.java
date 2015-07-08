@@ -25,6 +25,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
     SharedPreferences mSharedPreferences;
     SharedPreferences.Editor mSharedPreferencesEditor;
     Context mContext;
+    Bundle mBundle;
 
     DrawerLayout mDrawerLayout;
     Spinner mQuakeTypeSpinner;
@@ -50,6 +51,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         setContentView(R.layout.list_quakes_layout);
         mSharedPreferences = getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
         mContext = getApplicationContext();
+        mBundle = new Bundle();
         geoQuakeDB = new GeoQuakeDB(mContext);
         mQuakeListView = (ListView) findViewById(R.id.quakeListView);
         //Side Nav Begin
@@ -247,6 +249,10 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
                     startActivity(intent);
                 }
             });
+            if(mFeatureList.size() == 0){
+                Toast.makeText(mContext, mContext.getResources().getString(R.string.empty_list)
+                        , Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -279,10 +285,16 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
                 searchFeatures.add(feature);
             }
         }
-        mFeatureList.clear(); //is this needed?
-        mFeatureList = searchFeatures;
-        mSearchEditText.setText("");
-        mSearchBar.setVisibility(View.GONE);
+
+        if(searchFeatures.size() == 0){
+            Toast.makeText(mContext, mContext.getResources().getString(R.string.empty_search_list)
+                    , Toast.LENGTH_LONG).show();
+        }else{
+            mFeatureList.clear(); //is this needed?
+            mFeatureList = searchFeatures;
+            mSearchEditText.setText("");
+            mSearchBar.setVisibility(View.GONE);
+        }
         setupList();
     }
 

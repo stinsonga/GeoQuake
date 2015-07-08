@@ -24,6 +24,9 @@
     <string name="about_geoquake">About GeoQuake</string>
 
     <string name="refresh_warning">Please wait a few seconds before manually refreshing again.</string>
+    <string name="empty_list">No Data for Selected Parameters</string>
+    <string name="search_hint">Enter a search term</string>
+    <string name="empty_search_list">No Data for Search Parameter. Try another.</string>
 
     <!-- Past Hour, Updated Every Minute -->
     <string name="significant_hour">significant_hour.geojson</string>
