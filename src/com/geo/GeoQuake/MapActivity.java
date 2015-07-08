@@ -250,16 +250,16 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
                     LatLng coords = new LatLng(feature.getLatitude(), feature.getLongitude());
                     BitmapDescriptor quakeIcon;
                     if (feature.getProperties().getMag() <= 1.00) {
-                        //quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake_icon_1_0);
+                        quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake1);
                     } else if (feature.getProperties().getMag() <= 2.50) {
-                        //quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake_icon_2_5);
+                        quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake2);
                     } else if (feature.getProperties().getMag() <= 4.50) {
-                        //quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake_icon_4_5);
+                        quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake3);
                     } else {
-                        //quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake_icon_major);
+                        quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake4);
                     }
 
-                    Marker m = mMap.addMarker(new MarkerOptions().position(coords).title(feature.getProperties().getPlace()).snippet(getResources().getString(R.string.magnitude) + feature.getProperties().getMag()));
+                    Marker m = mMap.addMarker(new MarkerOptions().icon(quakeIcon).position(coords).title(feature.getProperties().getPlace()).snippet(getResources().getString(R.string.magnitude) + feature.getProperties().getMag()));
                     markerInfo.put(m.getId(), feature.getProperties().getUrl());
 
                     mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {

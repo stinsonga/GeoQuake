@@ -198,14 +198,16 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         setupList();
     }
 
+    /**
+     * This sorts the list and sets the adapter
+     */
     public void setupList(){
         if (mFeatureCollection != null) {
             Collections.sort(mFeatureCollection.getFeatures(), new Comparator<Feature>() {
                 @Override
                 public int compare(Feature lhs, Feature rhs) {
-                    return lhs.getProperties().getMag() > rhs.getProperties().getMag() ? -1
-                            : lhs.getProperties().getMag() > rhs.getProperties().getMag() ? 1
-                            : 0;
+                    //Using Double's compare method makes this pretty straightforward.
+                    return Double.compare(lhs.getProperties().getMag(), rhs.getProperties().getMag());
                 }
             });
             //TODO: This could use some cleaning up
