@@ -10,6 +10,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -35,7 +37,12 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
     GeoQuakeDB geoQuakeDB;
 
     FeatureCollection mFeatureCollection;
+    ArrayList<Feature> mFeatureList;
     QuakeData mQuakeData;
+
+    LinearLayout mSearchBar;
+    EditText mSearchEditText;
+    Button mSearchButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,6 +54,9 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         mQuakeListView = (ListView) findViewById(R.id.quakeListView);
         //Side Nav Begin
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mSearchBar = (LinearLayout) findViewById(R.id.search_bar);
+        mSearchEditText = (EditText) findViewById(R.id.search_edit_text);
+        mSearchButton = (Button) findViewById(R.id.search_button);
 
         mActionBarCheckbox = (CheckBox) findViewById(R.id.actionbar_toggle_checkbox);
         mActionBarCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -106,6 +116,26 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         }
     }
 
+    /**
+     *
+     * @param outState
+     */
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBundle("mBundle", mBundle);
+    }
+
+    /**
+     *
+     * @param savedInstanceState
+     */
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        savedInstanceState.getBundle("mBundle");
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -123,6 +153,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
                 startActivity(intent);
                 break;
             case R.id.action_search:
+                mSearchBar.setVisibility(View.VISIBLE);
                 break;
             case R.id.action_refresh:
                 if (GeoQuakeDB.checkRefreshLimit(Long.parseLong(GeoQuakeDB.getTime()),
@@ -195,6 +226,8 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
     @Override
     public void dataCallback(){
         mFeatureCollection = mQuakeData.getFeatureCollection();
+        basicSort(mFeatureCollection);
+        mFeatureList = mFeatureCollection.getFeatures();
         setupList();
     }
 
@@ -202,18 +235,10 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
      * This sorts the list and sets the adapter
      */
     public void setupList(){
-        if (mFeatureCollection != null) {
-            Collections.sort(mFeatureCollection.getFeatures(), new Comparator<Feature>() {
-                @Override
-                public int compare(Feature lhs, Feature rhs) {
-                    //Using Double's compare method makes this pretty straightforward.
-                    return Double.compare(lhs.getProperties().getMag(), rhs.getProperties().getMag());
-                }
-            });
+        if (mFeatureList != null) {
             //TODO: This could use some cleaning up
-            mQuakeListAdapter = new QuakeListAdapter(mContext, mFeatureCollection.getFeatures());
+            mQuakeListAdapter = new QuakeListAdapter(mContext, mFeatureList);
             mQuakeListView.setAdapter(mQuakeListAdapter);
-
             mQuakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -223,6 +248,42 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
                 }
             });
         }
+    }
+
+    /**
+     * Sorting a feature collection...
+     *
+     * @param featureCollection
+     */
+    public void basicSort(FeatureCollection featureCollection){
+        Collections.sort(featureCollection.getFeatures(), new Comparator<Feature>() {
+            @Override
+            public int compare(Feature lhs, Feature rhs) {
+                //Using Double's compare method makes this pretty straightforward.
+                return Double.compare(rhs.getProperties().getMag(), lhs.getProperties().getMag());
+            }
+        });
+    }
+
+    /**
+     * Crude indeed. This won't be very robust if we're getting into unicode,
+     * but we can pretty well assume that the USGS data isn't giving us any
+     * oddball characters in the result list
+     */
+    public void doSearch(View view){
+        ArrayList<Feature> searchFeatures = new ArrayList<>();
+        String searchTerm = mSearchEditText.getText().toString();
+        for(Feature feature : mFeatureList){
+            //For "expected" input, this should handle cases
+            if(feature.properties.getPlace().toLowerCase().contains(searchTerm)){
+                searchFeatures.add(feature);
+            }
+        }
+        mFeatureList.clear(); //is this needed?
+        mFeatureList = searchFeatures;
+        mSearchEditText.setText("");
+        mSearchBar.setVisibility(View.GONE);
+        setupList();
     }
 
 }

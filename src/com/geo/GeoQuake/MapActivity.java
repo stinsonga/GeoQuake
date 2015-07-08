@@ -13,7 +13,6 @@ import android.widget.*;
 import android.support.v4.widget.DrawerLayout;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
-//TODO: deal with deprecated imports
 import java.util.HashMap;
 
 
@@ -108,8 +107,6 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         switch (parent.getId()) {
             case (R.id.quake_type_spinner):
             case (R.id.duration_type_spinner):
-                mRefreshMap = true;
-                networkCheckFetchData();
                 break;
             case (R.id.cache_spinner):
                 Utils.changeCache(mCacheTimeSpinner.getSelectedItemPosition(), mSharedPreferences,
@@ -345,7 +342,6 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         savedInstanceState.getBundle("mBundle");
-        Log.i("restore", "restoree");
     }
 
 }
