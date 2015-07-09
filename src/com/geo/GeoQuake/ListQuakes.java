@@ -18,7 +18,7 @@ import java.util.Comparator;
 /**
  * Created by gstinson on 2014-08-25.
  */
-public class ListQuakes extends Activity implements AdapterView.OnItemSelectedListener, DataCallback {
+public class ListQuakes extends Activity implements AdapterView.OnItemSelectedListener, IDataCallback {
 
     ListView mQuakeListView;
     QuakeListAdapter mQuakeListAdapter;
@@ -44,6 +44,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
     LinearLayout mSearchBar;
     EditText mSearchEditText;
     Button mSearchButton;
+    TextView mQuakeCountTextView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +60,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         mSearchBar = (LinearLayout) findViewById(R.id.search_bar);
         mSearchEditText = (EditText) findViewById(R.id.search_edit_text);
         mSearchButton = (Button) findViewById(R.id.search_button);
+        mQuakeCountTextView = (TextView) findViewById(R.id.count_textview);
 
         mActionBarCheckbox = (CheckBox) findViewById(R.id.actionbar_toggle_checkbox);
         mActionBarCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -238,6 +240,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
      */
     public void setupList(){
         if (mFeatureList != null) {
+            mQuakeCountTextView.setText(String.format(mContext.getResources().getString(R.string.quake_count), mFeatureList.size()));
             //TODO: This could use some cleaning up
             mQuakeListAdapter = new QuakeListAdapter(mContext, mFeatureList);
             mQuakeListView.setAdapter(mQuakeListAdapter);
@@ -290,6 +293,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
             Toast.makeText(mContext, mContext.getResources().getString(R.string.empty_search_list)
                     , Toast.LENGTH_LONG).show();
         }else{
+            mQuakeCountTextView.setText(String.format(mContext.getResources().getString(R.string.quake_count), mFeatureList.size()));
             mFeatureList.clear(); //is this needed?
             mFeatureList = searchFeatures;
             mSearchEditText.setText("");

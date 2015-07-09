@@ -21,7 +21,7 @@ public class QuakeData {
 
     protected String usgsUrl;
     protected FeatureCollection mFeatureCollection = new FeatureCollection();
-    protected DataCallback mDataCallback;
+    protected IDataCallback mDataCallback;
     protected int mQuakeType;
     protected int mQuakeDuration;
 
@@ -29,7 +29,7 @@ public class QuakeData {
      * Constructor... takes only the url for USGS, which should be a resource
      * @param usgsUrl
      */
-    public QuakeData(String usgsUrl, int quakeDuration, int quakeType, DataCallback dataCallback){
+    public QuakeData(String usgsUrl, int quakeDuration, int quakeType, IDataCallback dataCallback){
         this.usgsUrl = usgsUrl;
         this.mQuakeDuration = quakeDuration;
         this.mQuakeType = quakeType;

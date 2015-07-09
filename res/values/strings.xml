@@ -13,6 +13,7 @@
 
     <string name="map_tab_label">Map</string>
     <string name="list_tab_label">Quake List</string>
+    <string name="quake_count">Earthquake Count: %1$d</string>
 
     <!-- Menu Items -->
     <string name="menu_refresh">Refresh</string>

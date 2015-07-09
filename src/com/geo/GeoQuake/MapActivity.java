@@ -16,7 +16,7 @@ import com.google.android.gms.maps.model.*;
 import java.util.HashMap;
 
 
-public class MapActivity extends Activity implements AdapterView.OnItemSelectedListener, DataCallback {
+public class MapActivity extends Activity implements AdapterView.OnItemSelectedListener, IDataCallback {
     Context mContext;
     Bundle mBundle;
     HashMap<String, String> markerInfo = new HashMap<String, String>();
