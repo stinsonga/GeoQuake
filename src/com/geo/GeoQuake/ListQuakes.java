@@ -260,7 +260,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
     }
 
     /**
-     * Sorting a feature collection...
+     * Sorting a feature collection.
      *
      * @param featureCollection
      */
@@ -272,6 +272,13 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
                 return Double.compare(rhs.getProperties().getMag(), lhs.getProperties().getMag());
             }
         });
+    }
+
+    /**
+     *
+     */
+    public void sortByProximity(){
+        //TODO: a possible sort by closest location
     }
 
     /**
