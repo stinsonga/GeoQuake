@@ -281,7 +281,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         Utils.fireToast(mDurationTypeSpinner.getSelectedItemPosition(), mQuakeTypeSpinner.getSelectedItemPosition(), mContext);
         mQuakeData = new QuakeData(mContext.getString(R.string.usgs_url),
                 mDurationTypeSpinner.getSelectedItemPosition(),
-                mQuakeTypeSpinner.getSelectedItemPosition(), this);
+                mQuakeTypeSpinner.getSelectedItemPosition(), this, mContext);
         mQuakeData.fetchData(mContext);
     }
 

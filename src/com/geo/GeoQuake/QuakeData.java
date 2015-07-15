@@ -24,16 +24,18 @@ public class QuakeData {
     protected IDataCallback mDataCallback;
     protected int mQuakeType;
     protected int mQuakeDuration;
+    GeoQuakeDB mGeoQuakeDB;
 
     /**
      * Constructor... takes only the url for USGS, which should be a resource
      * @param usgsUrl
      */
-    public QuakeData(String usgsUrl, int quakeDuration, int quakeType, IDataCallback dataCallback){
+    public QuakeData(String usgsUrl, int quakeDuration, int quakeType, IDataCallback dataCallback, Context context){
         this.usgsUrl = usgsUrl;
         this.mQuakeDuration = quakeDuration;
         this.mQuakeType = quakeType;
         this.mDataCallback = dataCallback;
+        this.mGeoQuakeDB = new GeoQuakeDB(context);
     }
 
     /**
