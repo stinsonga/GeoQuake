@@ -120,4 +120,15 @@ public class QuakeData {
         }
     }
 
+    /**
+     * We'll use this method to check a row's timestamp vs the current time, to determine whether
+     * or not to overwrite
+     *
+     * @param timeStamp
+     * @return
+     */
+    private boolean compareDate(long timeStamp){
+        return false; //TODO: fill 'er out
+    }
+
 }
