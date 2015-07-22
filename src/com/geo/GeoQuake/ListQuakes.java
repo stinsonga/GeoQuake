@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.*;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 
 import java.util.ArrayList;
@@ -166,7 +167,10 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
                 startActivity(intent);
                 break;
             case R.id.action_search:
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInput(0,0);
                 mSearchBar.setVisibility(View.VISIBLE);
+                mSearchBar.requestFocus();
                 break;
             case R.id.action_refresh:
                 mDrawerLayout.closeDrawers();
@@ -271,7 +275,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Intent intent = new Intent(ListQuakes.this, WebInfoActivity.class);
-                    intent.putExtra("url", mFeatureCollection.getFeatures().get(position).getProperties().getUrl());
+                    intent.putExtra("url", mFeatureList.get(position).getProperties().getUrl());
                     startActivity(intent);
                 }
             });
@@ -328,6 +332,10 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
             mFeatureList = searchFeatures;
             mSearchEditText.setText("");
             mSearchBar.setVisibility(View.GONE);
+            //close keyboard
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
         }
         setupList();
     }
