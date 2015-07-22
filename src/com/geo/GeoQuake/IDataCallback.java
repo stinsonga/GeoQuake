@@ -5,4 +5,5 @@ package com.geo.GeoQuake;
  */
 public interface IDataCallback {
     void dataCallback();
+    void asyncUnderway();
 }

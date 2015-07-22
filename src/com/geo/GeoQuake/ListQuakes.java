@@ -35,6 +35,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
     CheckBox mActionBarCheckbox;
     CheckBox mWifiCheckbox;
     boolean mRefreshList = true;
+    boolean mAsyncUnderway = false;
 
     GeoQuakeDB geoQuakeDB;
 
@@ -169,15 +170,19 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
                 break;
             case R.id.action_refresh:
                 mDrawerLayout.closeDrawers();
-                if (GeoQuakeDB.checkRefreshLimit(Long.parseLong(GeoQuakeDB.getTime()),
-                        mSharedPreferences.getLong(Utils.REFRESH_LIMITER, 0))) {
-                    SharedPreferences.Editor editor = mSharedPreferences.edit();
-                    editor.putLong(Utils.REFRESH_LIMITER, Long.parseLong(GeoQuakeDB.getTime()));
-                    editor.apply();
-                    mRefreshList = true;
-                    networkCheckFetchData();
+                if(!mAsyncUnderway) {
+                    if (GeoQuakeDB.checkRefreshLimit(Long.parseLong(GeoQuakeDB.getTime()),
+                            mSharedPreferences.getLong(Utils.REFRESH_LIMITER, 0))) {
+                        SharedPreferences.Editor editor = mSharedPreferences.edit();
+                        editor.putLong(Utils.REFRESH_LIMITER, Long.parseLong(GeoQuakeDB.getTime()));
+                        editor.apply();
+                        mRefreshList = true;
+                        networkCheckFetchData();
+                    } else {
+                        Toast.makeText(mContext, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(mContext, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, getResources().getString(R.string.wait_for_loading), Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.action_settings:
@@ -239,9 +244,18 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
     @Override
     public void dataCallback(){
         mFeatureCollection = mQuakeData.getFeatureCollection();
+        mAsyncUnderway = false;
         basicSort(mFeatureCollection);
         mFeatureList = mFeatureCollection.getFeatures();
         setupList();
+    }
+
+    /**
+     * Lets the activity know that an async data call is underway
+     */
+    @Override
+    public void asyncUnderway(){
+        mAsyncUnderway = true;
     }
 
     /**

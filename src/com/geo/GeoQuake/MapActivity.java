@@ -23,6 +23,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     SharedPreferences mSharedPreferences;
     SharedPreferences.Editor mSharedPreferencesEditor;
     boolean mRefreshMap = true;
+    boolean mAsyncUnderway = false;
 
     LinearLayout mDrawerLinearLayout;
     DrawerLayout mDrawerLayout;
@@ -156,17 +157,23 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         switch (item.getItemId()) {
             case R.id.action_refresh:
                 mDrawerLayout.closeDrawers();
-                if (GeoQuakeDB.checkRefreshLimit(Long.parseLong(GeoQuakeDB.getTime()),
-                        mSharedPreferences.getLong(Utils.REFRESH_LIMITER, 0))) {
-                    SharedPreferences.Editor editor = mSharedPreferences.edit();
-                    editor.putLong(Utils.REFRESH_LIMITER, Long.parseLong(GeoQuakeDB.getTime()));
-                    editor.apply();
-                    mRefreshMap = true;
-                    networkCheckFetchData();
-                } else {
-                    Toast.makeText(mContext, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
+                if(!mAsyncUnderway){
+                    if (GeoQuakeDB.checkRefreshLimit(Long.parseLong(GeoQuakeDB.getTime()),
+                            mSharedPreferences.getLong(Utils.REFRESH_LIMITER, 0))) {
+                        SharedPreferences.Editor editor = mSharedPreferences.edit();
+                        editor.putLong(Utils.REFRESH_LIMITER, Long.parseLong(GeoQuakeDB.getTime()));
+                        editor.apply();
+                        mRefreshMap = true;
+                        networkCheckFetchData();
+                    } else {
+                        Toast.makeText(mContext, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
+                    }
+
+                } else{
+                    Toast.makeText(mContext, getResources().getString(R.string.wait_for_loading), Toast.LENGTH_SHORT).show();
                 }
                 break;
+
             case R.id.action_settings:
                 if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
                     mDrawerLayout.closeDrawer(Gravity.LEFT);
@@ -309,6 +316,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     public void dataCallback(){
         //update map with data
         mFeatureCollection = mQuakeData.getFeatureCollection();
+        mAsyncUnderway = false;
         if (mRefreshMap) {
             placeMarkers();
             //A bit of a hack/fix for initial load, where the bastard spams several callbacks
@@ -316,6 +324,14 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
                 mRefreshMap = false;
             }
         }
+    }
+
+    /**
+     * Lets the activity know that an async data call is underway
+     */
+    @Override
+    public void asyncUnderway(){
+        mAsyncUnderway = true;
     }
 
     /**

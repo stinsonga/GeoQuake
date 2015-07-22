@@ -62,6 +62,7 @@ public class QuakeData {
                 @Override
                 protected FeatureCollection doInBackground(URL... params) {
                     try {
+                        mDataCallback.asyncUnderway();
                         return getJSON(new URL(usgsUrl + Utils.getURLFrag(
                                 mQuakeType, mQuakeDuration, context)));
                     } catch (MalformedURLException me) {
@@ -102,7 +103,6 @@ public class QuakeData {
             String dataResponse = "";
             String currentStream = "";
             while((currentStream = bufferedReader.readLine()) != null){
-                Log.i("current", currentStream);
                 dataResponse += currentStream;
             }
             return new FeatureCollection(dataResponse);

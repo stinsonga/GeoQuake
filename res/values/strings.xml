@@ -3,7 +3,8 @@
     <string name="app_name">GeoQuake</string>
     <string name="usgs_url">http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/</string>
     <string name="loading_data">Loading data.</string>
-    <string name="loading_data_long">Loading data, this may take a few seconds.</string>
+    <string name="loading_data_long">Loading data. *NOTE*: this may take a while!</string>
+    <string name="wait_for_loading">Please wait before continuing.</string>
     <string name="close">Close</string>
     <string name="no_network">No WiFi or Mobile Connection Found. Try again later.</string>
     <string name="magnitude">Magnitude: </string>
