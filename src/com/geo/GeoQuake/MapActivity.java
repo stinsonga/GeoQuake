@@ -24,6 +24,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     SharedPreferences.Editor mSharedPreferencesEditor;
     boolean mRefreshMap = true;
 
+    LinearLayout mDrawerLinearLayout;
     DrawerLayout mDrawerLayout;
     Spinner mQuakeTypeSpinner;
     Spinner mDurationTypeSpinner;
@@ -49,7 +50,13 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
 
         //Side Nav Begin
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
+        mDrawerLinearLayout = (LinearLayout) findViewById(R.id.drawer_root);
+        mDrawerLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.closeDrawers();
+            }
+        });
         mActionBarCheckbox = (CheckBox) findViewById(R.id.actionbar_toggle_checkbox);
         mActionBarCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -148,6 +155,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
+                mDrawerLayout.closeDrawers();
                 if (GeoQuakeDB.checkRefreshLimit(Long.parseLong(GeoQuakeDB.getTime()),
                         mSharedPreferences.getLong(Utils.REFRESH_LIMITER, 0))) {
                     SharedPreferences.Editor editor = mSharedPreferences.edit();

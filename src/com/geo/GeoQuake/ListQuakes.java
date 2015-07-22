@@ -27,6 +27,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
     Context mContext;
     Bundle mBundle;
 
+    LinearLayout mDrawerLinearLayout;
     DrawerLayout mDrawerLayout;
     Spinner mQuakeTypeSpinner;
     Spinner mDurationTypeSpinner;
@@ -57,6 +58,13 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         mQuakeListView = (ListView) findViewById(R.id.quakeListView);
         //Side Nav Begin
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLinearLayout = (LinearLayout) findViewById(R.id.drawer_root);
+        mDrawerLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.closeDrawers();
+            }
+        });
         mSearchBar = (LinearLayout) findViewById(R.id.search_bar);
         mSearchEditText = (EditText) findViewById(R.id.search_edit_text);
         mSearchButton = (Button) findViewById(R.id.search_button);
@@ -160,6 +168,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
                 mSearchBar.setVisibility(View.VISIBLE);
                 break;
             case R.id.action_refresh:
+                mDrawerLayout.closeDrawers();
                 if (GeoQuakeDB.checkRefreshLimit(Long.parseLong(GeoQuakeDB.getTime()),
                         mSharedPreferences.getLong(Utils.REFRESH_LIMITER, 0))) {
                     SharedPreferences.Editor editor = mSharedPreferences.edit();
