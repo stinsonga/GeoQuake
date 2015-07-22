@@ -3,14 +3,11 @@ package com.geo.GeoQuake;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -99,23 +96,18 @@ public class QuakeData {
      * @return A JSONObject containing the requested data
      */
     private FeatureCollection getJSON(URL url) {
-        //TODO: refactor to get rid of deprecated libraries
-        HttpClient client = new DefaultHttpClient();
-        HttpResponse response;
-        try {
-            response = client.execute(new HttpGet(url.toURI()));
-            StatusLine statusLine = response.getStatusLine();
-            if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                response.getEntity().writeTo(out);
-                out.close();
-                return new FeatureCollection(out.toString());
-            } else {
-                response.getEntity().getContent().close();
-                return null;
+        try{
+            HttpURLConnection connect = (HttpURLConnection) url.openConnection();
+            InputStream inputStream = connect.getInputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+            String dataResponse = "";
+            String currentStream = "";
+            while((currentStream = bufferedReader.readLine()) != null){
+                dataResponse += currentStream;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            return new FeatureCollection(dataResponse);
+        } catch(IOException ioe){
+            ioe.printStackTrace();
             return null;
         }
     }
