@@ -39,6 +39,9 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     FeatureCollection mFeatureCollection;
     QuakeData mQuakeData;
 
+    int mStrengthSelection = 4;
+    int mDurationSelection = 0;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,7 +117,10 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         switch (parent.getId()) {
             case (R.id.quake_type_spinner):
+                mStrengthSelection = mQuakeTypeSpinner.getSelectedItemPosition();
+                break;
             case (R.id.duration_type_spinner):
+                mDurationSelection = mDurationTypeSpinner.getSelectedItemPosition();
                 break;
             case (R.id.cache_spinner):
                 Utils.changeCache(mCacheTimeSpinner.getSelectedItemPosition(), mSharedPreferences,
@@ -203,7 +209,21 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         if (Utils.checkNetwork(mContext)) {
             fetchData();
         } else {
-            Utils.connectToast(mContext);
+            if(!mGeoQuakeDB.getData(""+mStrengthSelection, ""+mDurationSelection).isEmpty()){
+                mFeatureCollection = new FeatureCollection(mGeoQuakeDB
+                        .getData("" + mStrengthSelection, "" + mDurationSelection));
+                mAsyncUnderway = false;
+                Toast.makeText(mContext, getResources().getString(R.string.using_saved), Toast.LENGTH_SHORT).show();
+                if (mRefreshMap) {
+                    placeMarkers();
+                    //A bit of a hack/fix for initial load, where the bastard spams several callbacks
+                    if(mFeatureCollection.getFeatures().size() > 0){
+                        mRefreshMap = false;
+                    }
+                }
+            } else {
+                Utils.connectToast(mContext);
+            }
         }
     }
 

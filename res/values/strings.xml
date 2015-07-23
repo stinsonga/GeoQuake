@@ -5,6 +5,7 @@
     <string name="loading_data">Loading data.</string>
     <string name="loading_data_long">Loading data. *NOTE*: this may take a while!</string>
     <string name="wait_for_loading">Please wait before continuing.</string>
+    <string name="using_saved">No WiFi or Mobile Connection Found. Using previously-saved data.</string>
     <string name="close">Close</string>
     <string name="no_network">No WiFi or Mobile Connection Found. Try again later.</string>
     <string name="magnitude">Magnitude: </string>
