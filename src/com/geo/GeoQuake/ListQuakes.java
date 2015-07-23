@@ -38,7 +38,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
     boolean mRefreshList = true;
     boolean mAsyncUnderway = false;
 
-    GeoQuakeDB geoQuakeDB;
+    GeoQuakeDB mGeoQuakeDB;
 
     FeatureCollection mFeatureCollection;
     ArrayList<Feature> mFeatureList;
@@ -56,7 +56,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         mSharedPreferences = getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
         mContext = getApplicationContext();
         mBundle = new Bundle();
-        geoQuakeDB = new GeoQuakeDB(mContext);
+        mGeoQuakeDB = new GeoQuakeDB(mContext);
         mQuakeListView = (ListView) findViewById(R.id.quakeListView);
         //Side Nav Begin
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -168,7 +168,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
                 break;
             case R.id.action_search:
                 InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInput(0,0);
+                inputMethodManager.toggleSoftInput(0, 0);
                 mSearchBar.setVisibility(View.VISIBLE);
                 mSearchBar.requestFocus();
                 break;

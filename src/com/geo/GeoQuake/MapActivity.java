@@ -34,7 +34,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     CheckBox mWifiCheckbox;
 
     private GoogleMap mMap;
-    GeoQuakeDB geoQuakeDB;
+    GeoQuakeDB mGeoQuakeDB;
 
     FeatureCollection mFeatureCollection;
     QuakeData mQuakeData;
@@ -47,7 +47,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         mContext = getApplicationContext();
         mBundle = new Bundle();
         mSharedPreferences = getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
-        geoQuakeDB = new GeoQuakeDB(mContext);
+        mGeoQuakeDB = new GeoQuakeDB(mContext);
 
         //Side Nav Begin
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
