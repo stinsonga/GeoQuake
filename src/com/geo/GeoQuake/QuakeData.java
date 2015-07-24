@@ -21,6 +21,7 @@ public class QuakeData {
     protected IDataCallback mDataCallback;
     protected int mQuakeType;
     protected int mQuakeDuration;
+    protected Context mContext;
     GeoQuakeDB mGeoQuakeDB;
 
     /**
@@ -32,6 +33,7 @@ public class QuakeData {
         this.mQuakeDuration = quakeDuration;
         this.mQuakeType = quakeType;
         this.mDataCallback = dataCallback;
+        this.mContext = context;
         this.mGeoQuakeDB = new GeoQuakeDB(context);
     }
 
@@ -57,36 +59,41 @@ public class QuakeData {
      * @param context
      */
     private void processData(Context context) {
-        try {
-            new AsyncTask<URL, Void, FeatureCollection>() {
-                @Override
-                protected FeatureCollection doInBackground(URL... params) {
-                    try {
-                        mDataCallback.asyncUnderway();
-                        return getJSON(new URL(usgsUrl + Utils.getURLFrag(
-                                mQuakeType, mQuakeDuration, context)));
-                    } catch (MalformedURLException me) {
-                        return null;
+        if (checkForStoredData()) {
+            //TODO: check for stored data, versus cache timer
+
+        } else {
+            try {
+                new AsyncTask<URL, Void, FeatureCollection>() {
+                    @Override
+                    protected FeatureCollection doInBackground(URL... params) {
+                        try {
+                            mDataCallback.asyncUnderway();
+                            return getJSON(new URL(usgsUrl + Utils.getURLFrag(
+                                    mQuakeType, mQuakeDuration, context)));
+                        } catch (MalformedURLException me) {
+                            return null;
+                        }
+
                     }
 
-                }
+                    @Override
+                    protected void onPreExecute() {
+                        super.onPreExecute();
+                    }
 
-                @Override
-                protected void onPreExecute() {
-                    super.onPreExecute();
-                }
+                    @Override
+                    protected void onPostExecute(FeatureCollection featureCollection) {
+                        super.onPostExecute(featureCollection);
+                        mFeatureCollection = featureCollection;
+                        mDataCallback.dataCallback();
+                    }
+                }.execute(new URL(usgsUrl + Utils.getURLFrag(mQuakeType,
+                        mQuakeDuration, context)));
+            } catch (MalformedURLException me) {
+                Log.e(me.getMessage(), "URL Problem...");
 
-                @Override
-                protected void onPostExecute(FeatureCollection featureCollection) {
-                    super.onPostExecute(featureCollection);
-                    mFeatureCollection = featureCollection;
-                    mDataCallback.dataCallback();
-                }
-            }.execute(new URL(usgsUrl + Utils.getURLFrag(mQuakeType,
-                    mQuakeDuration, context)));
-        } catch (MalformedURLException me) {
-            Log.e(me.getMessage(), "URL Problem...");
-
+            }
         }
     }
 
@@ -121,6 +128,15 @@ public class QuakeData {
      */
     private boolean compareDate(long timeStamp){
         return false; //TODO: fill 'er out
+    }
+
+    /**
+     * Checking to see if there is already data stored, and if it should be used
+     *
+     * @return
+     */
+    private boolean checkForStoredData(){
+        return false;
     }
 
 }

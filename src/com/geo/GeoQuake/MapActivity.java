@@ -361,11 +361,12 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     @Override
     public void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
-        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Log.i("config", "landscape");
-        } else if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            Log.i("config", "portrait");
-        }
+        //TODO: Possible actions for orientation change
+//        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            //Log.i("config", "landscape");
+//        } else if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
+//            //Log.i("config", "portrait");
+//        }
     }
 
     /**
