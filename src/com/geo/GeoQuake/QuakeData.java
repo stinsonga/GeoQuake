@@ -136,6 +136,10 @@ public class QuakeData {
      * @return
      */
     private boolean checkForStoredData(){
+        if(!mGeoQuakeDB.getData(""+mQuakeType, ""+mQuakeDuration).isEmpty()
+                ){
+
+        }
         return false;
     }
 

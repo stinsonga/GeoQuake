@@ -34,26 +34,26 @@ public class GeoQuakeDB extends SQLiteOpenHelper{
         onCreate(db);
     }
 
-    public void setData(String strength_type, String period_type, String data) {
+    public void setData(String quakeStrength, String quakeDuration, String data) {
         Log.i("database activity", "setData()");
         Log.i("setData date(approx)", getTime());
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(QUAKE_STRENGTH_TYPE, strength_type);
-        cv.put(QUAKE_PERIOD_TYPE, period_type);
+        cv.put(QUAKE_STRENGTH_TYPE, quakeStrength);
+        cv.put(QUAKE_PERIOD_TYPE, quakeDuration);
         cv.put(QUAKE_DATA, data);
         cv.put(QUAKE_DATE, getTime());
         db.insert(TABLE_NAME, null, cv);
         db.close();
     }
 
-    public String getData(String query1, String query2) {
+    public String getData(String quakeStrength, String quakeDuration) {
         Log.i("database activity", "getData()");
         SQLiteDatabase db = this.getWritableDatabase();
         String result = "";
         //TODO: use query method here... rawQuery is a bit fugly. Just look at it.
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + QUAKE_STRENGTH_TYPE
-                + "='" + query1 + "' AND " + QUAKE_PERIOD_TYPE + "='" + query2 + "'", null);
+                + "='" + quakeStrength + "' AND " + QUAKE_PERIOD_TYPE + "='" + quakeDuration + "'", null);
         if (cursor.moveToFirst()) {
             do {
                 result = cursor.getString(2);
@@ -64,12 +64,13 @@ public class GeoQuakeDB extends SQLiteOpenHelper{
         return result;
     }
 
-    public String getDateColumn(String query1, String query2) {
+    public String getDateColumn(String quakeStrength, String quakeDuration) {
         Log.i("database activity", "getDateColumn()");
         SQLiteDatabase db = this.getWritableDatabase();
         String result = "";
+        //TODO: use query method here
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + QUAKE_STRENGTH_TYPE
-                + "='" + query1 + "' AND " + QUAKE_PERIOD_TYPE + "='" + query2 + "'", null);
+                + "='" + quakeStrength + "' AND " + QUAKE_PERIOD_TYPE + "='" + quakeDuration + "'", null);
         if (cursor.moveToFirst()) {
             do {
                 result = cursor.getString(3);
