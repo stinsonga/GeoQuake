@@ -138,7 +138,7 @@ public class QuakeData {
     private boolean checkForStoredData(){
         if(!mGeoQuakeDB.getData(""+mQuakeType, ""+mQuakeDuration).isEmpty()
                 ){
-
+            //TODO: finish this...
         }
         return false;
     }
