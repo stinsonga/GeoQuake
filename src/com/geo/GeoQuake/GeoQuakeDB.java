@@ -36,13 +36,13 @@ public class GeoQuakeDB extends SQLiteOpenHelper{
 
     public void setData(String quakeStrength, String quakeDuration, String data) {
         Log.i("database activity", "setData()");
-        Log.i("setData date(approx)", getTime());
+        Log.i("setData date(approx)", ""+getTime());
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(QUAKE_STRENGTH_TYPE, quakeStrength);
         cv.put(QUAKE_PERIOD_TYPE, quakeDuration);
         cv.put(QUAKE_DATA, data);
-        cv.put(QUAKE_DATE, getTime());
+        cv.put(QUAKE_DATE, ""+getTime());
         db.insert(TABLE_NAME, null, cv);
         db.close();
     }
@@ -86,7 +86,7 @@ public class GeoQuakeDB extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(QUAKE_DATA, data);
-        cv.put(QUAKE_DATE, getTime());
+        cv.put(QUAKE_DATE, ""+getTime());
         String where = QUAKE_STRENGTH_TYPE + "=?";
         String[] value = {name};
         db.update(TABLE_NAME, cv, where, value);
@@ -97,19 +97,9 @@ public class GeoQuakeDB extends SQLiteOpenHelper{
      *
      * @return The current milliseconds converted to a String
      */
-    public static String getTime(){
+    public static long getTime(){
         Date d = new Date();
-        return ""+d.getTime();
-    }
-
-    /**
-     * A method used to compare timestamps, in case we need to update the db
-     *
-     * @param time
-     * @return
-     */
-    public static boolean compareTime(long prefTime, long time){
-        return (Long.parseLong(getTime()) - time) > prefTime;
+        return d.getTime();
     }
 
     /**

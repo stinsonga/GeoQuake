@@ -164,10 +164,10 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
             case R.id.action_refresh:
                 mDrawerLayout.closeDrawers();
                 if(!mAsyncUnderway){
-                    if (GeoQuakeDB.checkRefreshLimit(Long.parseLong(GeoQuakeDB.getTime()),
+                    if (GeoQuakeDB.checkRefreshLimit(GeoQuakeDB.getTime(),
                             mSharedPreferences.getLong(Utils.REFRESH_LIMITER, 0))) {
                         SharedPreferences.Editor editor = mSharedPreferences.edit();
-                        editor.putLong(Utils.REFRESH_LIMITER, Long.parseLong(GeoQuakeDB.getTime()));
+                        editor.putLong(Utils.REFRESH_LIMITER, GeoQuakeDB.getTime());
                         editor.apply();
                         mRefreshMap = true;
                         networkCheckFetchData();

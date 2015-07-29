@@ -1,6 +1,7 @@
 package com.geo.GeoQuake;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 import java.io.BufferedReader;
@@ -59,9 +60,8 @@ public class QuakeData {
      * @param context
      */
     private void processData(Context context) {
-        if (checkForStoredData()) {
+        if (needToRefreshData()) {
             //TODO: check for stored data, versus cache timer
-
         } else {
             try {
                 new AsyncTask<URL, Void, FeatureCollection>() {
@@ -126,8 +126,13 @@ public class QuakeData {
      * @param timeStamp
      * @return
      */
-    private boolean compareDate(long timeStamp){
-        return false; //TODO: fill 'er out
+    private boolean isExpired(long timeStamp){
+        SharedPreferences sp = mContext.getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
+        if(timeStamp - GeoQuakeDB.getTime() > Long.parseLong(sp.getString(Utils.CACHE_TIME, "0"))){
+            return true; //need to refresh data
+        } else {
+            return false; //data still good, keep it
+        }
     }
 
     /**
@@ -135,12 +140,17 @@ public class QuakeData {
      *
      * @return
      */
-    private boolean checkForStoredData(){
-        if(!mGeoQuakeDB.getData(""+mQuakeType, ""+mQuakeDuration).isEmpty()
-                ){
-            //TODO: finish this...
+    private boolean needToRefreshData(){
+        if(!mGeoQuakeDB.getData(""+mQuakeType, ""+mQuakeDuration).isEmpty()){
+            if(isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mQuakeType, "" + mQuakeDuration)))){
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            //data is empty...need to fetch it
+            return true;
         }
-        return false;
     }
 
 }
