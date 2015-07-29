@@ -61,8 +61,6 @@ public class QuakeData {
      */
     private void processData(Context context) {
         if (needToRefreshData()) {
-            //TODO: check for stored data, versus cache timer
-        } else {
             try {
                 new AsyncTask<URL, Void, FeatureCollection>() {
                     @Override
@@ -141,10 +139,14 @@ public class QuakeData {
      * @return
      */
     private boolean needToRefreshData(){
+        //first check to see if results are empty
         if(!mGeoQuakeDB.getData(""+mQuakeType, ""+mQuakeDuration).isEmpty()){
+            //is the data too old?
             if(isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mQuakeType, "" + mQuakeDuration)))){
                 return true;
             } else {
+                //use existing data set, and return false
+                mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData(""+mQuakeType, ""+mQuakeDuration));
                 return false;
             }
         } else {
