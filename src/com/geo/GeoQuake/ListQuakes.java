@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.*;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
@@ -45,8 +46,8 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
 
     LinearLayout mSearchBar;
     EditText mSearchEditText;
-    Button mSearchButton;
     TextView mQuakeCountTextView;
+    ImageView mSearchImageButton;
 
     int mStrengthSelection = 4;
     int mDurationSelection = 0;
@@ -71,7 +72,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         });
         mSearchBar = (LinearLayout) findViewById(R.id.search_bar);
         mSearchEditText = (EditText) findViewById(R.id.search_edit_text);
-        mSearchButton = (Button) findViewById(R.id.search_button);
+        mSearchImageButton = (ImageView) findViewById(R.id.search_image_button);
         mQuakeCountTextView = (TextView) findViewById(R.id.count_textview);
 
         mActionBarCheckbox = (CheckBox) findViewById(R.id.actionbar_toggle_checkbox);
@@ -96,6 +97,19 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
                 mSharedPreferencesEditor.apply();
             }
         });
+
+        mSearchImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("clicked", "yep");
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInput(0, 0);
+                mSearchBar.setVisibility(View.VISIBLE);
+                mSearchBar.requestFocus();
+                mSearchImageButton.setVisibility(View.INVISIBLE);
+            }
+        });
+
         mCacheTimeSpinner = (Spinner) findViewById(R.id.cache_spinner);
 
         mQuakeTypeSpinner = (Spinner) findViewById(R.id.quake_type_spinner);
@@ -168,12 +182,6 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
             case R.id.action_map_view:
                 Intent intent = new Intent(this, MapActivity.class);
                 startActivity(intent);
-                break;
-            case R.id.action_search:
-                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInput(0, 0);
-                mSearchBar.setVisibility(View.VISIBLE);
-                mSearchBar.requestFocus();
                 break;
             case R.id.action_refresh:
                 mDrawerLayout.closeDrawers();
@@ -357,6 +365,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
             mFeatureList = searchFeatures;
             mSearchEditText.setText("");
             mSearchBar.setVisibility(View.GONE);
+            mSearchImageButton.setVisibility(View.VISIBLE);
             //close keyboard
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
