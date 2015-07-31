@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import android.support.v4.widget.DrawerLayout;
@@ -313,11 +312,18 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
      * Send the request to the QuakeData class to grab new data
      */
     private void fetchData() {
-        Utils.fireToast(mDurationTypeSpinner.getSelectedItemPosition(), mQuakeTypeSpinner.getSelectedItemPosition(), mContext);
-        mQuakeData = new QuakeData(mContext.getString(R.string.usgs_url),
-                mDurationTypeSpinner.getSelectedItemPosition(),
-                mQuakeTypeSpinner.getSelectedItemPosition(), this, mContext);
-        mQuakeData.fetchData(mContext);
+        if(!mGeoQuakeDB.getData(""+mStrengthSelection, ""+mDurationSelection).isEmpty() &&
+                !Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn(""+mStrengthSelection, ""
+                        +mDurationSelection)), mContext)){
+            mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData(""+mStrengthSelection, ""+mDurationSelection));
+            placeMarkers();
+        } else {
+            Utils.fireToast(mDurationTypeSpinner.getSelectedItemPosition(), mQuakeTypeSpinner.getSelectedItemPosition(), mContext);
+            mQuakeData = new QuakeData(mContext.getString(R.string.usgs_url),
+                    mDurationTypeSpinner.getSelectedItemPosition(),
+                    mQuakeTypeSpinner.getSelectedItemPosition(), this, mContext);
+            mQuakeData.fetchData(mContext);
+        }
     }
 
 

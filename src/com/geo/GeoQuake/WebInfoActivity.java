@@ -8,21 +8,21 @@ import android.webkit.WebView;
 
 public class WebInfoActivity extends Activity {
 
-    WebView webView;
-    String infoURL;
+    WebView mWebView;
+    String mInfoUrl;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.web_info_activity_layout);
 
-        webView = (WebView) findViewById(R.id.webView);
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setBuiltInZoomControls(true);
+        mWebView = (WebView) findViewById(R.id.webView);
+        mWebView.getSettings().setJavaScriptEnabled(true);
+        mWebView.getSettings().setBuiltInZoomControls(true);
         Intent intent = getIntent();
-        infoURL = intent.getStringExtra("url");
+        mInfoUrl = intent.getStringExtra("url");
 
-        webView.loadUrl(infoURL);
+        mWebView.loadUrl(mInfoUrl);
 
     }
 

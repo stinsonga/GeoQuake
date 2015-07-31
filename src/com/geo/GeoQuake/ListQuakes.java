@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.*;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
@@ -252,11 +251,20 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
     }
 
     private void fetchData() {
-        Utils.fireToast(mDurationTypeSpinner.getSelectedItemPosition(), mQuakeTypeSpinner.getSelectedItemPosition(), mContext);
-        mQuakeData = new QuakeData(mContext.getString(R.string.usgs_url),
-                mDurationTypeSpinner.getSelectedItemPosition(),
-                mQuakeTypeSpinner.getSelectedItemPosition(), this, mContext);
-        mQuakeData.fetchData(mContext);
+        if(!mGeoQuakeDB.getData(""+mStrengthSelection, ""+mDurationSelection).isEmpty() &&
+                !Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn(""+mStrengthSelection, ""
+                        +mDurationSelection)), mContext)){
+            mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData(""+mStrengthSelection, ""+mDurationSelection));
+            mFeatureList = mFeatureCollection.getFeatures();
+            setupList();
+        } else {
+            Utils.fireToast(mDurationTypeSpinner.getSelectedItemPosition(), mQuakeTypeSpinner.getSelectedItemPosition(), mContext);
+            mQuakeData = new QuakeData(mContext.getString(R.string.usgs_url),
+                    mDurationTypeSpinner.getSelectedItemPosition(),
+                    mQuakeTypeSpinner.getSelectedItemPosition(), this, mContext);
+            mQuakeData.fetchData(mContext);
+        }
+
     }
 
     /**

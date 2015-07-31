@@ -211,6 +211,22 @@ public class Utils {
         toast.show();
     }
 
+    /**
+     * We'll use this method to check a row's timestamp vs the current time, to determine whether
+     * or not to overwrite
+     *
+     * @param timeStamp
+     * @return
+     */
+    public static boolean isExpired(long timeStamp, Context context){
+        SharedPreferences sp = context.getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
+        if(GeoQuakeDB.getTime() - timeStamp > Long.parseLong(sp.getString(Utils.CACHE_TIME, "0"))){
+            return true; //need to refresh data
+        } else {
+            return false; //data still good, keep it
+        }
+    }
+
 
 
 }

@@ -7,14 +7,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 public class GeoQuakeDB extends SQLiteOpenHelper{
-    private static final int DB_VERSION = 6;
+    private static final int DB_VERSION = 17;
     private static final long DAY_MILLISECONDS = 86400000;
     private static final String DB_NAME = "GeoQuake";
     private static final String TABLE_NAME = "quakes";
-    //Other columns to be defined!
+    //Columns
     private static final String QUAKE_STRENGTH_TYPE = "quake_strength_type";
     private static final String QUAKE_PERIOD_TYPE = "quake_period_type";
     private static final String QUAKE_DATA = "quake_data";
@@ -35,8 +34,8 @@ public class GeoQuakeDB extends SQLiteOpenHelper{
     }
 
     public void setData(String quakeStrength, String quakeDuration, String data) {
-        Log.i("database activity", "setData()");
-        Log.i("setData date(approx)", ""+getTime());
+        //Log.i("database activity", "setData()");
+        //Log.i("setData date(approx)", ""+getTime());
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(QUAKE_STRENGTH_TYPE, quakeStrength);
@@ -48,48 +47,52 @@ public class GeoQuakeDB extends SQLiteOpenHelper{
     }
 
     public String getData(String quakeStrength, String quakeDuration) {
-        Log.i("database activity", "getData()");
+        //Log.i("database activity", "getData()");
         SQLiteDatabase db = this.getWritableDatabase();
         String result = "";
         //TODO: use query method here... rawQuery is a bit fugly. Just look at it.
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + QUAKE_STRENGTH_TYPE
+        Cursor rowCursor = db.rawQuery("SELECT "+QUAKE_DATA+" FROM " + TABLE_NAME + " WHERE " + QUAKE_STRENGTH_TYPE
                 + "='" + quakeStrength + "' AND " + QUAKE_PERIOD_TYPE + "='" + quakeDuration + "'", null);
-        if (cursor.moveToFirst()) {
+        if (rowCursor.moveToFirst()) {
             do {
-                result = cursor.getString(2);
-            } while (cursor.moveToNext());
+                result = rowCursor.getString(0);
+            } while (rowCursor.moveToNext());
 
         }
-        cursor.close();
+        rowCursor.close();
+        db.close();
         return result;
     }
 
     public String getDateColumn(String quakeStrength, String quakeDuration) {
-        Log.i("database activity", "getDateColumn()");
+        //Log.i("database activity", "getDateColumn()");
         SQLiteDatabase db = this.getWritableDatabase();
         String result = "";
         //TODO: use query method here
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + QUAKE_STRENGTH_TYPE
+        Cursor rowCursor = db.rawQuery("SELECT "+QUAKE_DATE+" FROM " + TABLE_NAME + " WHERE " + QUAKE_STRENGTH_TYPE
                 + "='" + quakeStrength + "' AND " + QUAKE_PERIOD_TYPE + "='" + quakeDuration + "'", null);
-        if (cursor.moveToFirst()) {
+        if (rowCursor.moveToFirst()) {
             do {
-                result = cursor.getString(3);
-            } while (cursor.moveToNext());
+                result = rowCursor.getString(0);
+            } while (rowCursor.moveToNext());
 
         }
-        cursor.close();
+        //Log.i("getDateColumn() Result", result);
+        rowCursor.close();
+        db.close();
         return result;
     }
 
-    public void updateData(String query1, String query2, String name, String data) {
-        Log.i("database activity", "updateData()");
+    public void updateData(String quakeStrength, String quakeDuration, String data) {
+        //Log.i("database activity", "updateData()");
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(QUAKE_DATA, data);
         cv.put(QUAKE_DATE, ""+getTime());
-        String where = QUAKE_STRENGTH_TYPE + "=?";
-        String[] value = {name};
+        String where = QUAKE_STRENGTH_TYPE + "=? AND " + QUAKE_PERIOD_TYPE + " =?";
+        String[] value = {quakeStrength, quakeDuration};
         db.update(TABLE_NAME, cv, where, value);
+        db.close();
     }
 
     /**

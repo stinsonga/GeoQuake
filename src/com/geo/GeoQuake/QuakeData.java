@@ -1,7 +1,6 @@
 package com.geo.GeoQuake;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 import java.io.BufferedReader;
@@ -92,6 +91,10 @@ public class QuakeData {
                 Log.e(me.getMessage(), "URL Problem...");
 
             }
+        } else {
+            //no need to refresh, so we send them back the persisted data
+            mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData(""+mQuakeType, ""+mQuakeDuration));
+            mDataCallback.dataCallback();
         }
     }
 
@@ -110,26 +113,15 @@ public class QuakeData {
             while((currentStream = bufferedReader.readLine()) != null){
                 dataResponse += currentStream;
             }
+            if(mGeoQuakeDB.getData(""+mQuakeType, ""+mQuakeDuration).isEmpty()){
+                mGeoQuakeDB.setData(""+mQuakeType, ""+mQuakeDuration, dataResponse);
+            } else {
+                mGeoQuakeDB.updateData(""+mQuakeType, ""+mQuakeDuration, dataResponse);
+            }
             return new FeatureCollection(dataResponse);
         } catch(IOException ioe){
             ioe.printStackTrace();
             return null;
-        }
-    }
-
-    /**
-     * We'll use this method to check a row's timestamp vs the current time, to determine whether
-     * or not to overwrite
-     *
-     * @param timeStamp
-     * @return
-     */
-    private boolean isExpired(long timeStamp){
-        SharedPreferences sp = mContext.getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
-        if(timeStamp - GeoQuakeDB.getTime() > Long.parseLong(sp.getString(Utils.CACHE_TIME, "0"))){
-            return true; //need to refresh data
-        } else {
-            return false; //data still good, keep it
         }
     }
 
@@ -142,7 +134,7 @@ public class QuakeData {
         //first check to see if results are empty
         if(!mGeoQuakeDB.getData(""+mQuakeType, ""+mQuakeDuration).isEmpty()){
             //is the data too old?
-            if(isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mQuakeType, "" + mQuakeDuration)))){
+            if(Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mQuakeType, "" + mQuakeDuration)), mContext)){
                 return true;
             } else {
                 //use existing data set, and return false
