@@ -10,7 +10,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.*;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
@@ -18,7 +17,6 @@ import android.widget.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
