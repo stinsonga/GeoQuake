@@ -25,6 +25,7 @@
     <string name="menu_list_view">List View</string>
     <string name="menu_map_view">Map View</string>
     <string name="about_geoquake">About GeoQuake</string>
+    <string name="filter_data_by">Filter Data By:</string>
 
     <string name="refresh_warning">Please wait a few seconds before manually refreshing again.</string>
     <string name="empty_list">No Data for Selected Parameters</string>

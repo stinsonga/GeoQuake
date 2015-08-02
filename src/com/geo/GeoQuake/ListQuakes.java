@@ -229,10 +229,10 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
                 }
                 break;
             case R.id.action_settings:
-                if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
-                    mDrawerLayout.closeDrawer(Gravity.LEFT);
+                if (mDrawerLayout.isDrawerOpen(Gravity.START)) {
+                    mDrawerLayout.closeDrawer(Gravity.START);
                 } else {
-                    mDrawerLayout.openDrawer(Gravity.LEFT);
+                    mDrawerLayout.openDrawer(Gravity.START);
                 }
                 break;
             default:
@@ -344,6 +344,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
             if(mFeatureList.size() == 0){
                 Toast.makeText(mContext, mContext.getResources().getString(R.string.empty_list)
                         , Toast.LENGTH_LONG).show();
+                mDrawerLayout.openDrawer(Gravity.START);
             }
         }
     }

@@ -180,10 +180,10 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
                 break;
 
             case R.id.action_settings:
-                if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
-                    mDrawerLayout.closeDrawer(Gravity.LEFT);
+                if (mDrawerLayout.isDrawerOpen(Gravity.START)) {
+                    mDrawerLayout.closeDrawer(Gravity.START);
                 } else {
-                    mDrawerLayout.openDrawer(Gravity.LEFT);
+                    mDrawerLayout.openDrawer(Gravity.START);
                 }
                 break;
             case R.id.action_list:
@@ -274,37 +274,43 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
      * The method that does the work of placing the markers on the map. Yes.
      */
     private void placeMarkers() {
-        mMap.clear();
-        try {
-            if (mFeatureCollection != null) {
-                for (Feature feature : mFeatureCollection.getFeatures()) {
-                    LatLng coords = new LatLng(feature.getLatitude(), feature.getLongitude());
-                    BitmapDescriptor quakeIcon;
-                    if (feature.getProperties().getMag() <= 1.00) {
-                        quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake1);
-                    } else if (feature.getProperties().getMag() <= 2.50) {
-                        quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake2);
-                    } else if (feature.getProperties().getMag() <= 4.50) {
-                        quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake3);
-                    } else {
-                        quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake4);
-                    }
-
-                    Marker m = mMap.addMarker(new MarkerOptions().icon(quakeIcon).position(coords).title(feature.getProperties().getPlace()).snippet(getResources().getString(R.string.magnitude) + feature.getProperties().getMag()));
-                    markerInfo.put(m.getId(), feature.getProperties().getUrl());
-
-                    mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-                        @Override
-                        public void onInfoWindowClick(Marker marker) {
-                            Intent intent = new Intent(MapActivity.this, WebInfoActivity.class);
-                            intent.putExtra("url", getURLFromMarker(marker.getId()));
-                            startActivity(intent);
+        if(mFeatureCollection.count == 0){
+            Toast.makeText(mContext, mContext.getResources().getString(R.string.empty_list)
+                    , Toast.LENGTH_SHORT).show();
+            mDrawerLayout.openDrawer(Gravity.START);
+        } else {
+            mMap.clear();
+            try {
+                if (mFeatureCollection != null) {
+                    for (Feature feature : mFeatureCollection.getFeatures()) {
+                        LatLng coords = new LatLng(feature.getLatitude(), feature.getLongitude());
+                        BitmapDescriptor quakeIcon;
+                        if (feature.getProperties().getMag() <= 1.00) {
+                            quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake1);
+                        } else if (feature.getProperties().getMag() <= 2.50) {
+                            quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake2);
+                        } else if (feature.getProperties().getMag() <= 4.50) {
+                            quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake3);
+                        } else {
+                            quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake4);
                         }
-                    });
+
+                        Marker m = mMap.addMarker(new MarkerOptions().icon(quakeIcon).position(coords).title(feature.getProperties().getPlace()).snippet(getResources().getString(R.string.magnitude) + feature.getProperties().getMag()));
+                        markerInfo.put(m.getId(), feature.getProperties().getUrl());
+
+                        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                            @Override
+                            public void onInfoWindowClick(Marker marker) {
+                                Intent intent = new Intent(MapActivity.this, WebInfoActivity.class);
+                                intent.putExtra("url", getURLFromMarker(marker.getId()));
+                                startActivity(intent);
+                            }
+                        });
+                    }
                 }
+            } catch (Exception me) {
+                me.printStackTrace();
             }
-        } catch (Exception me) {
-            me.printStackTrace();
         }
     }
 
