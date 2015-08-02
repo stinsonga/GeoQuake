@@ -220,7 +220,8 @@ public class Utils {
      */
     public static boolean isExpired(long timeStamp, Context context){
         SharedPreferences sp = context.getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
-        if(GeoQuakeDB.getTime() - timeStamp > Long.parseLong(sp.getString(Utils.CACHE_TIME, "0"))){
+        //default cache time set at 5 minutes (300000 ms)
+        if(GeoQuakeDB.getTime() - timeStamp > Long.parseLong(sp.getString(Utils.CACHE_TIME, "300000"))){
             return true; //need to refresh data
         } else {
             return false; //data still good, keep it

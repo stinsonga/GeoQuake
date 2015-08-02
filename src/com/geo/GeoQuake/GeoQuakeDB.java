@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class GeoQuakeDB extends SQLiteOpenHelper{
-    private static final int DB_VERSION = 17;
+    private static final int DB_VERSION = 18;
     private static final long DAY_MILLISECONDS = 86400000;
     private static final String DB_NAME = "GeoQuake";
     private static final String TABLE_NAME = "quakes";

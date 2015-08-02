@@ -263,6 +263,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
                 !Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn(""+mStrengthSelection, ""
                         +mDurationSelection)), mContext)){
             mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData(""+mStrengthSelection, ""+mDurationSelection));
+            basicSort(mFeatureCollection);
             mFeatureList = mFeatureCollection.getFeatures();
             setupList();
         } else {
@@ -332,6 +333,9 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
                 return Double.compare(rhs.getProperties().getMag(), lhs.getProperties().getMag());
             }
         });
+
+
+
     }
 
     /**
