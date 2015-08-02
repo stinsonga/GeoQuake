@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -15,6 +18,9 @@ import android.widget.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by gstinson on 2014-08-25.
@@ -48,9 +54,13 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
     EditText mSearchEditText;
     TextView mQuakeCountTextView;
     ImageView mSearchImageButton;
+    ImageView mProximityImageButton;
 
     int mStrengthSelection = 4;
     int mDurationSelection = 0;
+
+    double mUserLatitude = 0.0;
+    double mUserLongitude = 0.0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,6 +83,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         mSearchBar = (LinearLayout) findViewById(R.id.search_bar);
         mSearchEditText = (EditText) findViewById(R.id.search_edit_text);
         mSearchImageButton = (ImageView) findViewById(R.id.search_image_button);
+        mProximityImageButton = (ImageView) findViewById(R.id.proximity_image_button);
         mQuakeCountTextView = (TextView) findViewById(R.id.count_textview);
 
         mActionBarCheckbox = (CheckBox) findViewById(R.id.actionbar_toggle_checkbox);
@@ -101,12 +112,18 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         mSearchImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("clicked", "yep");
                 InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputMethodManager.toggleSoftInput(0, 0);
                 mSearchBar.setVisibility(View.VISIBLE);
                 mSearchBar.requestFocus();
                 mSearchImageButton.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        mProximityImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sortByProximity();
             }
         });
 
@@ -127,9 +144,22 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         mCacheTimeSpinner.setOnItemSelectedListener(this);
         //Side Nav End
 
+        setupLocation();
         networkCheckFetchData();
 
+    }
 
+    public void setupLocation(){
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Location location = locationManager.getLastKnownLocation(locationManager
+                .getBestProvider(new Criteria(), false));
+        if(location != null){
+            mProximityImageButton.setVisibility(View.VISIBLE);
+            mUserLatitude = location.getLatitude();
+            mUserLongitude = location.getLongitude();
+        } else {
+            mProximityImageButton.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -339,10 +369,25 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
     }
 
     /**
-     *
+     * Sorting list by distance from user
      */
     public void sortByProximity(){
-        //TODO: a possible sort by closest location
+        Toast.makeText(mContext, mContext.getResources().getString(R.string.sorting_by_proximity)
+                , Toast.LENGTH_SHORT).show();
+        ArrayList<Feature> proximityList = new ArrayList<>();
+        TreeMap<Float, Feature> proximityMap = new TreeMap<>();
+        for(Feature feature : mFeatureList){
+            float[] results = new float[3];
+            Location.distanceBetween(mUserLatitude, mUserLongitude, feature.getLatitude(),
+                    feature.getLongitude(), results);
+            proximityMap.put(results[0] / 1000, feature);
+        }
+        for(Map.Entry<Float, Feature> entry : proximityMap.entrySet()){
+            proximityList.add(entry.getValue());
+        }
+        mFeatureList.clear();
+        mFeatureList = proximityList;
+        setupList();
     }
 
     /**

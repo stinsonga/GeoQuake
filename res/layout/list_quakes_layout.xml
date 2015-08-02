@@ -43,9 +43,18 @@
 
             <TextView
                 android:id="@+id/count_textview"
-                android:layout_weight="0.8"
+                android:layout_weight="0.6"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent" />
+            <ImageView
+                android:id="@+id/proximity_image_button"
+                android:layout_weight="0.2"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:gravity="end"
+                android:contentDescription=" "
+                android:src="@drawable/ic_menu_mylocation"
+                />
 
             <ImageView
                 android:id="@+id/search_image_button"
