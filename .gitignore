@@ -18,3 +18,5 @@ local.properties
 
 # API key value... bring your own ;)
 res/values/api_key.xml
+
+proguard_logs/
