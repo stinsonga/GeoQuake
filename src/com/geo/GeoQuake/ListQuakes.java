@@ -69,6 +69,12 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         mBundle = new Bundle();
         mGeoQuakeDB = new GeoQuakeDB(mContext);
         mQuakeListView = (ListView) findViewById(R.id.quakeListView);
+
+        //grab intent values, if any
+        Intent intent = getIntent();
+        mStrengthSelection = intent.getIntExtra("quake_strength", 4);
+        mDurationSelection = intent.getIntExtra("quake_duration", 0);
+
         //Side Nav Begin
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerLinearLayout = (LinearLayout) findViewById(R.id.drawer_root);
@@ -130,12 +136,12 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         mQuakeTypeSpinner = (Spinner) findViewById(R.id.quake_type_spinner);
         ArrayAdapter<CharSequence> quakeTypeAdapter = ArrayAdapter.createFromResource(this, R.array.quake_types, android.R.layout.simple_spinner_dropdown_item);
         mQuakeTypeSpinner.setAdapter(quakeTypeAdapter);
-        mQuakeTypeSpinner.setSelection(4);
+        mQuakeTypeSpinner.setSelection(mStrengthSelection);
 
         mDurationTypeSpinner = (Spinner) findViewById(R.id.duration_type_spinner);
         ArrayAdapter<CharSequence> durationAdapter = ArrayAdapter.createFromResource(this, R.array.duration_types, android.R.layout.simple_spinner_dropdown_item);
         mDurationTypeSpinner.setAdapter(durationAdapter);
-        mDurationTypeSpinner.setSelection(0);
+        mDurationTypeSpinner.setSelection(mDurationSelection);
 
         mDurationTypeSpinner.setOnItemSelectedListener(this);
         mQuakeTypeSpinner.setOnItemSelectedListener(this);
@@ -209,6 +215,8 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
 
             case R.id.action_map_view:
                 Intent intent = new Intent(this, MapActivity.class);
+                intent.putExtra("quake_strength", mStrengthSelection);
+                intent.putExtra("quake_duration", mDurationSelection);
                 startActivity(intent);
                 break;
             case R.id.action_refresh:
