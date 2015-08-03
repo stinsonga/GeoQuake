@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">GeoQuake</string>
+    <string name="app_subname"> </string>
+    <string name="version_number">1.0</string>
+    <string name="version">Version: </string>
     <string name="usgs_url">http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/</string>
     <string name="loading_data">Loading data.</string>
     <string name="loading_data_long">Loading data. *NOTE*: this may take a while!</string>
@@ -104,6 +107,13 @@
 
     <string name="wifi_refresh_only_label">WiFi Refresh Only</string>
 
-
-
+    <!-- About -->
+    <string name="other_social_label">Other Social Media</string>
+    <string name="github_source_link"><![CDATA[<a href="https://github.com/stinsonga/GeoQuake">View the source code on GitHub</a>]]></string>
+    <string name="google_plus_link"><![CDATA[<a href="https://plus.google.com/u/0/100685214372574040271/posts>Google+</a>]]></string>
+    <string name="linkedin_link"><![CDATA[<a href="https://ca.linkedin.com/pub/george-stinson/18/80a/735">LinkedIn</a>]]></string>
+    <string name="github_source_image_link">https://github.com/stinsonga/GeoQuake</string>
+    <string name="google_plus_image_link">https://plus.google.com/u/0/100685214372574040271/posts</string>
+    <string name="linkedin_image_link">https://ca.linkedin.com/pub/george-stinson/18/80a/735"</string>
+    <string name="icon_disclaimer">GitHub Octoman, Google Plus, and LinkedIn \'In\' icons used as per the policies of the respective companies.</string>
 </resources>

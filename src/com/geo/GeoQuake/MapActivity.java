@@ -33,6 +33,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     Spinner mCacheTimeSpinner;
     CheckBox mActionBarCheckbox;
     CheckBox mWifiCheckbox;
+    Button mAboutButton;
 
     private GoogleMap mMap;
     GeoQuakeDB mGeoQuakeDB;
@@ -89,6 +90,16 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
                 mSharedPreferencesEditor.apply();
             }
         });
+
+        mAboutButton = (Button) findViewById(R.id.about_button);
+        mAboutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MapActivity.this, AboutActivity.class);
+                startActivity(intent);
+            }
+        });
+
         mCacheTimeSpinner = (Spinner) findViewById(R.id.cache_spinner);
 
         mQuakeTypeSpinner = (Spinner) findViewById(R.id.quake_type_spinner);

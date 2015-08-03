@@ -31,6 +31,10 @@
         <activity android:name=".WebInfoActivity" android:label="Additional Information"/>
         <activity android:name=".ListQuakes" android:label="Quake List" android:configChanges="orientation|screenSize"/>
         <activity android:name=".SettingsActivity" android:label="Settings"/>
+        <activity
+            android:name=".AboutActivity"
+            android:label="About GeoQuake"
+            android:parentActivityName=".MapActivity"/>
 
         <meta-data
                 android:name="com.google.android.gms.version"

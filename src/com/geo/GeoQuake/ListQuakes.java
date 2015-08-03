@@ -53,6 +53,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
     TextView mQuakeCountTextView;
     ImageView mSearchImageButton;
     ImageView mProximityImageButton;
+    Button mAboutButton;
 
     int mStrengthSelection = 4;
     int mDurationSelection = 0;
@@ -128,6 +129,15 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
             @Override
             public void onClick(View v) {
                 sortByProximity();
+            }
+        });
+
+        mAboutButton = (Button) findViewById(R.id.about_button);
+        mAboutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ListQuakes.this, AboutActivity.class);
+                startActivity(intent);
             }
         });
 
