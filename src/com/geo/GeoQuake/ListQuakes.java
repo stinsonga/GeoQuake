@@ -153,11 +153,11 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
 
     }
 
-    public void setupLocation(){
+    public void setupLocation() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Location location = locationManager.getLastKnownLocation(locationManager
                 .getBestProvider(new Criteria(), false));
-        if(location != null){
+        if (location != null) {
             mProximityImageButton.setVisibility(View.VISIBLE);
             mUserLatitude = location.getLatitude();
             mUserLongitude = location.getLongitude();
@@ -167,7 +167,6 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
     }
 
     /**
-     *
      * @param config
      */
     @Override
@@ -182,7 +181,6 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
     }
 
     /**
-     *
      * @param outState
      */
     @Override
@@ -192,7 +190,6 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
     }
 
     /**
-     *
      * @param savedInstanceState
      */
     @Override
@@ -221,7 +218,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
                 break;
             case R.id.action_refresh:
                 mDrawerLayout.closeDrawers();
-                if(!mAsyncUnderway) {
+                if (!mAsyncUnderway) {
                     if (GeoQuakeDB.checkRefreshLimit(GeoQuakeDB.getTime(),
                             mSharedPreferences.getLong(Utils.REFRESH_LIMITER, 0))) {
                         SharedPreferences.Editor editor = mSharedPreferences.edit();
@@ -280,7 +277,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         if (Utils.checkNetwork(mContext)) {
             fetchData();
         } else {
-            if(!mGeoQuakeDB.getData(""+mStrengthSelection, ""+mDurationSelection).isEmpty()){
+            if (!mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection).isEmpty()) {
                 mFeatureCollection = new FeatureCollection(mGeoQuakeDB
                         .getData("" + mStrengthSelection, "" + mDurationSelection));
                 mAsyncUnderway = false;
@@ -295,10 +292,10 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
     }
 
     private void fetchData() {
-        if(!mGeoQuakeDB.getData(""+mStrengthSelection, ""+mDurationSelection).isEmpty() &&
-                !Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn(""+mStrengthSelection, ""
-                        +mDurationSelection)), mContext)){
-            mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData(""+mStrengthSelection, ""+mDurationSelection));
+        if (!mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection).isEmpty() &&
+                !Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mStrengthSelection, ""
+                        + mDurationSelection)), mContext)) {
+            mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection));
             basicSort(mFeatureCollection);
             mFeatureList = mFeatureCollection.getFeatures();
             setupList();
@@ -316,7 +313,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
      * Interface callback when fetching data
      */
     @Override
-    public void dataCallback(){
+    public void dataCallback() {
         mFeatureCollection = mQuakeData.getFeatureCollection();
         mAsyncUnderway = false;
         basicSort(mFeatureCollection);
@@ -328,14 +325,14 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
      * Lets the activity know that an async data call is underway
      */
     @Override
-    public void asyncUnderway(){
+    public void asyncUnderway() {
         mAsyncUnderway = true;
     }
 
     /**
      * This sorts the list and sets the adapter
      */
-    public void setupList(){
+    public void setupList() {
         if (mFeatureList != null) {
             mQuakeCountTextView.setText(String.format(mContext.getResources().getString(R.string.quake_count), mFeatureList.size()));
             //TODO: This could use some cleaning up
@@ -349,7 +346,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
                     startActivity(intent);
                 }
             });
-            if(mFeatureList.size() == 0){
+            if (mFeatureList.size() == 0) {
                 Toast.makeText(mContext, mContext.getResources().getString(R.string.empty_list)
                         , Toast.LENGTH_LONG).show();
                 mDrawerLayout.openDrawer(Gravity.START);
@@ -362,7 +359,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
      *
      * @param featureCollection
      */
-    public void basicSort(FeatureCollection featureCollection){
+    public void basicSort(FeatureCollection featureCollection) {
         Collections.sort(featureCollection.getFeatures(), new Comparator<Feature>() {
             @Override
             public int compare(Feature lhs, Feature rhs) {
@@ -372,24 +369,23 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         });
 
 
-
     }
 
     /**
      * Sorting list by distance from user
      */
-    public void sortByProximity(){
+    public void sortByProximity() {
         Toast.makeText(mContext, mContext.getResources().getString(R.string.sorting_by_proximity)
                 , Toast.LENGTH_SHORT).show();
         ArrayList<Feature> proximityList = new ArrayList<>();
         TreeMap<Float, Feature> proximityMap = new TreeMap<>();
-        for(Feature feature : mFeatureList){
+        for (Feature feature : mFeatureList) {
             float[] results = new float[3];
             Location.distanceBetween(mUserLatitude, mUserLongitude, feature.getLatitude(),
                     feature.getLongitude(), results);
             proximityMap.put(results[0] / 1000, feature);
         }
-        for(Map.Entry<Float, Feature> entry : proximityMap.entrySet()){
+        for (Map.Entry<Float, Feature> entry : proximityMap.entrySet()) {
             proximityList.add(entry.getValue());
         }
         mFeatureList.clear();
@@ -402,20 +398,20 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
      * but we can pretty well assume that the USGS data isn't giving us any
      * oddball characters in the result list
      */
-    public void doSearch(View view){
+    public void doSearch(View view) {
         ArrayList<Feature> searchFeatures = new ArrayList<>();
         String searchTerm = mSearchEditText.getText().toString();
-        for(Feature feature : mFeatureList){
+        for (Feature feature : mFeatureList) {
             //For "expected" input, this should handle cases
-            if(feature.properties.getPlace().toLowerCase().contains(searchTerm)){
+            if (feature.properties.getPlace().toLowerCase().contains(searchTerm)) {
                 searchFeatures.add(feature);
             }
         }
 
-        if(searchFeatures.size() == 0){
+        if (searchFeatures.size() == 0) {
             Toast.makeText(mContext, mContext.getResources().getString(R.string.empty_search_list)
                     , Toast.LENGTH_LONG).show();
-        }else{
+        } else {
             mQuakeCountTextView.setText(String.format(mContext.getResources().getString(R.string.quake_count), mFeatureList.size()));
             mFeatureList.clear(); //is this needed?
             mFeatureList = searchFeatures;

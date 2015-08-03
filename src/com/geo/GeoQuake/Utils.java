@@ -49,7 +49,6 @@ public class Utils {
     public static final long REFRESH_LIMITER_TIME = 10000;
 
     /**
-     *
      * @return true if the network connection is ok, false otherwise
      */
     public static boolean checkNetwork(Context context) {
@@ -58,7 +57,7 @@ public class Utils {
             ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
             NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-            if(wifiOnly){
+            if (wifiOnly) {
                 if (wifi.isConnected()) {
                     return true;
                 } else {
@@ -79,9 +78,9 @@ public class Utils {
 
     }
 
-    public static void changeCache(int position, SharedPreferences sp, String[] cacheArray){
+    public static void changeCache(int position, SharedPreferences sp, String[] cacheArray) {
         SharedPreferences.Editor editor = sp.edit();
-        switch(position) {
+        switch (position) {
             //Crude fix for the fact that the spinner prompt doesn't seem to work, or perhaps
             //I don't get precisely how it is supposed to work, if at all.
             case 0:
@@ -210,16 +209,15 @@ public class Utils {
      * @param timeStamp
      * @return
      */
-    public static boolean isExpired(long timeStamp, Context context){
+    public static boolean isExpired(long timeStamp, Context context) {
         SharedPreferences sp = context.getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
         //default cache time set at 5 minutes (300000 ms)
-        if(GeoQuakeDB.getTime() - timeStamp > Long.parseLong(sp.getString(Utils.CACHE_TIME, "300000"))){
+        if (GeoQuakeDB.getTime() - timeStamp > Long.parseLong(sp.getString(Utils.CACHE_TIME, "300000"))) {
             return true; //need to refresh data
         } else {
             return false; //data still good, keep it
         }
     }
-
 
 
 }

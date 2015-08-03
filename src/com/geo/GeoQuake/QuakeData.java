@@ -3,6 +3,7 @@ package com.geo.GeoQuake;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,9 +27,10 @@ public class QuakeData {
 
     /**
      * Constructor... takes only the url for USGS, which should be a resource
+     *
      * @param usgsUrl
      */
-    public QuakeData(String usgsUrl, int quakeDuration, int quakeType, IDataCallback dataCallback, Context context){
+    public QuakeData(String usgsUrl, int quakeDuration, int quakeType, IDataCallback dataCallback, Context context) {
         this.usgsUrl = usgsUrl;
         this.mQuakeDuration = quakeDuration;
         this.mQuakeType = quakeType;
@@ -38,24 +40,21 @@ public class QuakeData {
     }
 
     /**
-     *
      * @return
      */
-    public FeatureCollection getFeatureCollection(){
+    public FeatureCollection getFeatureCollection() {
         return mFeatureCollection;
     }
 
     /**
-     *
      * @param context
      * @return
      */
-    public void fetchData(Context context){
+    public void fetchData(Context context) {
         processData(context);
     }
 
     /**
-     *
      * @param context
      */
     private void processData(Context context) {
@@ -93,33 +92,32 @@ public class QuakeData {
             }
         } else {
             //no need to refresh, so we send them back the persisted data
-            mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData(""+mQuakeType, ""+mQuakeDuration));
+            mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mQuakeType, "" + mQuakeDuration));
             mDataCallback.dataCallback();
         }
     }
 
     /**
-     *
      * @param url The url we'll use to fetch the data
      * @return A JSONObject containing the requested data
      */
     private FeatureCollection getJSON(URL url) {
-        try{
+        try {
             HttpURLConnection connect = (HttpURLConnection) url.openConnection();
             InputStream inputStream = connect.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
             String dataResponse = "";
             String currentStream = "";
-            while((currentStream = bufferedReader.readLine()) != null){
+            while ((currentStream = bufferedReader.readLine()) != null) {
                 dataResponse += currentStream;
             }
-            if(mGeoQuakeDB.getData(""+mQuakeType, ""+mQuakeDuration).isEmpty()){
-                mGeoQuakeDB.setData(""+mQuakeType, ""+mQuakeDuration, dataResponse);
+            if (mGeoQuakeDB.getData("" + mQuakeType, "" + mQuakeDuration).isEmpty()) {
+                mGeoQuakeDB.setData("" + mQuakeType, "" + mQuakeDuration, dataResponse);
             } else {
-                mGeoQuakeDB.updateData(""+mQuakeType, ""+mQuakeDuration, dataResponse);
+                mGeoQuakeDB.updateData("" + mQuakeType, "" + mQuakeDuration, dataResponse);
             }
             return new FeatureCollection(dataResponse);
-        } catch(IOException ioe){
+        } catch (IOException ioe) {
             ioe.printStackTrace();
             return null;
         }
@@ -130,15 +128,15 @@ public class QuakeData {
      *
      * @return
      */
-    private boolean needToRefreshData(){
+    private boolean needToRefreshData() {
         //first check to see if results are empty
-        if(!mGeoQuakeDB.getData(""+mQuakeType, ""+mQuakeDuration).isEmpty()){
+        if (!mGeoQuakeDB.getData("" + mQuakeType, "" + mQuakeDuration).isEmpty()) {
             //is the data too old?
-            if(Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mQuakeType, "" + mQuakeDuration)), mContext)){
+            if (Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mQuakeType, "" + mQuakeDuration)), mContext)) {
                 return true;
             } else {
                 //use existing data set, and return false
-                mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData(""+mQuakeType, ""+mQuakeDuration));
+                mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mQuakeType, "" + mQuakeDuration));
                 return false;
             }
         } else {

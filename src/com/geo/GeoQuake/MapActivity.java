@@ -10,8 +10,10 @@ import android.os.Bundle;
 import android.view.*;
 import android.widget.*;
 import android.support.v4.widget.DrawerLayout;
+
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
+
 import java.util.HashMap;
 
 
@@ -137,7 +139,6 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     }
 
     /**
-     *
      * @param parent
      */
     @Override
@@ -146,7 +147,6 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     }
 
     /**
-     *
      * @param menu
      * @return
      */
@@ -158,7 +158,6 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     }
 
     /**
-     *
      * @param item
      * @return
      */
@@ -167,7 +166,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         switch (item.getItemId()) {
             case R.id.action_refresh:
                 mDrawerLayout.closeDrawers();
-                if(!mAsyncUnderway){
+                if (!mAsyncUnderway) {
                     if (GeoQuakeDB.checkRefreshLimit(GeoQuakeDB.getTime(),
                             mSharedPreferences.getLong(Utils.REFRESH_LIMITER, 0))) {
                         SharedPreferences.Editor editor = mSharedPreferences.edit();
@@ -179,7 +178,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
                         Toast.makeText(mContext, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
                     }
 
-                } else{
+                } else {
                     Toast.makeText(mContext, getResources().getString(R.string.wait_for_loading), Toast.LENGTH_SHORT).show();
                 }
                 break;
@@ -215,7 +214,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         if (Utils.checkNetwork(mContext)) {
             fetchData();
         } else {
-            if(!mGeoQuakeDB.getData(""+mStrengthSelection, ""+mDurationSelection).isEmpty()){
+            if (!mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection).isEmpty()) {
                 mFeatureCollection = new FeatureCollection(mGeoQuakeDB
                         .getData("" + mStrengthSelection, "" + mDurationSelection));
                 mAsyncUnderway = false;
@@ -223,7 +222,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
                 if (mRefreshMap) {
                     placeMarkers();
                     //A bit of a hack/fix for initial load, where the bastard spams several callbacks
-                    if(mFeatureCollection.getFeatures().size() > 0){
+                    if (mFeatureCollection.getFeatures().size() > 0) {
                         mRefreshMap = false;
                     }
                 }
@@ -281,7 +280,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
      * The method that does the work of placing the markers on the map. Yes.
      */
     private void placeMarkers() {
-        if(mFeatureCollection.getFeatures().size() == 0){
+        if (mFeatureCollection.getFeatures().size() == 0) {
             Toast.makeText(mContext, mContext.getResources().getString(R.string.empty_list)
                     , Toast.LENGTH_SHORT).show();
             mDrawerLayout.openDrawer(Gravity.START);
@@ -325,10 +324,10 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
      * Send the request to the QuakeData class to grab new data
      */
     private void fetchData() {
-        if(!mGeoQuakeDB.getData(""+mStrengthSelection, ""+mDurationSelection).isEmpty() &&
-                !Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn(""+mStrengthSelection, ""
-                        +mDurationSelection)), mContext)){
-            mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData(""+mStrengthSelection, ""+mDurationSelection));
+        if (!mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection).isEmpty() &&
+                !Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mStrengthSelection, ""
+                        + mDurationSelection)), mContext)) {
+            mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection));
             placeMarkers();
         } else {
             Utils.fireToast(mDurationTypeSpinner.getSelectedItemPosition(), mQuakeTypeSpinner.getSelectedItemPosition(), mContext);
@@ -352,14 +351,14 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
      * Interface callback when fetching data
      */
     @Override
-    public void dataCallback(){
+    public void dataCallback() {
         //update map with data
         mFeatureCollection = mQuakeData.getFeatureCollection();
         mAsyncUnderway = false;
         if (mRefreshMap) {
             placeMarkers();
             //A bit of a hack/fix for initial load, where the bastard spams several callbacks
-            if(mFeatureCollection.getFeatures().size() > 0){
+            if (mFeatureCollection.getFeatures().size() > 0) {
                 mRefreshMap = false;
             }
         }
@@ -369,12 +368,11 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
      * Lets the activity know that an async data call is underway
      */
     @Override
-    public void asyncUnderway(){
+    public void asyncUnderway() {
         mAsyncUnderway = true;
     }
 
     /**
-     *
      * @param config
      */
     @Override
@@ -389,7 +387,6 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     }
 
     /**
-     *
      * @param outState
      */
     @Override
@@ -399,7 +396,6 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     }
 
     /**
-     *
      * @param savedInstanceState
      */
     @Override
