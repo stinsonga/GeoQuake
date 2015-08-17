@@ -117,8 +117,13 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         mCacheTimeSpinner.setOnItemSelectedListener(this);
         //Side Nav End
 
-        setUpMap();
-        networkCheckFetchData();
+        if(Utils.checkNetwork(mContext)){
+            setUpMap();
+            networkCheckFetchData();
+        } else{
+            Utils.connectToast(mContext);
+        }
+
 
     }
 
