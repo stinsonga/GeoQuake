@@ -44,6 +44,9 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     int mStrengthSelection = 4;
     int mDurationSelection = 0;
 
+    RelativeLayout mLoadingOverlay;
+    ProgressBar mLoadingProgress;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +119,9 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         mQuakeTypeSpinner.setOnItemSelectedListener(this);
         mCacheTimeSpinner.setOnItemSelectedListener(this);
         //Side Nav End
+
+        mLoadingOverlay = (RelativeLayout) findViewById(R.id.loading_overlay);
+        mLoadingProgress = (ProgressBar) findViewById(R.id.progress_counter);
 
         if(Utils.checkNetwork(mContext)){
             setUpMap();
@@ -378,6 +384,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
                 mRefreshMap = false;
             }
         }
+        setLoadingFinishedView();
     }
 
     /**
@@ -386,6 +393,25 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     @Override
     public void asyncUnderway() {
         mAsyncUnderway = true;
+        setLoadingView();
+    }
+
+    public void setLoadingView() {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                mLoadingOverlay.setVisibility(View.VISIBLE);
+                getActionBar().hide();
+            }
+        });
+    }
+
+    public void setLoadingFinishedView() {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                mLoadingOverlay.setVisibility(View.GONE);
+                getActionBar().show();
+            }
+        });
     }
 
     /**

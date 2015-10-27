@@ -61,6 +61,9 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
     double mUserLatitude = 0.0;
     double mUserLongitude = 0.0;
 
+    RelativeLayout mLoadingOverlay;
+    ProgressBar mLoadingProgress;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -158,6 +161,9 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         mCacheTimeSpinner.setOnItemSelectedListener(this);
         //Side Nav End
 
+        mLoadingOverlay = (RelativeLayout) findViewById(R.id.loading_overlay);
+        mLoadingProgress = (ProgressBar) findViewById(R.id.progress_counter);
+
         setupLocation();
         networkCheckFetchData();
 
@@ -165,15 +171,21 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
 
     public void setupLocation() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Location location = locationManager.getLastKnownLocation(locationManager
-                .getBestProvider(new Criteria(), false));
-        if (location != null) {
-            mProximityImageButton.setVisibility(View.VISIBLE);
-            mUserLatitude = location.getLatitude();
-            mUserLongitude = location.getLongitude();
-        } else {
+        Location location;
+        try {
+             location = locationManager.getLastKnownLocation(locationManager
+                    .getBestProvider(new Criteria(), false));
+            if (location != null) {
+                mProximityImageButton.setVisibility(View.VISIBLE);
+                mUserLatitude = location.getLatitude();
+                mUserLongitude = location.getLongitude();
+            } else {
+                mProximityImageButton.setVisibility(View.GONE);
+            }
+        } catch (SecurityException se) {
             mProximityImageButton.setVisibility(View.GONE);
         }
+
     }
 
     /**
@@ -329,6 +341,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
         basicSort(mFeatureCollection);
         mFeatureList = mFeatureCollection.getFeatures();
         setupList();
+        setLoadingFinishedView();
     }
 
     /**
@@ -337,6 +350,25 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
     @Override
     public void asyncUnderway() {
         mAsyncUnderway = true;
+        setLoadingView();
+    }
+
+    public void setLoadingView() {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                mLoadingOverlay.setVisibility(View.VISIBLE);
+                getActionBar().hide();
+            }
+        });
+    }
+
+    public void setLoadingFinishedView() {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                mLoadingOverlay.setVisibility(View.GONE);
+                getActionBar().show();
+            }
+        });
     }
 
     /**
