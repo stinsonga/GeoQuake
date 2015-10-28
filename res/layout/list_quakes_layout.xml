@@ -97,7 +97,8 @@
         <ProgressBar
             android:id="@+id/progress_counter"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
     </RelativeLayout>
 
 </android.support.v4.widget.DrawerLayout>
