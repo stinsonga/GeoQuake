@@ -1,6 +1,7 @@
 package com.geo.GeoQuake;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +45,9 @@ public class QuakeListAdapter extends ArrayAdapter<Feature> {
             ViewHolder vh = (ViewHolder) view.getTag();
             vh.magnitudeTextView.setText(""+feature.getProperties().getMag());
             vh.locationTextView.setText(feature.getProperties().getPlace());
+            if(feature.getProperties().getMag() >= 4.50) {
+                vh.magnitudeTextView.setTextColor(Color.RED);
+            }
         }
 
         return view;

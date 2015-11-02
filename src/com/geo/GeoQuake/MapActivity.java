@@ -307,9 +307,11 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
                     , Toast.LENGTH_SHORT).show();
             mDrawerLayout.openDrawer(Gravity.START);
         } else {
-            mMap.clear();
+            if(mMap != null) {
+                mMap.clear();
+            }
             try {
-                if (mFeatureCollection != null) {
+                if (mFeatureCollection != null && mMap != null) {
                     for (Feature feature : mFeatureCollection.getFeatures()) {
                         LatLng coords = new LatLng(feature.getLatitude(), feature.getLongitude());
                         BitmapDescriptor quakeIcon;
