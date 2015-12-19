@@ -57,7 +57,7 @@ public class QuakeData {
     /**
      * @param context
      */
-    private void processData(Context context) {
+    private void processData(final Context context) {
         if (needToRefreshData()) {
             try {
                 new AsyncTask<URL, Void, FeatureCollection>() {
