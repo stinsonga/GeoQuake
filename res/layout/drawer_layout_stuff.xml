@@ -98,12 +98,12 @@
             android:gravity="end" />
 
     </LinearLayout>
+
     <Button
         android:id="@+id/about_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/about_geoquake"
-        android:textSize="16sp"
-        />
+        android:textSize="16sp" />
 
 </LinearLayout>
