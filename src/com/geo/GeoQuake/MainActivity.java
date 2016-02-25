@@ -2,6 +2,7 @@ package com.geo.GeoQuake;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 public class MainActivity extends Activity {
 
@@ -28,4 +29,11 @@ public class MainActivity extends Activity {
         //for potential use with larger data sets
         super.onLowMemory();
     }
+
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        return super.onMenuItemSelected(featureId, item);
+    }
+
+
 }
