@@ -2,10 +2,15 @@
 # Generated files
 bin/
 gen/
+build/
+.gradletasknamecache
+.gradle/
 
 # IDE-specific stuff
 .idea/
 *.iml
+*.ipr
+*.iws
 
 *.apk
 *.ap_
