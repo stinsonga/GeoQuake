@@ -2,7 +2,7 @@ package com.geo.GeoQuake;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -154,7 +154,7 @@ public class MapFragment extends Fragment implements IDataCallback {
     private void setUpMap() {
         if (Utils.checkNetwork(mContext)) {
             if (mMap == null) {
-                mMap = ((com.google.android.gms.maps.MapFragment) getFragmentManager().findFragmentById(R.id.gmap))
+                mMap = ((com.google.android.gms.maps.MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.gmap))
                         .getMap();
                 if (mMap != null) {
                     mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
