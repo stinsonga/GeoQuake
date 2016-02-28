@@ -22,6 +22,6 @@ local.properties
 .DS_Store
 
 # API key value... bring your own ;)
-res/values/api_key.xml
+res/values/api-key.xml
 
 proguard_logs/
