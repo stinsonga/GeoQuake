@@ -9,13 +9,15 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener, IDataCallback {
 
     SharedPreferences mSharedPreferences;
     SharedPreferences.Editor mSharedPreferencesEditor;
@@ -101,4 +103,23 @@ public class MainActivity extends Activity {
         return false;
     }
 
+    @Override
+    public void dataCallback() {
+
+    }
+
+    @Override
+    public void asyncUnderway() {
+
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 }

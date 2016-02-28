@@ -1,24 +1,55 @@
 package com.geo.GeoQuake;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
-import android.view.*;
-import android.widget.*;
 import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.Toast;
 
-import com.google.android.gms.maps.*;
-import com.google.android.gms.maps.model.*;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
+import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.HashMap;
 
+import butterknife.ButterKnife;
+import butterknife.Bind;
+import butterknife.OnClick;
 
-public class MapActivity extends Activity implements AdapterView.OnItemSelectedListener, IDataCallback {
+
+public class MapFragment extends Fragment implements IDataCallback {
     Context mContext;
     Bundle mBundle;
     HashMap<String, String> markerInfo = new HashMap<String, String>();
@@ -26,15 +57,6 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     SharedPreferences.Editor mSharedPreferencesEditor;
     boolean mRefreshMap = true;
     boolean mAsyncUnderway = false;
-
-    LinearLayout mDrawerLinearLayout;
-    DrawerLayout mDrawerLayout;
-    Spinner mQuakeTypeSpinner;
-    Spinner mDurationTypeSpinner;
-    Spinner mCacheTimeSpinner;
-    CheckBox mActionBarCheckbox;
-    CheckBox mWifiCheckbox;
-    Button mAboutButton;
 
     private GoogleMap mMap;
     GeoQuakeDB mGeoQuakeDB;
@@ -45,84 +67,26 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     int mStrengthSelection = 4;
     int mDurationSelection = 0;
 
+    @Bind(R.id.loading_overlay)
     RelativeLayout mLoadingOverlay;
+
+    @Bind(R.id.progress_counter)
     ProgressBar mLoadingProgress;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.map_activity_layout);
+        setHasOptionsMenu(true);
 
-        mContext = getApplicationContext();
+        mContext = getActivity();
         mBundle = new Bundle();
-        mSharedPreferences = getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
+        mSharedPreferences = getActivity().getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
         mGeoQuakeDB = new GeoQuakeDB(mContext);
 
         //grab intent values, if any
-        Intent intent = getIntent();
+        Intent intent = getActivity().getIntent();
         mStrengthSelection = intent.getIntExtra("quake_strength", 4);
         mDurationSelection = intent.getIntExtra("quake_duration", 0);
-
-        //Side Nav Begin
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerLinearLayout = (LinearLayout) findViewById(R.id.drawer_root);
-        mDrawerLinearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDrawerLayout.closeDrawers();
-            }
-        });
-        mActionBarCheckbox = (CheckBox) findViewById(R.id.actionbar_toggle_checkbox);
-        mActionBarCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    getActionBar().hide();
-                } else {
-                    getActionBar().show();
-                }
-            }
-        });
-
-        mWifiCheckbox = (CheckBox) findViewById(R.id.wifi_checkbox);
-        mWifiCheckbox.setChecked(mSharedPreferences.getBoolean(Utils.WIFI_ONLY, false));
-        mWifiCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mSharedPreferencesEditor = mSharedPreferences.edit();
-                mSharedPreferencesEditor.putBoolean(Utils.WIFI_ONLY, isChecked);
-                mSharedPreferencesEditor.apply();
-            }
-        });
-
-        mAboutButton = (Button) findViewById(R.id.about_button);
-        mAboutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MapActivity.this, AboutActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        mCacheTimeSpinner = (Spinner) findViewById(R.id.cache_spinner);
-
-        mQuakeTypeSpinner = (Spinner) findViewById(R.id.quake_type_spinner);
-        ArrayAdapter<CharSequence> quakeTypeAdapter = ArrayAdapter.createFromResource(this, R.array.quake_types, android.R.layout.simple_spinner_dropdown_item);
-        mQuakeTypeSpinner.setAdapter(quakeTypeAdapter);
-        mQuakeTypeSpinner.setSelection(mStrengthSelection);
-
-        mDurationTypeSpinner = (Spinner) findViewById(R.id.duration_type_spinner);
-        ArrayAdapter<CharSequence> durationAdapter = ArrayAdapter.createFromResource(this, R.array.duration_types, android.R.layout.simple_spinner_dropdown_item);
-        mDurationTypeSpinner.setAdapter(durationAdapter);
-        mDurationTypeSpinner.setSelection(mDurationSelection);
-
-        mDurationTypeSpinner.setOnItemSelectedListener(this);
-        mQuakeTypeSpinner.setOnItemSelectedListener(this);
-        mCacheTimeSpinner.setOnItemSelectedListener(this);
-        //Side Nav End
-
-        mLoadingOverlay = (RelativeLayout) findViewById(R.id.loading_overlay);
-        mLoadingProgress = (ProgressBar) findViewById(R.id.progress_counter);
 
         if(Utils.checkNetwork(mContext)){
             setUpMap();
@@ -134,99 +98,17 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
 
     }
 
-    /**
-     * Side-nav onItemSelect handler
-     *
-     * @param parent
-     * @param view
-     * @param position
-     * @param id
-     */
+    @Nullable
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        switch (parent.getId()) {
-            case (R.id.quake_type_spinner):
-                mStrengthSelection = mQuakeTypeSpinner.getSelectedItemPosition();
-                break;
-            case (R.id.duration_type_spinner):
-                mDurationSelection = mDurationTypeSpinner.getSelectedItemPosition();
-                break;
-            case (R.id.cache_spinner):
-                Utils.changeCache(mCacheTimeSpinner.getSelectedItemPosition(), mSharedPreferences,
-                        getResources().getStringArray(R.array.cache_values));
-                break;
-            default:
-                break;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.map_fragment, container, false);
+        ButterKnife.bind(this, view);
 
-        }
-    }
-
-    /**
-     * @param parent
-     */
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
-
-    /**
-     * @param menu
-     * @return
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.map_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    /**
-     * @param item
-     * @return
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_refresh:
-                mDrawerLayout.closeDrawers();
-                if (!mAsyncUnderway) {
-                    if (GeoQuakeDB.checkRefreshLimit(GeoQuakeDB.getTime(),
-                            mSharedPreferences.getLong(Utils.REFRESH_LIMITER, 0))) {
-                        SharedPreferences.Editor editor = mSharedPreferences.edit();
-                        editor.putLong(Utils.REFRESH_LIMITER, GeoQuakeDB.getTime());
-                        editor.apply();
-                        mRefreshMap = true;
-                        networkCheckFetchData();
-                    } else {
-                        Toast.makeText(mContext, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
-                    }
-
-                } else {
-                    Toast.makeText(mContext, getResources().getString(R.string.wait_for_loading), Toast.LENGTH_SHORT).show();
-                }
-                break;
-
-            case R.id.action_settings:
-                if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    mDrawerLayout.closeDrawer(GravityCompat.START);
-                } else {
-                    mDrawerLayout.openDrawer(GravityCompat.START);
-                }
-                break;
-            case R.id.action_list:
-                Intent intent = new Intent(this, ListQuakes.class);
-                intent.putExtra("quake_strength", mStrengthSelection);
-                intent.putExtra("quake_duration", mDurationSelection);
-                startActivity(intent);
-                break;
-            default:
-                break;
-        }
-        return false;
+        return view;
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
     }
 
@@ -272,16 +154,25 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     private void setUpMap() {
         if (Utils.checkNetwork(mContext)) {
             if (mMap == null) {
-//                mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.gmap))
-//                        .getMap();
+                mMap = ((com.google.android.gms.maps.MapFragment) getFragmentManager().findFragmentById(R.id.gmap))
+                        .getMap();
                 if (mMap != null) {
                     mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-//                    mMap.setMyLocationEnabled(true);
+
+                    //check location permission
+                    PackageManager pm = getActivity().getPackageManager();
+                    int result = pm.checkPermission(android.Manifest.permission.ACCESS_FINE_LOCATION,
+                            getActivity().getPackageName());
+
+                    if(PackageManager.PERMISSION_GRANTED == result) {
+                        mMap.setMyLocationEnabled(true);
+                    }
+
                     mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
                         @Override
                         public void onMyLocationChange(Location arg0) {
                             LatLng latLng = new LatLng(arg0.getLatitude(), arg0.getLongitude());
-                            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, getApplicationContext().getResources().getInteger(R.integer.zoom_level));
+                            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, getActivity().getResources().getInteger(R.integer.zoom_level));
                             mMap.animateCamera(cameraUpdate);
                             mMap.setOnMyLocationChangeListener(null);
 
@@ -306,7 +197,6 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
         if (mFeatureCollection.getFeatures().size() == 0) {
             Toast.makeText(mContext, mContext.getResources().getString(R.string.empty_list)
                     , Toast.LENGTH_SHORT).show();
-            mDrawerLayout.openDrawer(GravityCompat.START);
         } else {
             if(mMap != null) {
                 mMap.clear();
@@ -332,7 +222,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
                         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                             @Override
                             public void onInfoWindowClick(Marker marker) {
-                                Intent intent = new Intent(MapActivity.this, WebInfoActivity.class);
+                                Intent intent = new Intent(getActivity(), WebInfoActivity.class);
                                 intent.putExtra("url", getURLFromMarker(marker.getId()));
                                 startActivity(intent);
                             }
@@ -355,10 +245,10 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
             mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection));
             placeMarkers();
         } else {
-            Utils.fireToast(mDurationTypeSpinner.getSelectedItemPosition(), mQuakeTypeSpinner.getSelectedItemPosition(), mContext);
-            mQuakeData = new QuakeData(mContext.getString(R.string.usgs_url),
-                    mDurationTypeSpinner.getSelectedItemPosition(),
-                    mQuakeTypeSpinner.getSelectedItemPosition(), this, mContext);
+//            Utils.fireToast(mDurationTypeSpinner.getSelectedItemPosition(), mQuakeTypeSpinner.getSelectedItemPosition(), mContext);
+//            mQuakeData = new QuakeData(mContext.getString(R.string.usgs_url),
+//                    mDurationTypeSpinner.getSelectedItemPosition(),
+//                    mQuakeTypeSpinner.getSelectedItemPosition(), this, mContext);
             mQuakeData.fetchData(mContext);
         }
     }
@@ -400,19 +290,19 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     }
 
     public void setLoadingView() {
-        runOnUiThread(new Runnable() {
+        getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 mLoadingOverlay.setVisibility(View.VISIBLE);
-                getActionBar().hide();
+                getActivity().getActionBar().hide();
             }
         });
     }
 
     public void setLoadingFinishedView() {
-        runOnUiThread(new Runnable() {
+        getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 mLoadingOverlay.setVisibility(View.GONE);
-                getActionBar().show();
+                getActivity().getActionBar().show();
             }
         });
     }
@@ -438,15 +328,6 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBundle("mBundle", mBundle);
-    }
-
-    /**
-     * @param savedInstanceState
-     */
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        savedInstanceState.getBundle("mBundle");
     }
 
 }
