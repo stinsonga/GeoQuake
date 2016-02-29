@@ -9,13 +9,16 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -39,6 +42,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * Created by gstinson on 2014-08-25.
@@ -51,7 +55,6 @@ public class ListFragment extends Fragment implements IDataCallback {
     QuakeListAdapter mQuakeListAdapter;
     SharedPreferences mSharedPreferences;
     SharedPreferences.Editor mSharedPreferencesEditor;
-    Context mContext;
     Bundle mBundle;
     boolean mRefreshList = true;
     boolean mAsyncUnderway = false;
@@ -62,11 +65,21 @@ public class ListFragment extends Fragment implements IDataCallback {
     ArrayList<Feature> mFeatureList;
     QuakeData mQuakeData;
 
+    @Bind(R.id.search_bar)
     LinearLayout mSearchBar;
+
+    @Bind(R.id.search_edit_text)
     EditText mSearchEditText;
+
+    @Bind(R.id.count_textview)
     TextView mQuakeCountTextView;
+
+    @Bind(R.id.search_image_button)
     ImageView mSearchImageButton;
+
+    @Bind(R.id.proximity_image_button)
     ImageView mProximityImageButton;
+
     Button mAboutButton;
 
     int mStrengthSelection = 4;
@@ -87,18 +100,30 @@ public class ListFragment extends Fragment implements IDataCallback {
         setHasOptionsMenu(true);
 
         mSharedPreferences = getActivity().getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
-        mContext = getActivity().getApplicationContext();
         mBundle = new Bundle();
-        mGeoQuakeDB = new GeoQuakeDB(mContext);
+        mGeoQuakeDB = new GeoQuakeDB(getActivity());
 
-        //grab intent values, if any
-        Intent intent = getActivity().getIntent();
-        mStrengthSelection = intent.getIntExtra("quake_strength", 4);
-        mDurationSelection = intent.getIntExtra("quake_duration", 0);
+    }
 
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.list_fragment, container, false);
+        ButterKnife.bind(this, view);
 
-        setupLocation();
-        networkCheckFetchData();
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if(Utils.checkNetwork(getActivity())) {
+            setupLocation();
+            networkCheckFetchData();
+        } else {
+            Utils.connectToast(getActivity());
+        }
 
     }
 
@@ -148,19 +173,19 @@ public class ListFragment extends Fragment implements IDataCallback {
      * Checking the network before we bother trying to grab data
      */
     public void networkCheckFetchData() {
-        if (Utils.checkNetwork(mContext)) {
+        if (Utils.checkNetwork(getActivity())) {
             fetchData();
         } else {
             if (!mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection).isEmpty()) {
                 mFeatureCollection = new FeatureCollection(mGeoQuakeDB
                         .getData("" + mStrengthSelection, "" + mDurationSelection));
                 mAsyncUnderway = false;
-                Toast.makeText(mContext, getResources().getString(R.string.using_saved), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getResources().getString(R.string.using_saved), Toast.LENGTH_SHORT).show();
                 basicSort(mFeatureCollection);
                 mFeatureList = mFeatureCollection.getFeatures();
                 setupList();
             } else {
-                Utils.connectToast(mContext);
+                Utils.connectToast(getActivity());
             }
         }
     }
@@ -168,17 +193,16 @@ public class ListFragment extends Fragment implements IDataCallback {
     private void fetchData() {
         if (!mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection).isEmpty() &&
                 !Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mStrengthSelection, ""
-                        + mDurationSelection)), mContext)) {
+                        + mDurationSelection)), getActivity())) {
             mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection));
             basicSort(mFeatureCollection);
             mFeatureList = mFeatureCollection.getFeatures();
             setupList();
         } else {
-//            Utils.fireToast(mDurationTypeSpinner.getSelectedItemPosition(), mQuakeTypeSpinner.getSelectedItemPosition(), mContext);
-//            mQuakeData = new QuakeData(mContext.getString(R.string.usgs_url),
-//                    mDurationTypeSpinner.getSelectedItemPosition(),
-//                    mQuakeTypeSpinner.getSelectedItemPosition(), this, mContext);
-            mQuakeData.fetchData(mContext);
+            Utils.fireToast(mDurationSelection, mStrengthSelection, getActivity());
+            mQuakeData = new QuakeData(getActivity().getResources().getString(R.string.usgs_url),
+                    mDurationSelection, mStrengthSelection, this, getActivity());
+            mQuakeData.fetchData(getActivity());
         }
 
     }
@@ -228,9 +252,9 @@ public class ListFragment extends Fragment implements IDataCallback {
      */
     public void setupList() {
         if (mFeatureList != null) {
-            mQuakeCountTextView.setText(String.format(mContext.getResources().getString(R.string.quake_count), mFeatureList.size()));
+            mQuakeCountTextView.setText(String.format(getActivity().getResources().getString(R.string.quake_count), mFeatureList.size()));
             //TODO: This could use some cleaning up
-            mQuakeListAdapter = new QuakeListAdapter(mContext, mFeatureList);
+            mQuakeListAdapter = new QuakeListAdapter(getActivity(), mFeatureList);
             mQuakeListView.setAdapter(mQuakeListAdapter);
             mQuakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -241,7 +265,7 @@ public class ListFragment extends Fragment implements IDataCallback {
                 }
             });
             if (mFeatureList.size() == 0) {
-                Toast.makeText(mContext, mContext.getResources().getString(R.string.empty_list)
+                Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.empty_list)
                         , Toast.LENGTH_LONG).show();
             }
         }
@@ -268,7 +292,7 @@ public class ListFragment extends Fragment implements IDataCallback {
      * Sorting list by distance from user
      */
     public void sortByProximity() {
-        Toast.makeText(mContext, mContext.getResources().getString(R.string.sorting_by_proximity)
+        Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.sorting_by_proximity)
                 , Toast.LENGTH_SHORT).show();
         ArrayList<Feature> proximityList = new ArrayList<>();
         TreeMap<Float, Feature> proximityMap = new TreeMap<>();
@@ -302,10 +326,10 @@ public class ListFragment extends Fragment implements IDataCallback {
         }
 
         if (searchFeatures.size() == 0) {
-            Toast.makeText(mContext, mContext.getResources().getString(R.string.empty_search_list)
+            Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.empty_search_list)
                     , Toast.LENGTH_LONG).show();
         } else {
-            mQuakeCountTextView.setText(String.format(mContext.getResources().getString(R.string.quake_count), mFeatureList.size()));
+            mQuakeCountTextView.setText(String.format(getActivity().getResources().getString(R.string.quake_count), mFeatureList.size()));
             mFeatureList.clear(); //is this needed?
             mFeatureList = searchFeatures;
             mSearchEditText.setText("");

@@ -225,7 +225,7 @@ public class ListQuakes extends Activity implements AdapterView.OnItemSelectedLi
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.list_menu, menu);
+        menuInflater.inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

@@ -52,7 +52,7 @@ import butterknife.OnClick;
 
 
 public class QuakeMapFragment extends Fragment implements IDataCallback {
-    Context mContext;
+
     Bundle mBundle;
     HashMap<String, String> markerInfo = new HashMap<String, String>();
     SharedPreferences mSharedPreferences;
@@ -80,10 +80,9 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        mContext = getActivity();
         mBundle = new Bundle();
         mSharedPreferences = getActivity().getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
-        mGeoQuakeDB = new GeoQuakeDB(mContext);
+        mGeoQuakeDB = new GeoQuakeDB(getActivity());
 
 
 
@@ -103,11 +102,11 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     public void onResume() {
         super.onResume();
 
-        if(Utils.checkNetwork(mContext)){
+        if(Utils.checkNetwork(getActivity())){
             setUpMap();
             networkCheckFetchData();
         } else{
-            Utils.connectToast(mContext);
+            Utils.connectToast(getActivity());
         }
     }
 
@@ -115,14 +114,14 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
      * Checking the network before we bother trying to grab data
      */
     public void networkCheckFetchData() {
-        if (Utils.checkNetwork(mContext)) {
+        if (Utils.checkNetwork(getActivity())) {
             fetchData();
         } else {
             if (!mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection).isEmpty()) {
                 mFeatureCollection = new FeatureCollection(mGeoQuakeDB
                         .getData("" + mStrengthSelection, "" + mDurationSelection));
                 mAsyncUnderway = false;
-                Toast.makeText(mContext, getResources().getString(R.string.using_saved), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getResources().getString(R.string.using_saved), Toast.LENGTH_SHORT).show();
                 if (mRefreshMap) {
                     placeMarkers();
                     //A bit of a hack/fix for initial load, where the bastard spams several callbacks
@@ -131,7 +130,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
                     }
                 }
             } else {
-                Utils.connectToast(mContext);
+                Utils.connectToast(getActivity());
             }
         }
     }
@@ -151,7 +150,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
      * Contains the basics for setting up the map.
      */
     private void setUpMap() {
-        if (Utils.checkNetwork(mContext)) {
+        if (Utils.checkNetwork(getActivity())) {
             if (mMap == null) {
                 ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.gmap)).getMapAsync(new OnMapReadyCallback() {
                     @Override
@@ -165,7 +164,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
             }
 
         } else {
-            Utils.connectToast(mContext);
+            Utils.connectToast(getActivity());
         }
     }
 
@@ -205,7 +204,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
      */
     private void placeMarkers() {
         if (mFeatureCollection.getFeatures().size() == 0) {
-            Toast.makeText(mContext, mContext.getResources().getString(R.string.empty_list)
+            Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.empty_list)
                     , Toast.LENGTH_SHORT).show();
         } else {
             if(mMap != null) {
@@ -251,14 +250,14 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     private void fetchData() {
         if (!mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection).isEmpty() &&
                 !Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mStrengthSelection, ""
-                        + mDurationSelection)), mContext)) {
+                        + mDurationSelection)), getActivity())) {
             mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection));
             placeMarkers();
         } else {
-            Utils.fireToast(mDurationSelection, mStrengthSelection, mContext);
-            mQuakeData = new QuakeData(mContext.getString(R.string.usgs_url),
-                    mDurationSelection, mStrengthSelection, this, mContext);
-            mQuakeData.fetchData(mContext);
+            Utils.fireToast(mDurationSelection, mStrengthSelection, getActivity());
+            mQuakeData = new QuakeData(getActivity().getString(R.string.usgs_url),
+                    mDurationSelection, mStrengthSelection, this, getActivity());
+            mQuakeData.fetchData(getActivity());
         }
     }
 
