@@ -15,12 +15,14 @@
     <Spinner
         android:id="@+id/quake_type_spinner"
         android:layout_width="match_parent"
-        android:layout_height="35dp" />
+        android:layout_height="35dp"
+        android:entries="@array/quake_types"/>
 
     <Spinner
         android:id="@+id/duration_type_spinner"
         android:layout_width="match_parent"
-        android:layout_height="35dp" />
+        android:layout_height="35dp"
+        android:entries="@array/duration_types"/>
 
 
     <!-- The below View pushes the other items to the bottom -->

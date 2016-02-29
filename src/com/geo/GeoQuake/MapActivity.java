@@ -272,7 +272,7 @@ public class MapActivity extends Activity implements AdapterView.OnItemSelectedL
     private void setUpMap() {
         if (Utils.checkNetwork(mContext)) {
             if (mMap == null) {
-//                mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.gmap))
+//                mMap = ((QuakeMapFragment) getFragmentManager().findFragmentById(R.id.gmap))
 //                        .getMap();
                 if (mMap != null) {
                     mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);

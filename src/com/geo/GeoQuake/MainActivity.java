@@ -1,22 +1,17 @@
 package com.geo.GeoQuake;
 
-import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -37,14 +32,14 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
     boolean mRefreshList = true;
     boolean mAsyncUnderway = false;
 
-    MapFragment mFragment;
+    QuakeMapFragment mFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mFragment = new MapFragment();
+        mFragment = new QuakeMapFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mFragment).commit();
 
     }

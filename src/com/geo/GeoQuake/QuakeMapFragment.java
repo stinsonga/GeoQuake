@@ -35,6 +35,8 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -49,7 +51,7 @@ import butterknife.Bind;
 import butterknife.OnClick;
 
 
-public class MapFragment extends Fragment implements IDataCallback {
+public class QuakeMapFragment extends Fragment implements IDataCallback {
     Context mContext;
     Bundle mBundle;
     HashMap<String, String> markerInfo = new HashMap<String, String>();
@@ -83,17 +85,6 @@ public class MapFragment extends Fragment implements IDataCallback {
         mSharedPreferences = getActivity().getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
         mGeoQuakeDB = new GeoQuakeDB(mContext);
 
-        //grab intent values, if any
-        Intent intent = getActivity().getIntent();
-        mStrengthSelection = intent.getIntExtra("quake_strength", 4);
-        mDurationSelection = intent.getIntExtra("quake_duration", 0);
-
-        if(Utils.checkNetwork(mContext)){
-            setUpMap();
-            networkCheckFetchData();
-        } else{
-            Utils.connectToast(mContext);
-        }
 
 
     }
@@ -104,12 +95,20 @@ public class MapFragment extends Fragment implements IDataCallback {
         View view = inflater.inflate(R.layout.map_fragment, container, false);
         ButterKnife.bind(this, view);
 
+
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        if(Utils.checkNetwork(mContext)){
+            setUpMap();
+            networkCheckFetchData();
+        } else{
+            Utils.connectToast(mContext);
+        }
     }
 
     /**
@@ -154,41 +153,52 @@ public class MapFragment extends Fragment implements IDataCallback {
     private void setUpMap() {
         if (Utils.checkNetwork(mContext)) {
             if (mMap == null) {
-                mMap = ((com.google.android.gms.maps.MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.gmap))
-                        .getMap();
-                if (mMap != null) {
-                    mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-
-                    //check location permission
-                    PackageManager pm = getActivity().getPackageManager();
-                    int result = pm.checkPermission(android.Manifest.permission.ACCESS_FINE_LOCATION,
-                            getActivity().getPackageName());
-
-                    if(PackageManager.PERMISSION_GRANTED == result) {
-                        mMap.setMyLocationEnabled(true);
+                ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.gmap)).getMapAsync(new OnMapReadyCallback() {
+                    @Override
+                    public void onMapReady(GoogleMap googleMap) {
+                        mMap = googleMap;
+                        postSyncMapSetup();
                     }
+                });
 
-                    mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
-                        @Override
-                        public void onMyLocationChange(Location arg0) {
-                            LatLng latLng = new LatLng(arg0.getLatitude(), arg0.getLongitude());
-                            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, getActivity().getResources().getInteger(R.integer.zoom_level));
-                            mMap.animateCamera(cameraUpdate);
-                            mMap.setOnMyLocationChangeListener(null);
 
-                        }
-                    });
-
-                    UiSettings settings = mMap.getUiSettings();
-                    settings.setCompassEnabled(true);
-                    settings.setMyLocationButtonEnabled(true);
-                }
             }
 
         } else {
             Utils.connectToast(mContext);
         }
     }
+
+    public void postSyncMapSetup() {
+        if (mMap != null) {
+            mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+
+            //check location permission
+            PackageManager pm = getActivity().getPackageManager();
+            int result = pm.checkPermission(android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    getActivity().getPackageName());
+
+            if(PackageManager.PERMISSION_GRANTED == result) {
+                mMap.setMyLocationEnabled(true);
+            }
+
+            mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+                @Override
+                public void onMyLocationChange(Location arg0) {
+                    LatLng latLng = new LatLng(arg0.getLatitude(), arg0.getLongitude());
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, getActivity().getResources().getInteger(R.integer.zoom_level));
+                    mMap.animateCamera(cameraUpdate);
+                    mMap.setOnMyLocationChangeListener(null);
+
+                }
+            });
+
+            UiSettings settings = mMap.getUiSettings();
+            settings.setCompassEnabled(true);
+            settings.setMyLocationButtonEnabled(true);
+        }
+    }
+
 
     /**
      * The method that does the work of placing the markers on the map. Yes.
@@ -245,10 +255,9 @@ public class MapFragment extends Fragment implements IDataCallback {
             mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection));
             placeMarkers();
         } else {
-//            Utils.fireToast(mDurationTypeSpinner.getSelectedItemPosition(), mQuakeTypeSpinner.getSelectedItemPosition(), mContext);
-//            mQuakeData = new QuakeData(mContext.getString(R.string.usgs_url),
-//                    mDurationTypeSpinner.getSelectedItemPosition(),
-//                    mQuakeTypeSpinner.getSelectedItemPosition(), this, mContext);
+            Utils.fireToast(mDurationSelection, mStrengthSelection, mContext);
+            mQuakeData = new QuakeData(mContext.getString(R.string.usgs_url),
+                    mDurationSelection, mStrengthSelection, this, mContext);
             mQuakeData.fetchData(mContext);
         }
     }
