@@ -14,10 +14,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class MainActivity extends FragmentActivity implements AdapterView.OnItemSelectedListener, IDataCallback {
 
@@ -47,10 +49,15 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
     @Bind(R.id.wifi_checkbox)
     CheckBox mWifiCheckbox;
 
+    @Bind(R.id.loading_overlay)
+    RelativeLayout mLoadingOverlay;
+
     boolean mRefreshList = true;
     boolean mAsyncUnderway = false;
 
+    FeatureCollection mFeatureCollection;
     GeoQuakeDB mGeoQuakeDB;
+    QuakeData mQuakeData;
     QuakeMapFragment mMapFragment;
     ListFragment mListFragment;
 
@@ -63,22 +70,26 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         mBundle = new Bundle();
         mSharedPreferences = getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
         mGeoQuakeDB = new GeoQuakeDB(this);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
         mMapFragment = new QuakeMapFragment();
         mListFragment = new ListFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mMapFragment).commit();
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        if(Utils.checkNetwork(this)){
+            fetchData();
+        } else{
+            Utils.connectToast(this);
+        }
     }
 
     @Override
@@ -133,11 +144,13 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
             case R.id.action_list:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mListFragment).commit();
                 mSelectedFragment = 1;
+                mListFragment.updateData(mFeatureCollection);
                 invalidateOptionsMenu();
                 break;
             case R.id.action_map_view:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mMapFragment).commit();
                 mSelectedFragment = 0;
+                mMapFragment.updateData(mFeatureCollection);
                 invalidateOptionsMenu();
                 break;
             case R.id.action_refresh:
@@ -182,14 +195,68 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
         return super.onPrepareOptionsPanel(view, menu);
     }
 
+    public FeatureCollection getFeatures() {
+        return mFeatureCollection;
+    }
+
+    /**
+     * Send the request to the QuakeData class to grab new data
+     */
+    private void fetchData() {
+        if (!mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection).isEmpty() &&
+                !Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mStrengthSelection, ""
+                        + mDurationSelection)), this)) {
+            mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection));
+        } else {
+            Utils.fireToast(mDurationSelection, mStrengthSelection, this);
+            mQuakeData = new QuakeData(this.getString(R.string.usgs_url),
+                    mDurationSelection, mStrengthSelection, this, this);
+            mQuakeData.fetchData(this);
+        }
+    }
+
+    /**
+     * Interface callback when fetching data
+     */
     @Override
     public void dataCallback() {
+        //update map with data
+        mFeatureCollection = mQuakeData.getFeatureCollection();
+        mAsyncUnderway = false;
+        setLoadingFinishedView();
+        if(mSelectedFragment == 0) {
+            mMapFragment.updateData(mFeatureCollection);
+        } else {
+            mListFragment.updateData(mFeatureCollection);
+        }
 
     }
 
+    /**
+     * Lets the activity know that an async data call is underway
+     */
     @Override
     public void asyncUnderway() {
+        mAsyncUnderway = true;
+        setLoadingView();
+    }
 
+    public void setLoadingView() {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                mLoadingOverlay.setVisibility(View.VISIBLE);
+                getActionBar().hide();
+            }
+        });
+    }
+
+    public void setLoadingFinishedView() {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                mLoadingOverlay.setVisibility(View.GONE);
+                getActionBar().show();
+            }
+        });
     }
 
     @Override

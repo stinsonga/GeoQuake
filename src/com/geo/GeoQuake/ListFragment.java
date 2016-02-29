@@ -47,7 +47,7 @@ import butterknife.ButterKnife;
 /**
  * Created by gstinson on 2014-08-25.
  */
-public class ListFragment extends Fragment implements IDataCallback {
+public class ListFragment extends Fragment {
 
     @Bind(R.id.quakeListView)
     ListView mQuakeListView;
@@ -63,7 +63,6 @@ public class ListFragment extends Fragment implements IDataCallback {
 
     FeatureCollection mFeatureCollection;
     ArrayList<Feature> mFeatureList;
-    QuakeData mQuakeData;
 
     @Bind(R.id.search_bar)
     LinearLayout mSearchBar;
@@ -80,19 +79,11 @@ public class ListFragment extends Fragment implements IDataCallback {
     @Bind(R.id.proximity_image_button)
     ImageView mProximityImageButton;
 
-    Button mAboutButton;
-
     int mStrengthSelection = 4;
     int mDurationSelection = 0;
 
     double mUserLatitude = 0.0;
     double mUserLongitude = 0.0;
-
-    @Bind(R.id.loading_overlay)
-    RelativeLayout mLoadingOverlay;
-
-    @Bind(R.id.progress_counter)
-    ProgressBar mLoadingProgress;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -120,7 +111,6 @@ public class ListFragment extends Fragment implements IDataCallback {
 
         if(Utils.checkNetwork(getActivity())) {
             setupLocation();
-            networkCheckFetchData();
         } else {
             Utils.connectToast(getActivity());
         }
@@ -153,11 +143,6 @@ public class ListFragment extends Fragment implements IDataCallback {
     public void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
         //TODO: Possible actions for orientation change
-//        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            //Log.i("config", "landscape");
-//        } else if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
-//            //Log.i("config", "portrait");
-//        }
     }
 
     /**
@@ -167,84 +152,6 @@ public class ListFragment extends Fragment implements IDataCallback {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBundle("mBundle", mBundle);
-    }
-
-    /**
-     * Checking the network before we bother trying to grab data
-     */
-    public void networkCheckFetchData() {
-        if (Utils.checkNetwork(getActivity())) {
-            fetchData();
-        } else {
-            if (!mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection).isEmpty()) {
-                mFeatureCollection = new FeatureCollection(mGeoQuakeDB
-                        .getData("" + mStrengthSelection, "" + mDurationSelection));
-                mAsyncUnderway = false;
-                Toast.makeText(getActivity(), getResources().getString(R.string.using_saved), Toast.LENGTH_SHORT).show();
-                basicSort(mFeatureCollection);
-                mFeatureList = mFeatureCollection.getFeatures();
-                setupList();
-            } else {
-                Utils.connectToast(getActivity());
-            }
-        }
-    }
-
-    private void fetchData() {
-        if (!mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection).isEmpty() &&
-                !Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mStrengthSelection, ""
-                        + mDurationSelection)), getActivity())) {
-            mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection));
-            basicSort(mFeatureCollection);
-            mFeatureList = mFeatureCollection.getFeatures();
-            setupList();
-        } else {
-            Utils.fireToast(mDurationSelection, mStrengthSelection, getActivity());
-            mQuakeData = new QuakeData(getActivity().getResources().getString(R.string.usgs_url),
-                    mDurationSelection, mStrengthSelection, this, getActivity());
-            mQuakeData.fetchData(getActivity());
-        }
-
-    }
-
-    /**
-     * Interface callback when fetching data
-     */
-    @Override
-    public void dataCallback() {
-        mFeatureCollection = mQuakeData.getFeatureCollection();
-        mAsyncUnderway = false;
-        basicSort(mFeatureCollection);
-        mFeatureList = mFeatureCollection.getFeatures();
-        setupList();
-        setLoadingFinishedView();
-    }
-
-    /**
-     * Lets the activity know that an async data call is underway
-     */
-    @Override
-    public void asyncUnderway() {
-        mAsyncUnderway = true;
-        setLoadingView();
-    }
-
-    public void setLoadingView() {
-        getActivity().runOnUiThread(new Runnable() {
-            public void run() {
-                mLoadingOverlay.setVisibility(View.VISIBLE);
-                getActivity().getActionBar().hide();
-            }
-        });
-    }
-
-    public void setLoadingFinishedView() {
-        getActivity().runOnUiThread(new Runnable() {
-            public void run() {
-                mLoadingOverlay.setVisibility(View.GONE);
-                getActivity().getActionBar().show();
-            }
-        });
     }
 
     /**
@@ -340,6 +247,12 @@ public class ListFragment extends Fragment implements IDataCallback {
             inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
 
         }
+        setupList();
+    }
+
+    public void updateData(FeatureCollection data) {
+        mFeatureCollection = data;
+        mFeatureList = mFeatureCollection.getFeatures();
         setupList();
     }
 

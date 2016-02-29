@@ -1,7 +1,5 @@
 package com.geo.GeoQuake;
 
-import android.Manifest;
-import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -11,24 +9,11 @@ import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -51,7 +36,7 @@ import butterknife.Bind;
 import butterknife.OnClick;
 
 
-public class QuakeMapFragment extends Fragment implements IDataCallback {
+public class QuakeMapFragment extends Fragment {
 
     Bundle mBundle;
     HashMap<String, String> markerInfo = new HashMap<String, String>();
@@ -68,12 +53,6 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
 
     int mStrengthSelection = 4;
     int mDurationSelection = 0;
-
-    @Bind(R.id.loading_overlay)
-    RelativeLayout mLoadingOverlay;
-
-    @Bind(R.id.progress_counter)
-    ProgressBar mLoadingProgress;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,35 +82,15 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
         super.onResume();
 
         if(Utils.checkNetwork(getActivity())){
-            setUpMap();
-            networkCheckFetchData();
+            if(mMap == null) {
+                setUpMap();
+            } else {
+                mFeatureCollection = ((MainActivity)getActivity() ).getFeatures();
+                placeMarkers();
+            }
+            //networkCheckFetchData();
         } else{
             Utils.connectToast(getActivity());
-        }
-    }
-
-    /**
-     * Checking the network before we bother trying to grab data
-     */
-    public void networkCheckFetchData() {
-        if (Utils.checkNetwork(getActivity())) {
-            fetchData();
-        } else {
-            if (!mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection).isEmpty()) {
-                mFeatureCollection = new FeatureCollection(mGeoQuakeDB
-                        .getData("" + mStrengthSelection, "" + mDurationSelection));
-                mAsyncUnderway = false;
-                Toast.makeText(getActivity(), getResources().getString(R.string.using_saved), Toast.LENGTH_SHORT).show();
-                if (mRefreshMap) {
-                    placeMarkers();
-                    //A bit of a hack/fix for initial load, where the bastard spams several callbacks
-                    if (mFeatureCollection.getFeatures().size() > 0) {
-                        mRefreshMap = false;
-                    }
-                }
-            } else {
-                Utils.connectToast(getActivity());
-            }
         }
     }
 
@@ -195,6 +154,11 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
             UiSettings settings = mMap.getUiSettings();
             settings.setCompassEnabled(true);
             settings.setMyLocationButtonEnabled(true);
+
+            if(mFeatureCollection != null && mFeatureCollection.getFeatures().size() > 0) {
+                Log.i("placeMarkers", "postSyncMapSetup");
+                placeMarkers();
+            }
         }
     }
 
@@ -244,23 +208,6 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
         }
     }
 
-    /**
-     * Send the request to the QuakeData class to grab new data
-     */
-    private void fetchData() {
-        if (!mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection).isEmpty() &&
-                !Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mStrengthSelection, ""
-                        + mDurationSelection)), getActivity())) {
-            mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection));
-            placeMarkers();
-        } else {
-            Utils.fireToast(mDurationSelection, mStrengthSelection, getActivity());
-            mQuakeData = new QuakeData(getActivity().getString(R.string.usgs_url),
-                    mDurationSelection, mStrengthSelection, this, getActivity());
-            mQuakeData.fetchData(getActivity());
-        }
-    }
-
 
     /**
      * @param id The map marker id
@@ -268,51 +215,6 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
      */
     private String getURLFromMarker(String id) {
         return markerInfo.get(id);
-    }
-
-    /**
-     * Interface callback when fetching data
-     */
-    @Override
-    public void dataCallback() {
-        //update map with data
-        mFeatureCollection = mQuakeData.getFeatureCollection();
-        mAsyncUnderway = false;
-        if (mRefreshMap) {
-            placeMarkers();
-            //A bit of a hack/fix for initial load, where the bastard spams several callbacks
-            if (mFeatureCollection.getFeatures().size() > 0) {
-                mRefreshMap = false;
-            }
-        }
-        setLoadingFinishedView();
-    }
-
-    /**
-     * Lets the activity know that an async data call is underway
-     */
-    @Override
-    public void asyncUnderway() {
-        mAsyncUnderway = true;
-        setLoadingView();
-    }
-
-    public void setLoadingView() {
-        getActivity().runOnUiThread(new Runnable() {
-            public void run() {
-                mLoadingOverlay.setVisibility(View.VISIBLE);
-                getActivity().getActionBar().hide();
-            }
-        });
-    }
-
-    public void setLoadingFinishedView() {
-        getActivity().runOnUiThread(new Runnable() {
-            public void run() {
-                mLoadingOverlay.setVisibility(View.GONE);
-                getActivity().getActionBar().show();
-            }
-        });
     }
 
     /**
@@ -336,6 +238,12 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBundle("mBundle", mBundle);
+    }
+
+    public void updateData(FeatureCollection data) {
+        mFeatureCollection = data;
+        Log.i("placeMarkers", "updateData");
+        placeMarkers();
     }
 
 }
