@@ -56,8 +56,6 @@ public class ListFragment extends Fragment {
     SharedPreferences mSharedPreferences;
     SharedPreferences.Editor mSharedPreferencesEditor;
     Bundle mBundle;
-    boolean mRefreshList = true;
-    boolean mAsyncUnderway = false;
 
     GeoQuakeDB mGeoQuakeDB;
 
@@ -79,11 +77,10 @@ public class ListFragment extends Fragment {
     @Bind(R.id.proximity_image_button)
     ImageView mProximityImageButton;
 
-    int mStrengthSelection = 4;
-    int mDurationSelection = 0;
-
     double mUserLatitude = 0.0;
     double mUserLongitude = 0.0;
+
+    Context mContext;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -111,9 +108,19 @@ public class ListFragment extends Fragment {
 
         if(Utils.checkNetwork(getActivity())) {
             setupLocation();
+            if(mFeatureList != null) {
+                setupList();
+            }
         } else {
             Utils.connectToast(getActivity());
         }
+
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
 
     }
 
@@ -158,21 +165,21 @@ public class ListFragment extends Fragment {
      * This sorts the list and sets the adapter
      */
     public void setupList() {
-        if (mFeatureList != null) {
-            mQuakeCountTextView.setText(String.format(getActivity().getResources().getString(R.string.quake_count), mFeatureList.size()));
+        if (mFeatureList != null && mContext != null) {
+            mQuakeCountTextView.setText(String.format(mContext.getResources().getString(R.string.quake_count), mFeatureList.size()));
             //TODO: This could use some cleaning up
-            mQuakeListAdapter = new QuakeListAdapter(getActivity(), mFeatureList);
+            mQuakeListAdapter = new QuakeListAdapter(mContext, mFeatureList);
             mQuakeListView.setAdapter(mQuakeListAdapter);
             mQuakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(getActivity(), WebInfoActivity.class);
+                    Intent intent = new Intent(mContext, WebInfoActivity.class);
                     intent.putExtra("url", mFeatureList.get(position).getProperties().getUrl());
                     startActivity(intent);
                 }
             });
             if (mFeatureList.size() == 0) {
-                Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.empty_list)
+                Toast.makeText(mContext, mContext.getResources().getString(R.string.empty_list)
                         , Toast.LENGTH_LONG).show();
             }
         }

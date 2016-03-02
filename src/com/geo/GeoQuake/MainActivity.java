@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
@@ -139,16 +140,18 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        FragmentManager fm = getSupportFragmentManager();
         switch (item.getItemId()) {
 
             case R.id.action_list:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mListFragment).commit();
+                fm.beginTransaction().replace(R.id.fragment_container, mListFragment).commit();
+
                 mSelectedFragment = 1;
                 mListFragment.updateData(mFeatureCollection);
                 invalidateOptionsMenu();
                 break;
             case R.id.action_map_view:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mMapFragment).commit();
+                fm.beginTransaction().replace(R.id.fragment_container, mMapFragment).commit();
                 mSelectedFragment = 0;
                 mMapFragment.updateData(mFeatureCollection);
                 invalidateOptionsMenu();
@@ -162,7 +165,11 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
                         editor.putLong(Utils.REFRESH_LIMITER, GeoQuakeDB.getTime());
                         editor.apply();
                         mRefreshList = true;
-                        //networkCheckFetchData();
+                        if(Utils.checkNetwork(this)){
+                            fetchData();
+                        } else{
+                            Utils.connectToast(this);
+                        }
                     } else {
                         Toast.makeText(this, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
                     }

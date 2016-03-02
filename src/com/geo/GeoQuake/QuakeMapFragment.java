@@ -42,17 +42,11 @@ public class QuakeMapFragment extends Fragment {
     HashMap<String, String> markerInfo = new HashMap<String, String>();
     SharedPreferences mSharedPreferences;
     SharedPreferences.Editor mSharedPreferencesEditor;
-    boolean mRefreshMap = true;
-    boolean mAsyncUnderway = false;
 
     private GoogleMap mMap;
     GeoQuakeDB mGeoQuakeDB;
 
     FeatureCollection mFeatureCollection;
-    QuakeData mQuakeData;
-
-    int mStrengthSelection = 4;
-    int mDurationSelection = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,24 +79,14 @@ public class QuakeMapFragment extends Fragment {
             if(mMap == null) {
                 setUpMap();
             } else {
-                mFeatureCollection = ((MainActivity)getActivity() ).getFeatures();
+                if(mFeatureCollection == null) {
+                    mFeatureCollection = ((MainActivity)getActivity() ).getFeatures();
+                }
                 placeMarkers();
             }
-            //networkCheckFetchData();
         } else{
             Utils.connectToast(getActivity());
         }
-    }
-
-    /**
-     * We're not using this method right now. That's how it goes.
-     *
-     * @return
-     */
-    public GoogleMapOptions mapOptions() {
-        GoogleMapOptions opts = new GoogleMapOptions();
-        opts.mapType(GoogleMap.MAP_TYPE_HYBRID).compassEnabled(true);
-        return opts;
     }
 
     /**
@@ -129,7 +113,7 @@ public class QuakeMapFragment extends Fragment {
 
     public void postSyncMapSetup() {
         if (mMap != null) {
-            mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+            mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 
             //check location permission
             PackageManager pm = getActivity().getPackageManager();
@@ -242,7 +226,6 @@ public class QuakeMapFragment extends Fragment {
 
     public void updateData(FeatureCollection data) {
         mFeatureCollection = data;
-        Log.i("placeMarkers", "updateData");
         placeMarkers();
     }
 
