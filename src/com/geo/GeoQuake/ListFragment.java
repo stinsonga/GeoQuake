@@ -82,6 +82,14 @@ public class ListFragment extends Fragment {
 
     Context mContext;
 
+    public static ListFragment newInstance() {
+        return new ListFragment();
+    }
+
+    public ListFragment() {
+
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,8 +115,10 @@ public class ListFragment extends Fragment {
         super.onResume();
 
         if(Utils.checkNetwork(getActivity())) {
+
             setupLocation();
             if(mFeatureList != null) {
+                updateData(((MainActivity)getActivity()).getFeatures());
                 setupList();
             }
         } else {

@@ -48,6 +48,14 @@ public class QuakeMapFragment extends Fragment {
 
     FeatureCollection mFeatureCollection;
 
+    public static QuakeMapFragment newInstance() {
+        return new QuakeMapFragment();
+    }
+
+    public QuakeMapFragment() {
+
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,10 +85,11 @@ public class QuakeMapFragment extends Fragment {
 
         if(Utils.checkNetwork(getActivity())){
             if(mMap == null) {
+
                 setUpMap();
             } else {
                 if(mFeatureCollection == null) {
-                    mFeatureCollection = ((MainActivity)getActivity() ).getFeatures();
+                    updateData(((MainActivity)getActivity()).getFeatures());
                 }
                 placeMarkers();
             }

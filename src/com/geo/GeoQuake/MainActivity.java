@@ -19,6 +19,8 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.MapFragment;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -77,9 +79,19 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
         mSharedPreferences = getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
         mGeoQuakeDB = new GeoQuakeDB(this);
 
-        mMapFragment = new QuakeMapFragment();
-        mListFragment = new ListFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mMapFragment).commit();
+        mMapFragment = QuakeMapFragment.newInstance();
+        mListFragment = ListFragment.newInstance();
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mMapFragment)
+                .addToBackStack(null).commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+//        if(getSupportFragmentManager().getBackStackEntryCount() > 0){
+//            getSupportFragmentManager().popBackStackImmediate();
+//        } else{
+//            finish();
+//        }
     }
 
     @Override
@@ -144,16 +156,13 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
         switch (item.getItemId()) {
 
             case R.id.action_list:
-                fm.beginTransaction().replace(R.id.fragment_container, mListFragment).commit();
-
                 mSelectedFragment = 1;
-                mListFragment.updateData(mFeatureCollection);
+                fm.beginTransaction().replace(R.id.fragment_container, mListFragment).commit();
                 invalidateOptionsMenu();
                 break;
             case R.id.action_map_view:
-                fm.beginTransaction().replace(R.id.fragment_container, mMapFragment).commit();
                 mSelectedFragment = 0;
-                mMapFragment.updateData(mFeatureCollection);
+                onBackPressed();
                 invalidateOptionsMenu();
                 break;
             case R.id.action_refresh:
