@@ -9,6 +9,7 @@ import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,7 +47,11 @@ public class QuakeMapFragment extends Fragment {
     private GoogleMap mMap;
     GeoQuakeDB mGeoQuakeDB;
 
+    SupportMapFragment mMapFragment;
+
     FeatureCollection mFeatureCollection;
+
+    private static View mView;
 
     public static QuakeMapFragment newInstance() {
         return new QuakeMapFragment();
@@ -72,11 +77,25 @@ public class QuakeMapFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.map_fragment, container, false);
-        ButterKnife.bind(this, view);
+            mView = inflater.inflate(R.layout.map_fragment, container, false);
+            ButterKnife.bind(this, mView);
 
 
-        return view;
+            return mView;
+
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        FragmentManager fm = getChildFragmentManager();
+        mMapFragment = (SupportMapFragment) fm.findFragmentById(R.id.gmap);
+        if(mMapFragment == null) {
+            mMapFragment = SupportMapFragment.newInstance();
+            fm.beginTransaction().replace(R.id.gmap, mMapFragment).commit();
+        }
+
     }
 
     @Override
@@ -96,6 +115,7 @@ public class QuakeMapFragment extends Fragment {
         } else{
             Utils.connectToast(getActivity());
         }
+
     }
 
     /**
@@ -104,7 +124,7 @@ public class QuakeMapFragment extends Fragment {
     private void setUpMap() {
         if (Utils.checkNetwork(getActivity())) {
             if (mMap == null) {
-                ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.gmap)).getMapAsync(new OnMapReadyCallback() {
+                mMapFragment.getMapAsync(new OnMapReadyCallback() {
                     @Override
                     public void onMapReady(GoogleMap googleMap) {
                         mMap = googleMap;

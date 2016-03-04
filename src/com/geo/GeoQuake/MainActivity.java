@@ -81,17 +81,17 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
 
         mMapFragment = QuakeMapFragment.newInstance();
         mListFragment = ListFragment.newInstance();
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mMapFragment)
-                .addToBackStack(null).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mMapFragment)
+                .addToBackStack("stack").commit();
     }
 
     @Override
     public void onBackPressed() {
-//        if(getSupportFragmentManager().getBackStackEntryCount() > 0){
-//            getSupportFragmentManager().popBackStackImmediate();
-//        } else{
-//            finish();
-//        }
+        if(getSupportFragmentManager().getBackStackEntryCount() > 0){
+            getSupportFragmentManager().popBackStackImmediate();
+        } else{
+            finish();
+        }
     }
 
     @Override
@@ -157,7 +157,7 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
 
             case R.id.action_list:
                 mSelectedFragment = 1;
-                fm.beginTransaction().replace(R.id.fragment_container, mListFragment).commit();
+                fm.beginTransaction().replace(R.id.fragment_container, mListFragment).addToBackStack("map").commit();
                 invalidateOptionsMenu();
                 break;
             case R.id.action_map_view:
