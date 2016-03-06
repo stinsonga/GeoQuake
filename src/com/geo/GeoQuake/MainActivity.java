@@ -87,9 +87,9 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
 
     @Override
     public void onBackPressed() {
-        if(getSupportFragmentManager().getBackStackEntryCount() > 0){
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStackImmediate();
-        } else{
+        } else {
             finish();
         }
     }
@@ -98,11 +98,6 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
     protected void onResume() {
         super.onResume();
 
-        if(Utils.checkNetwork(this)){
-            fetchData();
-        } else{
-            Utils.connectToast(this);
-        }
     }
 
     @Override
@@ -174,9 +169,9 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
                         editor.putLong(Utils.REFRESH_LIMITER, GeoQuakeDB.getTime());
                         editor.apply();
                         mRefreshList = true;
-                        if(Utils.checkNetwork(this)){
+                        if (Utils.checkNetwork(this)) {
                             fetchData();
-                        } else{
+                        } else {
                             Utils.connectToast(this);
                         }
                     } else {
@@ -201,7 +196,7 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
 
     @Override
     protected boolean onPrepareOptionsPanel(View view, Menu menu) {
-        if(mSelectedFragment == 0) {
+        if (mSelectedFragment == 0) {
             menu.findItem(R.id.action_map_view).setVisible(false);
             menu.findItem(R.id.action_list).setVisible(true);
         } else {
@@ -209,6 +204,15 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
             menu.findItem(R.id.action_list).setVisible(false);
         }
         return super.onPrepareOptionsPanel(view, menu);
+    }
+
+    public void checkNetworkFetchData() {
+
+        if (Utils.checkNetwork(this)) {
+            fetchData();
+        } else {
+            Utils.connectToast(this);
+        }
     }
 
     public FeatureCollection getFeatures() {
@@ -240,7 +244,7 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
         mFeatureCollection = mQuakeData.getFeatureCollection();
         mAsyncUnderway = false;
         setLoadingFinishedView();
-        if(mSelectedFragment == 0) {
+        if (mSelectedFragment == 0) {
             mMapFragment.updateData(mFeatureCollection);
         } else {
             mListFragment.updateData(mFeatureCollection);

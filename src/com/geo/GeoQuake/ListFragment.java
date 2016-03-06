@@ -115,11 +115,11 @@ public class ListFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        if(Utils.checkNetwork(getActivity())) {
+        if (Utils.checkNetwork(getActivity())) {
 
             setupLocation();
-            if(mFeatureList != null) {
-                updateData(((MainActivity)getActivity()).getFeatures());
+            if (mFeatureList != null) {
+                updateData(((MainActivity) getActivity()).getFeatures());
                 setupList();
             }
         } else {
@@ -139,7 +139,7 @@ public class ListFragment extends Fragment {
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         Location location;
         try {
-             location = locationManager.getLastKnownLocation(locationManager
+            location = locationManager.getLastKnownLocation(locationManager
                     .getBestProvider(new Criteria(), false));
             if (location != null) {
                 mProximityImageButton.setVisibility(View.VISIBLE);

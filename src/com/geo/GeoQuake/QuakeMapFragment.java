@@ -71,17 +71,16 @@ public class QuakeMapFragment extends Fragment {
         mGeoQuakeDB = new GeoQuakeDB(getActivity());
 
 
-
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            mView = inflater.inflate(R.layout.map_fragment, container, false);
-            ButterKnife.bind(this, mView);
+        mView = inflater.inflate(R.layout.map_fragment, container, false);
+        ButterKnife.bind(this, mView);
 
 
-            return mView;
+        return mView;
 
     }
 
@@ -91,7 +90,7 @@ public class QuakeMapFragment extends Fragment {
 
         FragmentManager fm = getChildFragmentManager();
         mMapFragment = (SupportMapFragment) fm.findFragmentById(R.id.gmap);
-        if(mMapFragment == null) {
+        if (mMapFragment == null) {
             mMapFragment = SupportMapFragment.newInstance();
             fm.beginTransaction().replace(R.id.gmap, mMapFragment).commit();
         }
@@ -102,17 +101,17 @@ public class QuakeMapFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        if(Utils.checkNetwork(getActivity())){
-            if(mMap == null) {
+        if (Utils.checkNetwork(getActivity())) {
+            if (mMap == null) {
 
                 setUpMap();
             } else {
-                if(mFeatureCollection == null) {
-                    updateData(((MainActivity)getActivity()).getFeatures());
+                if (mFeatureCollection == null) {
+                    updateData(((MainActivity) getActivity()).getFeatures());
                 }
                 placeMarkers();
             }
-        } else{
+        } else {
             Utils.connectToast(getActivity());
         }
 
@@ -149,7 +148,7 @@ public class QuakeMapFragment extends Fragment {
             int result = pm.checkPermission(android.Manifest.permission.ACCESS_FINE_LOCATION,
                     getActivity().getPackageName());
 
-            if(PackageManager.PERMISSION_GRANTED == result) {
+            if (PackageManager.PERMISSION_GRANTED == result) {
                 mMap.setMyLocationEnabled(true);
             }
 
@@ -168,7 +167,7 @@ public class QuakeMapFragment extends Fragment {
             settings.setCompassEnabled(true);
             settings.setMyLocationButtonEnabled(true);
 
-            if(mFeatureCollection != null && mFeatureCollection.getFeatures().size() > 0) {
+            if (mFeatureCollection != null && mFeatureCollection.getFeatures().size() > 0) {
                 Log.i("placeMarkers", "postSyncMapSetup");
                 placeMarkers();
             }
@@ -184,7 +183,7 @@ public class QuakeMapFragment extends Fragment {
             Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.empty_list)
                     , Toast.LENGTH_SHORT).show();
         } else {
-            if(mMap != null) {
+            if (mMap != null) {
                 mMap.clear();
             }
             try {
