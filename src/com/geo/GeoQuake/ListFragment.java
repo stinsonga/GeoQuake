@@ -35,6 +35,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -115,17 +118,28 @@ public class ListFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        if(!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+
         if (Utils.checkNetwork(getActivity())) {
 
             setupLocation();
             if (mFeatureList != null) {
-                updateData(((MainActivity) getActivity()).getFeatures());
                 setupList();
+            } else {
+                ((MainActivity)getActivity()).checkNetworkFetchData();
             }
         } else {
             Utils.connectToast(getActivity());
         }
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -193,6 +207,8 @@ public class ListFragment extends Fragment {
                 Toast.makeText(mContext, mContext.getResources().getString(R.string.empty_list)
                         , Toast.LENGTH_LONG).show();
             }
+        } else {
+            ((MainActivity)getActivity()).checkNetworkFetchData();
         }
     }
 
@@ -271,6 +287,12 @@ public class ListFragment extends Fragment {
     public void updateData(FeatureCollection data) {
         mFeatureCollection = data;
         mFeatureList = mFeatureCollection.getFeatures();
+        setupList();
+    }
+
+    @Subscribe
+    public void onEvent(MainActivity.QuakeDataEvent event) {
+        this.mFeatureCollection = event.getFeatureCollection();
         setupList();
     }
 

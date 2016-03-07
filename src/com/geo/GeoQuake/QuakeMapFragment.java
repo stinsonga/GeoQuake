@@ -14,13 +14,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
@@ -30,11 +28,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.HashMap;
 
 import butterknife.ButterKnife;
-import butterknife.Bind;
-import butterknife.OnClick;
 
 
 public class QuakeMapFragment extends Fragment {
@@ -100,21 +99,30 @@ public class QuakeMapFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if(!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
 
         if (Utils.checkNetwork(getActivity())) {
             if (mMap == null) {
 
                 setUpMap();
             } else {
-                if (mFeatureCollection == null) {
-                    updateData(((MainActivity) getActivity()).getFeatures());
+                if (mFeatureCollection != null) {
+                    placeMarkers();
                 }
-                placeMarkers();
+
             }
         } else {
             Utils.connectToast(getActivity());
         }
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
     }
 
     /**
@@ -170,6 +178,8 @@ public class QuakeMapFragment extends Fragment {
             if (mFeatureCollection != null && mFeatureCollection.getFeatures().size() > 0) {
                 Log.i("placeMarkers", "postSyncMapSetup");
                 placeMarkers();
+            } else {
+                ((MainActivity)getActivity()).checkNetworkFetchData();
             }
         }
     }
@@ -254,6 +264,12 @@ public class QuakeMapFragment extends Fragment {
 
     public void updateData(FeatureCollection data) {
         mFeatureCollection = data;
+        placeMarkers();
+    }
+
+    @Subscribe
+    public void onEvent(MainActivity.QuakeDataEvent event) {
+        this.mFeatureCollection = event.getFeatureCollection();
         placeMarkers();
     }
 

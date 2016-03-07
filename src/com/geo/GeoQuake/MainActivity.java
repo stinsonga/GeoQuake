@@ -21,6 +21,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.MapFragment;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.util.AsyncExecutor;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -29,7 +32,7 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
     SharedPreferences mSharedPreferences;
     SharedPreferences.Editor mSharedPreferencesEditor;
     Bundle mBundle;
-
+    AsyncExecutor mAsyncRequest;
 
     @Bind(R.id.drawer_root)
     LinearLayout mDrawerLinearLayout;
@@ -244,11 +247,12 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
         mFeatureCollection = mQuakeData.getFeatureCollection();
         mAsyncUnderway = false;
         setLoadingFinishedView();
-        if (mSelectedFragment == 0) {
-            mMapFragment.updateData(mFeatureCollection);
-        } else {
-            mListFragment.updateData(mFeatureCollection);
-        }
+        EventBus.getDefault().post(new QuakeDataEvent(mQuakeData.getFeatureCollection()));
+//        if (mSelectedFragment == 0) {
+//            mMapFragment.updateData(mFeatureCollection);
+//        } else {
+//            mListFragment.updateData(mFeatureCollection);
+//        }
 
     }
 
@@ -302,4 +306,18 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+
+    public class QuakeDataEvent {
+        FeatureCollection mFeatureCollection;
+
+        public QuakeDataEvent(FeatureCollection featureCollection) {
+            this.mFeatureCollection = featureCollection;
+        }
+
+        public FeatureCollection getFeatureCollection() {
+            return mFeatureCollection;
+        }
+    }
+
+
 }
