@@ -11,27 +11,16 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -118,10 +107,6 @@ public class ListFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        if(!EventBus.getDefault().isRegistered(this)){
-            EventBus.getDefault().register(this);
-        }
-
         if (Utils.checkNetwork(getActivity())) {
 
             setupLocation();
@@ -137,8 +122,8 @@ public class ListFragment extends Fragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onDestroy() {
+        super.onDestroy();
         EventBus.getDefault().unregister(this);
     }
 
@@ -147,6 +132,9 @@ public class ListFragment extends Fragment {
         super.onAttach(context);
         mContext = context;
 
+        if(!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
     }
 
     public void setupLocation() {
@@ -207,8 +195,6 @@ public class ListFragment extends Fragment {
                 Toast.makeText(mContext, mContext.getResources().getString(R.string.empty_list)
                         , Toast.LENGTH_LONG).show();
             }
-        } else {
-            ((MainActivity)getActivity()).checkNetworkFetchData();
         }
     }
 

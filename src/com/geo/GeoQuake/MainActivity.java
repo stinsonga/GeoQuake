@@ -230,6 +230,7 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
                 !Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mStrengthSelection, ""
                         + mDurationSelection)), this)) {
             mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection));
+            EventBus.getDefault().post(mFeatureCollection);
         } else {
             Utils.fireToast(mDurationSelection, mStrengthSelection, this);
             mQuakeData = new QuakeData(this.getString(R.string.usgs_url),
@@ -248,11 +249,6 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
         mAsyncUnderway = false;
         setLoadingFinishedView();
         EventBus.getDefault().post(new QuakeDataEvent(mQuakeData.getFeatureCollection()));
-//        if (mSelectedFragment == 0) {
-//            mMapFragment.updateData(mFeatureCollection);
-//        } else {
-//            mListFragment.updateData(mFeatureCollection);
-//        }
 
     }
 
