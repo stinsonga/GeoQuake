@@ -24,9 +24,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -39,7 +36,7 @@ import butterknife.ButterKnife;
 /**
  * Created by gstinson on 2014-08-25.
  */
-public class ListFragment extends Fragment {
+public class ListFragment extends Fragment implements IDataCallback {
 
     @Bind(R.id.quakeListView)
     ListView mQuakeListView;
@@ -124,7 +121,6 @@ public class ListFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -132,9 +128,6 @@ public class ListFragment extends Fragment {
         super.onAttach(context);
         mContext = context;
 
-        if(!EventBus.getDefault().isRegistered(this)){
-            EventBus.getDefault().register(this);
-        }
     }
 
     public void setupLocation() {
@@ -276,10 +269,14 @@ public class ListFragment extends Fragment {
         setupList();
     }
 
-    @Subscribe
-    public void onEvent(MainActivity.QuakeDataEvent event) {
-        this.mFeatureCollection = event.getFeatureCollection();
-        setupList();
+    @Override
+    public void asyncUnderway() {
+
     }
 
+    @Override
+    public void dataCallback(FeatureCollection featureCollection) {
+        mFeatureCollection = featureCollection;
+        setupList();
+    }
 }

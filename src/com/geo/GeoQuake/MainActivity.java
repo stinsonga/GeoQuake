@@ -21,9 +21,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.MapFragment;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.util.AsyncExecutor;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -32,7 +29,6 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
     SharedPreferences mSharedPreferences;
     SharedPreferences.Editor mSharedPreferencesEditor;
     Bundle mBundle;
-    AsyncExecutor mAsyncRequest;
 
     @Bind(R.id.drawer_root)
     LinearLayout mDrawerLinearLayout;
@@ -230,7 +226,6 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
                 !Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mStrengthSelection, ""
                         + mDurationSelection)), this)) {
             mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection));
-            EventBus.getDefault().post(mFeatureCollection);
         } else {
             Utils.fireToast(mDurationSelection, mStrengthSelection, this);
             mQuakeData = new QuakeData(this.getString(R.string.usgs_url),
@@ -243,12 +238,11 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
      * Interface callback when fetching data
      */
     @Override
-    public void dataCallback() {
+    public void dataCallback(FeatureCollection featureCollection) {
         //update map with data
-        mFeatureCollection = mQuakeData.getFeatureCollection();
+        mFeatureCollection = featureCollection; //mQuakeData.getFeatureCollection();
         mAsyncUnderway = false;
         setLoadingFinishedView();
-        EventBus.getDefault().post(new QuakeDataEvent(mQuakeData.getFeatureCollection()));
 
     }
 

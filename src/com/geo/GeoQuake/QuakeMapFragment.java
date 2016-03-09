@@ -28,15 +28,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-
 import java.util.HashMap;
 
 import butterknife.ButterKnife;
 
 
-public class QuakeMapFragment extends Fragment {
+public class QuakeMapFragment extends Fragment implements IDataCallback {
 
     Bundle mBundle;
     HashMap<String, String> markerInfo = new HashMap<String, String>();
@@ -99,9 +96,6 @@ public class QuakeMapFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(!EventBus.getDefault().isRegistered(this)){
-            EventBus.getDefault().register(this);
-        }
 
         if (Utils.checkNetwork(getActivity())) {
             if (mMap == null) {
@@ -122,7 +116,6 @@ public class QuakeMapFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
     }
 
     /**
@@ -267,10 +260,14 @@ public class QuakeMapFragment extends Fragment {
         placeMarkers();
     }
 
-    @Subscribe
-    public void onEvent(MainActivity.QuakeDataEvent event) {
-        this.mFeatureCollection = event.getFeatureCollection();
-        placeMarkers();
+    @Override
+    public void asyncUnderway() {
+
     }
 
+    @Override
+    public void dataCallback(FeatureCollection featureCollection) {
+        mFeatureCollection = featureCollection;
+        placeMarkers();
+    }
 }

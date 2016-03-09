@@ -82,7 +82,7 @@ public class QuakeData {
                     protected void onPostExecute(FeatureCollection featureCollection) {
                         super.onPostExecute(featureCollection);
                         mFeatureCollection = featureCollection;
-                        mDataCallback.dataCallback();
+                        mDataCallback.dataCallback(mFeatureCollection);
                     }
                 }.execute(new URL(usgsUrl + Utils.getURLFrag(mQuakeType,
                         mQuakeDuration, context)));
@@ -93,7 +93,7 @@ public class QuakeData {
         } else {
             //no need to refresh, so we send them back the persisted data
             mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mQuakeType, "" + mQuakeDuration));
-            mDataCallback.dataCallback();
+            mDataCallback.dataCallback(mFeatureCollection);
         }
     }
 
