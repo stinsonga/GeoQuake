@@ -107,7 +107,8 @@ public class ListFragment extends Fragment implements IDataCallback {
         if (Utils.checkNetwork(getActivity())) {
 
             setupLocation();
-            if (mFeatureList != null) {
+            if (((MainActivity)getActivity()).getFeatures() != null && ((MainActivity)getActivity()).getFeatures().getFeatures().size() > 0) {
+                mFeatureList = ((MainActivity)getActivity()).getFeatures().getFeatures();
                 setupList();
             } else {
                 ((MainActivity)getActivity()).checkNetworkFetchData();

@@ -67,6 +67,7 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
     int mDurationSelection = 0;
 
     int mSelectedFragment = 0;
+    boolean isFirstLoad = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +81,6 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
 
         mMapFragment = QuakeMapFragment.newInstance();
         mListFragment = ListFragment.newInstance();
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mMapFragment)
-                .addToBackStack("stack").commit();
     }
 
     @Override
@@ -96,7 +95,7 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
     @Override
     protected void onResume() {
         super.onResume();
-
+        checkNetworkFetchData();
     }
 
     @Override
@@ -244,6 +243,11 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
         mAsyncUnderway = false;
         setLoadingFinishedView();
 
+        if (isFirstLoad) {
+            isFirstLoad = false;
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mMapFragment)
+                    .addToBackStack("stack").commit();
+        }
     }
 
     /**

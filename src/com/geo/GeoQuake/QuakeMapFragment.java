@@ -168,8 +168,10 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
             settings.setCompassEnabled(true);
             settings.setMyLocationButtonEnabled(true);
 
-            if (mFeatureCollection != null && mFeatureCollection.getFeatures().size() > 0) {
-                Log.i("placeMarkers", "postSyncMapSetup");
+
+
+            if (((MainActivity)getActivity()).getFeatures() != null && ((MainActivity)getActivity()).getFeatures().getFeatures().size() > 0) {
+                mFeatureCollection = ((MainActivity)getActivity()).getFeatures();
                 placeMarkers();
             } else {
                 ((MainActivity)getActivity()).checkNetworkFetchData();
