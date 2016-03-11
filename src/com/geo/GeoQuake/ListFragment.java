@@ -32,6 +32,7 @@ import java.util.TreeMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by gstinson on 2014-08-25.
@@ -97,6 +98,17 @@ public class ListFragment extends Fragment implements IDataCallback {
         View view = inflater.inflate(R.layout.list_fragment, container, false);
         ButterKnife.bind(this, view);
 
+        mSearchImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInput(0, 0);
+                mSearchBar.setVisibility(View.VISIBLE);
+                mSearchBar.requestFocus();
+                mSearchImageButton.setVisibility(View.INVISIBLE);
+            }
+        });
+
         return view;
     }
 
@@ -107,11 +119,11 @@ public class ListFragment extends Fragment implements IDataCallback {
         if (Utils.checkNetwork(getActivity())) {
 
             setupLocation();
-            if (((MainActivity)getActivity()).getFeatures() != null && ((MainActivity)getActivity()).getFeatures().getFeatures().size() > 0) {
-                mFeatureList = ((MainActivity)getActivity()).getFeatures().getFeatures();
+            if (((MainActivity) getActivity()).getFeatures() != null && ((MainActivity) getActivity()).getFeatures().getFeatures().size() > 0) {
+                mFeatureList = ((MainActivity) getActivity()).getFeatures().getFeatures();
                 setupList();
             } else {
-                ((MainActivity)getActivity()).checkNetworkFetchData();
+                ((MainActivity) getActivity()).checkNetworkFetchData();
             }
         } else {
             Utils.connectToast(getActivity());
@@ -212,6 +224,7 @@ public class ListFragment extends Fragment implements IDataCallback {
     /**
      * Sorting list by distance from user
      */
+    @OnClick(R.id.proximity_image_button)
     public void sortByProximity() {
         Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.sorting_by_proximity)
                 , Toast.LENGTH_SHORT).show();
@@ -236,7 +249,8 @@ public class ListFragment extends Fragment implements IDataCallback {
      * but we can pretty well assume that the USGS data isn't giving us any
      * oddball characters in the result list
      */
-    public void doSearch(View view) {
+    @OnClick(R.id.search_image_button)
+    public void doSearch() {
         ArrayList<Feature> searchFeatures = new ArrayList<>();
         String searchTerm = mSearchEditText.getText().toString();
         for (Feature feature : mFeatureList) {
