@@ -11,7 +11,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -265,7 +264,7 @@ public class ListFragment extends Fragment implements IDataCallback {
                     , Toast.LENGTH_LONG).show();
         } else {
             mQuakeCountTextView.setText(String.format(getActivity().getResources().getString(R.string.quake_count), mFeatureList.size()));
-            mFeatureList.clear(); //is this needed?
+            mFeatureList.clear();
             mFeatureList = searchFeatures;
             mSearchEditText.setText("");
             mSearchBar.setVisibility(View.GONE);

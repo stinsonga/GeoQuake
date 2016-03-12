@@ -1,7 +1,6 @@
 package com.geo.GeoQuake;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -19,7 +18,6 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.MapFragment;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
