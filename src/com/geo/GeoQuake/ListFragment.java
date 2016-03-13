@@ -16,10 +16,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,8 +54,8 @@ public class ListFragment extends Fragment implements IDataCallback {
     @Bind(R.id.search_bar)
     LinearLayout mSearchBar;
 
-    @Bind(R.id.search_edit_text)
-    EditText mSearchEditText;
+    @Bind(R.id.search_view)
+    SearchView mSearchEditText;
 
     @Bind(R.id.count_textview)
     TextView mQuakeCountTextView;
@@ -251,7 +251,7 @@ public class ListFragment extends Fragment implements IDataCallback {
     @OnClick(R.id.search_image_button)
     public void doSearch() {
         ArrayList<Feature> searchFeatures = new ArrayList<>();
-        String searchTerm = mSearchEditText.getText().toString();
+        String searchTerm = mSearchEditText.getQuery().toString();
         for (Feature feature : mFeatureList) {
             //For "expected" input, this should handle cases
             if (feature.properties.getPlace().toLowerCase().contains(searchTerm)) {
@@ -266,7 +266,7 @@ public class ListFragment extends Fragment implements IDataCallback {
             mQuakeCountTextView.setText(String.format(getActivity().getResources().getString(R.string.quake_count), mFeatureList.size()));
             mFeatureList.clear();
             mFeatureList = searchFeatures;
-            mSearchEditText.setText("");
+            mSearchEditText.setQuery("", false);
             mSearchBar.setVisibility(View.GONE);
             mSearchImageButton.setVisibility(View.VISIBLE);
             //close keyboard

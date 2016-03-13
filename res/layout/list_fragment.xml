@@ -18,8 +18,8 @@
             android:orientation="horizontal"
             android:visibility="gone">
 
-            <EditText
-                android:id="@+id/search_edit_text"
+            <SearchView
+                android:id="@+id/search_view"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
