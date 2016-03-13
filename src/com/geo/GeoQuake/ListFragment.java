@@ -100,8 +100,7 @@ public class ListFragment extends Fragment implements IDataCallback {
         mSearchImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInput(0, 0);
+                Utils.toggleKeyboard(getActivity());
                 mSearchBar.setVisibility(View.VISIBLE);
                 mSearchBar.requestFocus();
                 mSearchImageButton.setVisibility(View.INVISIBLE);
