@@ -276,12 +276,6 @@ public class ListFragment extends Fragment implements IDataCallback {
         setupList();
     }
 
-    public void updateData(FeatureCollection data) {
-        mFeatureCollection = data;
-        mFeatureList = mFeatureCollection.getFeatures();
-        setupList();
-    }
-
     @Override
     public void asyncUnderway() {
 

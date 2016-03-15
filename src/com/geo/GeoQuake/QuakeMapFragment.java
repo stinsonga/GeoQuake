@@ -256,11 +256,6 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
         outState.putBundle("mBundle", mBundle);
     }
 
-    public void updateData(FeatureCollection data) {
-        mFeatureCollection = data;
-        placeMarkers();
-    }
-
     @Override
     public void asyncUnderway() {
 
