@@ -56,16 +56,18 @@ public class Utils {
         boolean wifiOnly = context.getSharedPreferences(QUAKE_PREFS, Context.MODE_PRIVATE).getBoolean(WIFI_ONLY, false);
         try {
             ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            NetworkInfo network = cm.getActiveNetworkInfo();
+
             NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-            if (wifiOnly) {
-                if (wifi.isConnected()) {
+
+            if (network.getType() == ConnectivityManager.TYPE_WIFI) {
+                if (network.isConnected()) {
                     return true;
                 } else {
                     return false;
                 }
-            } else {
-                if (wifi.isConnected() || mobile.isConnected()) {
+            } else if (network.getType() == ConnectivityManager.TYPE_MOBILE) {
+                if (network.isConnected()) {
                     return true;
                 } else {
                     return false;
@@ -160,16 +162,16 @@ public class Utils {
             }
         }
         //Unreachable with current UI options... may return soon
-        else if(durationSelection == 3){
-            if(quakeSelection == 0){
+        else if (durationSelection == 3) {
+            if (quakeSelection == 0) {
                 return context.getString(R.string.significant_month);
-            }else if(quakeSelection == 1){
+            } else if (quakeSelection == 1) {
                 return context.getString(R.string._4_5_month);
-            }else if(quakeSelection == 2){
+            } else if (quakeSelection == 2) {
                 return context.getString(R.string._2_5_month);
-            }else if(quakeSelection == 3){
+            } else if (quakeSelection == 3) {
                 return context.getString(R.string._1_0_month);
-            }else if(quakeSelection == 4){
+            } else if (quakeSelection == 4) {
                 return context.getString(R.string.all_month);
             }
         }
@@ -217,7 +219,6 @@ public class Utils {
     }
 
     /**
-     *
      * @param context
      */
     public static void toggleKeyboard(Context context) {
