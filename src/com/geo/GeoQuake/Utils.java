@@ -72,6 +72,8 @@ public class Utils {
                 } else {
                     return false;
                 }
+            } else {
+                return false;
             }
 
         } catch (Exception e) {
