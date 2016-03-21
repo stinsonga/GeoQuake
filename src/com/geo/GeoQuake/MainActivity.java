@@ -6,13 +6,14 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
+//import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -32,7 +33,7 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
     LinearLayout mDrawerLinearLayout;
 
     @Bind(R.id.drawer_layout)
-    DrawerLayout mDrawerLayout;
+    FrameLayout mDrawerLayout;
 
     @Bind(R.id.quake_type_spinner)
     Spinner mQuakeTypeSpinner;
@@ -157,7 +158,8 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
                 invalidateOptionsMenu();
                 break;
             case R.id.action_refresh:
-                mDrawerLayout.closeDrawers();
+                //mDrawerLayout.closeDrawers();
+                mDrawerLinearLayout.setVisibility(View.VISIBLE);
                 if (!mAsyncUnderway) {
                     if (GeoQuakeDB.checkRefreshLimit(GeoQuakeDB.getTime(),
                             mSharedPreferences.getLong(Utils.REFRESH_LIMITER, 0))) {
@@ -178,10 +180,10 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
                 }
                 break;
             case R.id.action_settings:
-                if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                if (mDrawerLinearLayout.getVisibility() == View.VISIBLE) {
+                    mDrawerLinearLayout.setVisibility(View.GONE);
                 } else {
-                    mDrawerLayout.openDrawer(GravityCompat.START);
+                    mDrawerLinearLayout.setVisibility(View.VISIBLE);
                 }
                 break;
             default:
