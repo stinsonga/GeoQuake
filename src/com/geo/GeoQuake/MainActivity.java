@@ -299,17 +299,5 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
 
     }
 
-    public class QuakeDataEvent {
-        FeatureCollection mFeatureCollection;
-
-        public QuakeDataEvent(FeatureCollection featureCollection) {
-            this.mFeatureCollection = featureCollection;
-        }
-
-        public FeatureCollection getFeatureCollection() {
-            return mFeatureCollection;
-        }
-    }
-
 
 }

@@ -64,8 +64,6 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
         mBundle = new Bundle();
         mSharedPreferences = getActivity().getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
         mGeoQuakeDB = new GeoQuakeDB(getActivity());
-
-
     }
 
     @Nullable
