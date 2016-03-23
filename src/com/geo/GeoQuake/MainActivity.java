@@ -232,7 +232,13 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
                         + mDurationSelection)), this)) {
             mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection));
             Log.i(TAG, "no need for new data, setup fragment");
-            fireMapFragment();
+            if (isFirstLoad) {
+                Log.i(TAG, "firstLoad, set map fragment");
+                isFirstLoad = false;
+                fireMapFragment();
+            } else {
+                updateCurrentFragment();
+            }
         } else {
             Utils.fireToast(mDurationSelection, mStrengthSelection, this);
             mQuakeData = new QuakeData(this.getString(R.string.usgs_url),
@@ -245,6 +251,14 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
     public void fireMapFragment() {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mMapFragment)
                 .addToBackStack("stack").commit();
+    }
+
+    public void updateCurrentFragment() {
+       if(mSelectedFragment == 0) {
+           mMapFragment.onUpdateData();
+       } else {
+           mListFragment.onUpdateData();
+       }
     }
 
     /**
@@ -262,6 +276,8 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
             Log.i(TAG, "firstLoad, set map fragment");
             isFirstLoad = false;
             fireMapFragment();
+        } else {
+            updateCurrentFragment();
         }
     }
 
@@ -338,6 +354,5 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
             startActivity(new Intent(MainActivity.this, AboutActivity.class));
         }
     };
-
 
 }

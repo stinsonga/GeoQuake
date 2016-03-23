@@ -185,6 +185,7 @@ public class ListFragment extends Fragment implements IDataCallback {
      */
     public void setupList() {
         if (mFeatureList != null && mContext != null) {
+            Log.i(TAG, "setupList, with size: " + mFeatureList.size());
             mQuakeCountTextView.setText(String.format(mContext.getResources().getString(R.string.quake_count), mFeatureList.size()));
             //TODO: This could use some cleaning up
             mQuakeListAdapter = new QuakeListAdapter(mContext, mFeatureList);
@@ -287,6 +288,12 @@ public class ListFragment extends Fragment implements IDataCallback {
     public void dataCallback(FeatureCollection featureCollection) {
         Log.i(TAG, "got callback in fragment, set data");
         mFeatureCollection = featureCollection;
+        setupList();
+    }
+
+    public void onUpdateData() {
+        Log.i(TAG, "onUpdateData");
+        mFeatureCollection = ((MainActivity)getActivity()).getFeatures();
         setupList();
     }
 }

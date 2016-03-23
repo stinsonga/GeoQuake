@@ -189,6 +189,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
             }
             try {
                 if (mFeatureCollection != null && mMap != null) {
+                    Log.i(TAG, "placeMarkers, with size: " + mFeatureCollection.getFeatures().size());
                     for (Feature feature : mFeatureCollection.getFeatures()) {
                         LatLng coords = new LatLng(feature.getLatitude(), feature.getLongitude());
                         BitmapDescriptor quakeIcon;
@@ -262,6 +263,12 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     public void dataCallback(FeatureCollection featureCollection) {
         Log.i(TAG, "got callback in fragment, set data");
         mFeatureCollection = featureCollection;
+        placeMarkers();
+    }
+
+    public void onUpdateData() {
+        Log.i(TAG, "onUpdateData");
+        mFeatureCollection = ((MainActivity)getActivity()).getFeatures();
         placeMarkers();
     }
 }
