@@ -37,6 +37,7 @@ import butterknife.OnClick;
  * Created by gstinson on 2014-08-25.
  */
 public class ListFragment extends Fragment implements IDataCallback {
+    private static final String TAG = "ListFragment";
 
     @Bind(R.id.quakeListView)
     ListView mQuakeListView;

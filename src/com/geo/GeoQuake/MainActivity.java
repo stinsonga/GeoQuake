@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 //import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,7 +25,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class MainActivity extends FragmentActivity implements AdapterView.OnItemSelectedListener, IDataCallback {
-
+    private static final String TAG = "MainActivity";
     SharedPreferences mSharedPreferences;
     SharedPreferences.Editor mSharedPreferencesEditor;
     Bundle mBundle;
@@ -53,7 +54,6 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
     @Bind(R.id.loading_overlay)
     RelativeLayout mLoadingOverlay;
 
-    boolean mRefreshList = true;
     boolean mAsyncUnderway = false;
 
     FeatureCollection mFeatureCollection;
@@ -94,6 +94,7 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
     @Override
     protected void onResume() {
         super.onResume();
+        Log.i(TAG, "onResume");
         checkNetworkFetchData();
     }
 
@@ -166,7 +167,6 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
                         SharedPreferences.Editor editor = mSharedPreferences.edit();
                         editor.putLong(Utils.REFRESH_LIMITER, GeoQuakeDB.getTime());
                         editor.apply();
-                        mRefreshList = true;
                         checkNetworkFetchData();
                     } else {
                         Toast.makeText(this, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
@@ -217,16 +217,25 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
      * Send the request to the QuakeData class to grab new data
      */
     private void fetchData() {
+
         if (!mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection).isEmpty() &&
                 !Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mStrengthSelection, ""
                         + mDurationSelection)), this)) {
             mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection));
+            Log.i(TAG, "no need for new data, setup fragment");
+            fireMapFragment();
         } else {
             Utils.fireToast(mDurationSelection, mStrengthSelection, this);
             mQuakeData = new QuakeData(this.getString(R.string.usgs_url),
                     mDurationSelection, mStrengthSelection, this, this);
+            Log.i(TAG, "fetching data... await callback");
             mQuakeData.fetchData(this);
         }
+    }
+
+    public void fireMapFragment() {
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mMapFragment)
+                .addToBackStack("stack").commit();
     }
 
     /**
@@ -234,15 +243,16 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
      */
     @Override
     public void dataCallback(FeatureCollection featureCollection) {
+        Log.i(TAG, "got callback, set data");
         //update map with data
         mFeatureCollection = featureCollection; //mQuakeData.getFeatureCollection();
         mAsyncUnderway = false;
         setLoadingFinishedView();
 
         if (isFirstLoad) {
+            Log.i(TAG, "firstLoad, set map fragment");
             isFirstLoad = false;
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mMapFragment)
-                    .addToBackStack("stack").commit();
+            fireMapFragment();
         }
     }
 

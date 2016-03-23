@@ -10,6 +10,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,7 @@ import butterknife.ButterKnife;
 
 
 public class QuakeMapFragment extends Fragment implements IDataCallback {
-
+    private static final String TAG = "QuakeMapFragment";
     Bundle mBundle;
     HashMap<String, String> markerInfo = new HashMap<String, String>();
     SharedPreferences mSharedPreferences;
@@ -93,7 +94,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     @Override
     public void onResume() {
         super.onResume();
-
+        Log.i(TAG, "onResume");
         if (Utils.checkNetwork(getActivity())) {
             if (mMap == null) {
                 setUpMap();
@@ -119,9 +120,11 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     private void setUpMap() {
         if (Utils.checkNetwork(getActivity())) {
             if (mMap == null) {
+                Log.i(TAG, "setupMap, set listener");
                 mMapFragment.getMapAsync(new OnMapReadyCallback() {
                     @Override
                     public void onMapReady(GoogleMap googleMap) {
+                        Log.i(TAG, "onMapReady");
                         mMap = googleMap;
                         postSyncMapSetup();
                     }
