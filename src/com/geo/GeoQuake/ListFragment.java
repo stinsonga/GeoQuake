@@ -11,6 +11,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -284,6 +285,7 @@ public class ListFragment extends Fragment implements IDataCallback {
 
     @Override
     public void dataCallback(FeatureCollection featureCollection) {
+        Log.i(TAG, "got callback in fragment, set data");
         mFeatureCollection = featureCollection;
         setupList();
     }

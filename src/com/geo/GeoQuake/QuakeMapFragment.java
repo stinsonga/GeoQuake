@@ -260,6 +260,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
 
     @Override
     public void dataCallback(FeatureCollection featureCollection) {
+        Log.i(TAG, "got callback in fragment, set data");
         mFeatureCollection = featureCollection;
         placeMarkers();
     }

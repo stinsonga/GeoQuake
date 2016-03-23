@@ -1,19 +1,20 @@
 package com.geo.GeoQuake;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.GravityCompat;
-//import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -24,7 +25,7 @@ import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class MainActivity extends FragmentActivity implements AdapterView.OnItemSelectedListener, IDataCallback {
+public class MainActivity extends FragmentActivity implements IDataCallback {
     private static final String TAG = "MainActivity";
     SharedPreferences mSharedPreferences;
     SharedPreferences.Editor mSharedPreferencesEditor;
@@ -54,6 +55,9 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
     @Bind(R.id.loading_overlay)
     RelativeLayout mLoadingOverlay;
 
+    @Bind(R.id.about_button)
+    Button mAboutButton;
+
     boolean mAsyncUnderway = false;
 
     FeatureCollection mFeatureCollection;
@@ -80,6 +84,12 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
 
         mMapFragment = QuakeMapFragment.newInstance();
         mListFragment = ListFragment.newInstance();
+
+        mActionBarCheckbox.setOnCheckedChangeListener(checkListener);
+        mDurationTypeSpinner.setOnItemSelectedListener(spinnerListener);
+        mQuakeTypeSpinner.setOnItemSelectedListener(spinnerListener);
+        mCacheTimeSpinner.setOnItemSelectedListener(spinnerListener);
+        mAboutButton.setOnClickListener(aboutClickListener);
     }
 
     @Override
@@ -159,8 +169,7 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
                 invalidateOptionsMenu();
                 break;
             case R.id.action_refresh:
-                //mDrawerLayout.closeDrawers();
-                mDrawerLinearLayout.setVisibility(View.VISIBLE);
+                mDrawerLinearLayout.setVisibility(View.GONE);
                 if (!mAsyncUnderway) {
                     if (GeoQuakeDB.checkRefreshLimit(GeoQuakeDB.getTime(),
                             mSharedPreferences.getLong(Utils.REFRESH_LIMITER, 0))) {
@@ -283,29 +292,52 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
         });
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        switch (parent.getId()) {
-            case (R.id.quake_type_spinner):
-                mStrengthSelection = mQuakeTypeSpinner.getSelectedItemPosition();
-                break;
-            case (R.id.duration_type_spinner):
-                mDurationSelection = mDurationTypeSpinner.getSelectedItemPosition();
-                break;
-            case (R.id.cache_spinner):
-                Utils.changeCache(mCacheTimeSpinner.getSelectedItemPosition(), mSharedPreferences,
-                        getResources().getStringArray(R.array.cache_values));
-                break;
-            default:
-                break;
+    CheckBox.OnCheckedChangeListener checkListener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked) {
+                Log.i(TAG, "hide actionbar");
+                getActionBar().hide();
+            } else {
+                Log.i(TAG, "show actionbar");
+                getActionBar().show();
+            }
+        }
+    };
+
+
+    AdapterView.OnItemSelectedListener spinnerListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            switch (parent.getId()) {
+                case (R.id.quake_type_spinner):
+                    mStrengthSelection = mQuakeTypeSpinner.getSelectedItemPosition();
+                    break;
+                case (R.id.duration_type_spinner):
+                    mDurationSelection = mDurationTypeSpinner.getSelectedItemPosition();
+                    break;
+                case (R.id.cache_spinner):
+                    Utils.changeCache(mCacheTimeSpinner.getSelectedItemPosition(), mSharedPreferences,
+                            getResources().getStringArray(R.array.cache_values));
+                    break;
+                default:
+                    break;
+
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
 
         }
-    }
+    };
 
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
+    Button.OnClickListener aboutClickListener = new Button.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            startActivity(new Intent(MainActivity.this, AboutActivity.class));
+        }
+    };
 
 
 }

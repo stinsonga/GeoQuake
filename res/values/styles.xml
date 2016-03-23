@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="actionbar_color">#2E0854</color>
-    <color name="tab_select_color">#300A57</color>
 
     <style name="GeoQuakeTheme" parent="android:Theme.Holo">
         <item name="android:actionBarStyle">@style/ActionBarStyling</item>
