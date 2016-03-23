@@ -96,13 +96,11 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
 
         if (Utils.checkNetwork(getActivity())) {
             if (mMap == null) {
-
                 setUpMap();
             } else {
                 if (mFeatureCollection != null) {
                     placeMarkers();
                 }
-
             }
         } else {
             Utils.connectToast(getActivity());
@@ -128,8 +126,6 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
                         postSyncMapSetup();
                     }
                 });
-
-
             }
 
         } else {

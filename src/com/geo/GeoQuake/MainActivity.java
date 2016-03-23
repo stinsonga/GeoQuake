@@ -167,11 +167,7 @@ public class MainActivity extends FragmentActivity implements AdapterView.OnItem
                         editor.putLong(Utils.REFRESH_LIMITER, GeoQuakeDB.getTime());
                         editor.apply();
                         mRefreshList = true;
-                        if (Utils.checkNetwork(this)) {
-                            fetchData();
-                        } else {
-                            Utils.connectToast(this);
-                        }
+                        checkNetworkFetchData();
                     } else {
                         Toast.makeText(this, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
                     }
