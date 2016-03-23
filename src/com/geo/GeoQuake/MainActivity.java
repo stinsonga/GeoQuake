@@ -46,8 +46,8 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
     @Bind(R.id.cache_spinner)
     Spinner mCacheTimeSpinner;
 
-    @Bind(R.id.actionbar_toggle_checkbox)
-    CheckBox mActionBarCheckbox;
+//    @Bind(R.id.actionbar_toggle_checkbox)
+//    CheckBox mActionBarCheckbox;
 
     @Bind(R.id.wifi_checkbox)
     CheckBox mWifiCheckbox;
@@ -85,7 +85,7 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
         mMapFragment = QuakeMapFragment.newInstance();
         mListFragment = ListFragment.newInstance();
 
-        mActionBarCheckbox.setOnCheckedChangeListener(checkListener);
+//        mActionBarCheckbox.setOnCheckedChangeListener(checkListener);
         mDurationTypeSpinner.setOnItemSelectedListener(spinnerListener);
         mQuakeTypeSpinner.setOnItemSelectedListener(spinnerListener);
         mCacheTimeSpinner.setOnItemSelectedListener(spinnerListener);
@@ -237,7 +237,7 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
                 isFirstLoad = false;
                 fireMapFragment();
             } else {
-                updateCurrentFragment();
+                refreshCurrentFragment(mFeatureCollection);
             }
         } else {
             Utils.fireToast(mDurationSelection, mStrengthSelection, this);
@@ -248,16 +248,25 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
         }
     }
 
+    /**
+     * Essentially the default behaviour when we first enter the app
+     */
     public void fireMapFragment() {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mMapFragment)
                 .addToBackStack("stack").commit();
     }
 
-    public void updateCurrentFragment() {
+
+    /**
+     * Refresh the current fragment with new data
+     *
+     * @param featureCollection
+     */
+    public void refreshCurrentFragment(FeatureCollection featureCollection) {
        if(mSelectedFragment == 0) {
-           mMapFragment.onUpdateData();
+           mMapFragment.onUpdateData(featureCollection);
        } else {
-           mListFragment.onUpdateData();
+           mListFragment.onUpdateData(featureCollection);
        }
     }
 
@@ -277,7 +286,7 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
             isFirstLoad = false;
             fireMapFragment();
         } else {
-            updateCurrentFragment();
+            refreshCurrentFragment(featureCollection);
         }
     }
 

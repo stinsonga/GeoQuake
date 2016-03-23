@@ -58,25 +58,25 @@
             android:spinnerMode="dropdown" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="7dp">
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:padding="7dp">-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="start"
-            android:text="@string/hide_action_bar"
-            android:textSize="16sp" />
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:gravity="start"-->
+            <!--android:text="@string/hide_action_bar"-->
+            <!--android:textSize="16sp" />-->
 
-        <CheckBox
-            android:id="@+id/actionbar_toggle_checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="end" />
-    </LinearLayout>
+        <!--<CheckBox-->
+            <!--android:id="@+id/actionbar_toggle_checkbox"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:gravity="end" />-->
+    <!--</LinearLayout>-->
 
     <LinearLayout
         android:layout_width="fill_parent"

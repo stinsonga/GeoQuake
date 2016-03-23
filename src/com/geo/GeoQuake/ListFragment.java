@@ -291,9 +291,10 @@ public class ListFragment extends Fragment implements IDataCallback {
         setupList();
     }
 
-    public void onUpdateData() {
+    public void onUpdateData(FeatureCollection featureCollection) {
         Log.i(TAG, "onUpdateData");
-        mFeatureCollection = ((MainActivity)getActivity()).getFeatures();
+        mFeatureCollection = featureCollection;
+        mFeatureList = featureCollection.getFeatures();
         setupList();
     }
 }
