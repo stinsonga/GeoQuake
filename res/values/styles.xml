@@ -10,9 +10,9 @@
     </style>
 
     <dimen name="quake_list_font_size">15sp</dimen>
-    <dimen name="quake_list_padding">10dp</dimen>
-    <dimen name="quake_list_margin">10dp</dimen>
+    <dimen name="quake_list_padding">16dp</dimen>
+    <dimen name="quake_list_margin">16dp</dimen>
 
-    <dimen name="bar_margin">6dp</dimen>
-    <dimen name="about_padding">10dp</dimen>
+    <dimen name="bar_margin">16dp</dimen>
+    <dimen name="about_padding">8dp</dimen>
 </resources>

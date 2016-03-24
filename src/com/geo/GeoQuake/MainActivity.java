@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -28,11 +27,10 @@ import butterknife.ButterKnife;
 public class MainActivity extends FragmentActivity implements IDataCallback {
     private static final String TAG = "MainActivity";
     SharedPreferences mSharedPreferences;
-    SharedPreferences.Editor mSharedPreferencesEditor;
     Bundle mBundle;
 
     @Bind(R.id.drawer_root)
-    LinearLayout mDrawerLinearLayout;
+    RelativeLayout mDrawerLinearLayout;
 
     @Bind(R.id.drawer_layout)
     FrameLayout mDrawerLayout;
@@ -46,17 +44,11 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
     @Bind(R.id.cache_spinner)
     Spinner mCacheTimeSpinner;
 
-//    @Bind(R.id.actionbar_toggle_checkbox)
-//    CheckBox mActionBarCheckbox;
-
     @Bind(R.id.wifi_checkbox)
     CheckBox mWifiCheckbox;
 
     @Bind(R.id.loading_overlay)
     RelativeLayout mLoadingOverlay;
-
-    @Bind(R.id.about_button)
-    Button mAboutButton;
 
     boolean mAsyncUnderway = false;
 
@@ -85,11 +77,11 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
         mMapFragment = QuakeMapFragment.newInstance();
         mListFragment = ListFragment.newInstance();
 
-//        mActionBarCheckbox.setOnCheckedChangeListener(checkListener);
         mDurationTypeSpinner.setOnItemSelectedListener(spinnerListener);
         mQuakeTypeSpinner.setOnItemSelectedListener(spinnerListener);
+        mQuakeTypeSpinner.setSelection(4); //default selection
         mCacheTimeSpinner.setOnItemSelectedListener(spinnerListener);
-        mAboutButton.setOnClickListener(aboutClickListener);
+        mWifiCheckbox.setOnCheckedChangeListener(checkListener);
     }
 
     @Override
@@ -190,6 +182,9 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
                 } else {
                     mDrawerLinearLayout.setVisibility(View.VISIBLE);
                 }
+                break;
+            case R.id.action_info:
+                startActivity(new Intent(MainActivity.this, AboutActivity.class));
                 break;
             default:
                 break;
@@ -321,11 +316,9 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if (isChecked) {
-                Log.i(TAG, "hide actionbar");
-                getActionBar().hide();
+
             } else {
-                Log.i(TAG, "show actionbar");
-                getActionBar().show();
+
             }
         }
     };
@@ -354,13 +347,6 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
 
-        }
-    };
-
-    Button.OnClickListener aboutClickListener = new Button.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            startActivity(new Intent(MainActivity.this, AboutActivity.class));
         }
     };
 

@@ -3,7 +3,6 @@ package com.geo.GeoQuake;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.location.Criteria;
 import android.location.Location;
@@ -44,8 +43,6 @@ public class ListFragment extends Fragment implements IDataCallback {
     ListView mQuakeListView;
 
     QuakeListAdapter mQuakeListAdapter;
-    SharedPreferences mSharedPreferences;
-    SharedPreferences.Editor mSharedPreferencesEditor;
     Bundle mBundle;
 
     GeoQuakeDB mGeoQuakeDB;
@@ -86,7 +83,6 @@ public class ListFragment extends Fragment implements IDataCallback {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        mSharedPreferences = getActivity().getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
         mBundle = new Bundle();
         mGeoQuakeDB = new GeoQuakeDB(getActivity());
 

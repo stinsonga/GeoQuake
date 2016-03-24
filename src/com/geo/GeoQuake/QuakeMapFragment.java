@@ -1,9 +1,7 @@
 package com.geo.GeoQuake;
 
 import android.support.v4.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.Location;
@@ -37,8 +35,6 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     private static final String TAG = "QuakeMapFragment";
     Bundle mBundle;
     HashMap<String, String> markerInfo = new HashMap<String, String>();
-    SharedPreferences mSharedPreferences;
-    SharedPreferences.Editor mSharedPreferencesEditor;
 
     private GoogleMap mMap;
     GeoQuakeDB mGeoQuakeDB;
@@ -63,7 +59,6 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
         setHasOptionsMenu(true);
 
         mBundle = new Bundle();
-        mSharedPreferences = getActivity().getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
         mGeoQuakeDB = new GeoQuakeDB(getActivity());
     }
 

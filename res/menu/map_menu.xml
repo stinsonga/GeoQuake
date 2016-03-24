@@ -2,7 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/action_list" android:title="@string/menu_list_view" android:showAsAction="ifRoom" android:icon="@drawable/ic_perm_group_user_dictionary"/>
-    <!-- <item android:id="@+id/action_location" android:title="@string/menu_my_location" android:showAsAction="ifRoom" android:icon="@drawable/ic_menu_mylocation"/> -->
     <item android:id="@+id/action_refresh" android:title="@string/menu_refresh" android:showAsAction="ifRoom" android:icon="@drawable/refresh"/>
     <item android:id="@+id/action_settings" android:title="@string/app_settings" android:showAsAction="ifRoom" android:icon="@drawable/ic_settings"/>
 </menu>
