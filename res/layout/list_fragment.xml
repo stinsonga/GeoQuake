@@ -12,10 +12,9 @@
         <LinearLayout
             android:id="@+id/search_bar"
             android:layout_width="match_parent"
-            android:padding="@dimen/quake_list_padding"
+            android:padding="8dp"
             android:layout_height="60dp"
-            android:orientation="horizontal"
-            android:visibility="gone">
+            android:orientation="horizontal">
 
             <SearchView
                 android:id="@+id/search_view"
@@ -24,12 +23,6 @@
                 android:layout_weight="1"
                 android:hint="@string/search_hint"
                 android:singleLine="true" />
-
-            <Button
-                android:id="@+id/search_button"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="@string/menu_search" />
         </LinearLayout>
 
         <LinearLayout
@@ -42,7 +35,7 @@
 
             <TextView
                 android:id="@+id/count_textview"
-                android:layout_weight="0.6"
+                android:layout_weight="0.8"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent" />
             <ImageView
@@ -55,15 +48,6 @@
                 android:src="@drawable/ic_menu_mylocation"
                 />
 
-            <ImageView
-                android:id="@+id/search_image_button"
-                android:layout_weight="0.2"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:gravity="end"
-                android:contentDescription="@string/menu_search"
-                android:src="@drawable/ic_menu_search"
-                />
         </LinearLayout>
 
         <ListView

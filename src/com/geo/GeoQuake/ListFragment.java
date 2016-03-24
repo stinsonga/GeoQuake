@@ -23,6 +23,8 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -54,13 +56,10 @@ public class ListFragment extends Fragment implements IDataCallback {
     LinearLayout mSearchBar;
 
     @Bind(R.id.search_view)
-    SearchView mSearchEditText;
+    SearchView mSearchView;
 
     @Bind(R.id.count_textview)
     TextView mQuakeCountTextView;
-
-    @Bind(R.id.search_image_button)
-    ImageView mSearchImageButton;
 
     @Bind(R.id.proximity_image_button)
     ImageView mProximityImageButton;
@@ -95,15 +94,7 @@ public class ListFragment extends Fragment implements IDataCallback {
         View view = inflater.inflate(R.layout.list_fragment, container, false);
         ButterKnife.bind(this, view);
 
-        mSearchImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.toggleKeyboard(getActivity());
-                mSearchBar.setVisibility(View.VISIBLE);
-                mSearchBar.requestFocus();
-                mSearchImageButton.setVisibility(View.INVISIBLE);
-            }
-        });
+        mSearchView.setOnQueryTextListener(queryTextListener);
 
         return view;
     }
@@ -246,10 +237,9 @@ public class ListFragment extends Fragment implements IDataCallback {
      * but we can pretty well assume that the USGS data isn't giving us any
      * oddball characters in the result list
      */
-    @OnClick(R.id.search_image_button)
     public void doSearch() {
         ArrayList<Feature> searchFeatures = new ArrayList<>();
-        String searchTerm = mSearchEditText.getQuery().toString();
+        String searchTerm = mSearchView.getQuery().toString();
         for (Feature feature : mFeatureList) {
             //For "expected" input, this should handle cases
             if (feature.properties.getPlace().toLowerCase().contains(searchTerm)) {
@@ -264,9 +254,7 @@ public class ListFragment extends Fragment implements IDataCallback {
             mQuakeCountTextView.setText(String.format(getActivity().getResources().getString(R.string.quake_count), mFeatureList.size()));
             mFeatureList.clear();
             mFeatureList = searchFeatures;
-            mSearchEditText.setQuery("", false);
-            mSearchBar.setVisibility(View.GONE);
-            mSearchImageButton.setVisibility(View.VISIBLE);
+            mSearchView.setQuery("", false);
             //close keyboard
             InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
@@ -274,6 +262,21 @@ public class ListFragment extends Fragment implements IDataCallback {
         }
         setupList();
     }
+
+    SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            if(!StringUtils.isEmpty(query)) {
+                doSearch();
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            return false;
+        }
+    };
 
     @Override
     public void asyncUnderway() {
@@ -284,12 +287,14 @@ public class ListFragment extends Fragment implements IDataCallback {
     public void dataCallback(FeatureCollection featureCollection) {
         Log.i(TAG, "got callback in fragment, set data");
         mFeatureCollection = featureCollection;
+        basicSort(mFeatureCollection);
         setupList();
     }
 
     public void onUpdateData(FeatureCollection featureCollection) {
         Log.i(TAG, "onUpdateData");
         mFeatureCollection = featureCollection;
+        basicSort(mFeatureCollection);
         mFeatureList = featureCollection.getFeatures();
         setupList();
     }
