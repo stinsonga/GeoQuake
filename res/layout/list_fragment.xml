@@ -35,7 +35,7 @@
 
             <TextView
                 android:id="@+id/count_textview"
-                android:layout_weight="0.8"
+                android:layout_weight="0.82"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent" />
             <ImageView

@@ -194,6 +194,7 @@ public class ListFragment extends Fragment implements IDataCallback {
 
     /**
      * Sorting a feature collection.
+     * TODO: see why this isn't working consistently
      *
      * @param featureCollection
      */
@@ -280,7 +281,7 @@ public class ListFragment extends Fragment implements IDataCallback {
 
     @Override
     public void asyncUnderway() {
-
+        //unused
     }
 
     @Override
@@ -291,6 +292,11 @@ public class ListFragment extends Fragment implements IDataCallback {
         setupList();
     }
 
+    /**
+     * Called from activity on refresh
+     *
+     * @param featureCollection
+     */
     public void onUpdateData(FeatureCollection featureCollection) {
         Log.i(TAG, "onUpdateData");
         mFeatureCollection = featureCollection;

@@ -261,6 +261,11 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
         placeMarkers();
     }
 
+    /**
+     * Called from activity on refresh
+     *
+     * @param featureCollection
+     */
     public void onUpdateData(FeatureCollection featureCollection) {
         Log.i(TAG, "onUpdateData");
         mFeatureCollection = featureCollection;
