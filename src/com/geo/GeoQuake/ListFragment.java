@@ -108,7 +108,7 @@ public class ListFragment extends Fragment implements IDataCallback {
             setupLocation();
             if (((MainActivity) getActivity()).getFeatures() != null && ((MainActivity) getActivity()).getFeatures().getFeatures().size() > 0) {
                 mFeatureList = ((MainActivity) getActivity()).getFeatures().getFeatures();
-                setupList();
+                setupList(mFeatureList);
             } else {
                 ((MainActivity) getActivity()).checkNetworkFetchData();
             }
@@ -170,22 +170,22 @@ public class ListFragment extends Fragment implements IDataCallback {
     /**
      * This sorts the list and sets the adapter
      */
-    public void setupList() {
-        if (mFeatureList != null && mContext != null) {
+    public void setupList(final ArrayList<Feature> features) {
+        if (features != null && mContext != null) {
             Log.i(TAG, "setupList, with size: " + mFeatureList.size());
             mQuakeCountTextView.setText(String.format(mContext.getResources().getString(R.string.quake_count), mFeatureList.size()));
             //TODO: This could use some cleaning up
-            mQuakeListAdapter = new QuakeListAdapter(mContext, mFeatureList);
+            mQuakeListAdapter = new QuakeListAdapter(mContext, features);
             mQuakeListView.setAdapter(mQuakeListAdapter);
             mQuakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Intent intent = new Intent(mContext, WebInfoActivity.class);
-                    intent.putExtra("url", mFeatureList.get(position).getProperties().getUrl());
+                    intent.putExtra("url", features.get(position).getProperties().getUrl());
                     startActivity(intent);
                 }
             });
-            if (mFeatureList.size() == 0) {
+            if (features.size() == 0) {
                 Toast.makeText(mContext, mContext.getResources().getString(R.string.empty_list)
                         , Toast.LENGTH_LONG).show();
             }
@@ -230,7 +230,7 @@ public class ListFragment extends Fragment implements IDataCallback {
         }
         mFeatureList.clear();
         mFeatureList = proximityList;
-        setupList();
+        setupList(mFeatureList);
     }
 
     /**
@@ -243,7 +243,8 @@ public class ListFragment extends Fragment implements IDataCallback {
         String searchTerm = mSearchView.getQuery().toString();
         for (Feature feature : mFeatureList) {
             //For "expected" input, this should handle cases
-            if (feature.properties.getPlace().toLowerCase().contains(searchTerm)) {
+            if (feature.getProperties().getPlace() != null
+                    && feature.getProperties().getPlace().toLowerCase().contains(searchTerm)) {
                 searchFeatures.add(feature);
             }
         }
@@ -253,15 +254,13 @@ public class ListFragment extends Fragment implements IDataCallback {
                     , Toast.LENGTH_LONG).show();
         } else {
             mQuakeCountTextView.setText(String.format(getActivity().getResources().getString(R.string.quake_count), mFeatureList.size()));
-            mFeatureList.clear();
-            mFeatureList = searchFeatures;
             mSearchView.setQuery("", false);
             //close keyboard
             InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
-
+            setupList(searchFeatures);
         }
-        setupList();
+
     }
 
     SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
@@ -289,7 +288,7 @@ public class ListFragment extends Fragment implements IDataCallback {
         Log.i(TAG, "got callback in fragment, set data");
         mFeatureCollection = featureCollection;
         basicSort(mFeatureCollection);
-        setupList();
+        setupList(mFeatureCollection.getFeatures());
     }
 
     /**
@@ -302,6 +301,6 @@ public class ListFragment extends Fragment implements IDataCallback {
         mFeatureCollection = featureCollection;
         basicSort(mFeatureCollection);
         mFeatureList = featureCollection.getFeatures();
-        setupList();
+        setupList(mFeatureList);
     }
 }
