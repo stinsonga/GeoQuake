@@ -6,7 +6,7 @@
     android:clickable="true"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="@color/options_background">
+    android:background="@color/actionbar_color">
 
     <LinearLayout
         android:id="@+id/spinner_container"
