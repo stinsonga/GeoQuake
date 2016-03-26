@@ -194,12 +194,11 @@ public class ListFragment extends Fragment implements IDataCallback {
 
     /**
      * Sorting a feature collection.
-     * TODO: see why this isn't working consistently
      *
-     * @param featureCollection
+     * @param features
      */
-    public void basicSort(FeatureCollection featureCollection) {
-        Collections.sort(featureCollection.getFeatures(), new Comparator<Feature>() {
+    public void basicSort(ArrayList<Feature> features) {
+        Collections.sort(features, new Comparator<Feature>() {
             @Override
             public int compare(Feature lhs, Feature rhs) {
                 //Using Double's compare method makes this pretty straightforward.
@@ -234,9 +233,8 @@ public class ListFragment extends Fragment implements IDataCallback {
     }
 
     /**
-     * Crude indeed. This won't be very robust if we're getting into unicode,
-     * but we can pretty well assume that the USGS data isn't giving us any
-     * oddball characters in the result list
+     * Crude indeed. But it works 'enough'
+     *
      */
     public void doSearch() {
         ArrayList<Feature> searchFeatures = new ArrayList<>();
@@ -287,8 +285,9 @@ public class ListFragment extends Fragment implements IDataCallback {
     public void dataCallback(FeatureCollection featureCollection) {
         Log.i(TAG, "got callback in fragment, set data");
         mFeatureCollection = featureCollection;
-        basicSort(mFeatureCollection);
-        setupList(mFeatureCollection.getFeatures());
+        mFeatureList = featureCollection.getFeatures();
+        basicSort(mFeatureList);
+        setupList(mFeatureList);
     }
 
     /**
@@ -299,8 +298,8 @@ public class ListFragment extends Fragment implements IDataCallback {
     public void onUpdateData(FeatureCollection featureCollection) {
         Log.i(TAG, "onUpdateData");
         mFeatureCollection = featureCollection;
-        basicSort(mFeatureCollection);
         mFeatureList = featureCollection.getFeatures();
+        basicSort(mFeatureList);
         setupList(mFeatureList);
     }
 }
