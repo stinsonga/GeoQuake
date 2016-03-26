@@ -35,6 +35,7 @@
         android:layout_below="@id/spinner_container"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
         android:orientation="horizontal">
 
         <TextView
@@ -57,29 +58,29 @@
             android:spinnerMode="dropdown" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/wifi_check_container"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/cache_container"
-        android:orientation="horizontal">
+    <!--<LinearLayout-->
+        <!--android:id="@+id/wifi_check_container"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@id/cache_container"-->
+        <!--android:orientation="horizontal">-->
 
-        <TextView
-            android:id="@+id/wifi_label"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:gravity="start"
-            android:text="@string/wifi_refresh_only_label"
-            android:textSize="16sp" />
+        <!--<TextView-->
+            <!--android:id="@+id/wifi_label"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="0.5"-->
+            <!--android:gravity="start"-->
+            <!--android:text="@string/wifi_refresh_only_label"-->
+            <!--android:textSize="16sp" />-->
 
-        <CheckBox
-            android:id="@+id/wifi_checkbox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:gravity="end" />
+        <!--<CheckBox-->
+            <!--android:id="@+id/wifi_checkbox"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="0.5"-->
+            <!--android:gravity="end" />-->
 
-    </LinearLayout>
+    <!--</LinearLayout>-->
 
 </RelativeLayout>

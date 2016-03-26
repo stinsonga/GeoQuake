@@ -44,8 +44,8 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
     @Bind(R.id.cache_spinner)
     Spinner mCacheTimeSpinner;
 
-    @Bind(R.id.wifi_checkbox)
-    CheckBox mWifiCheckbox;
+//    @Bind(R.id.wifi_checkbox)
+//    CheckBox mWifiCheckbox;
 
     @Bind(R.id.loading_overlay)
     RelativeLayout mLoadingOverlay;
@@ -81,12 +81,12 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
         mQuakeTypeSpinner.setOnItemSelectedListener(spinnerListener);
         mQuakeTypeSpinner.setSelection(4); //default selection
         mCacheTimeSpinner.setOnItemSelectedListener(spinnerListener);
-        mWifiCheckbox.setOnCheckedChangeListener(checkListener);
+//        mWifiCheckbox.setOnCheckedChangeListener(checkListener);
     }
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
             getSupportFragmentManager().popBackStackImmediate();
         } else {
             finish();

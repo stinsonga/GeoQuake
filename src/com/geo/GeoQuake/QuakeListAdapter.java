@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+
 import java.util.ArrayList;
 
 /**
@@ -44,8 +46,15 @@ public class QuakeListAdapter extends ArrayAdapter<Feature> {
         if(feature != null){
             ViewHolder vh = (ViewHolder) view.getTag();
             vh.magnitudeTextView.setText(""+feature.getProperties().getMag());
+            vh.magnitudeTextView.setTextColor(Color.WHITE);
             vh.locationTextView.setText(feature.getProperties().getPlace());
-            if(feature.getProperties().getMag() >= 4.50) {
+            if (feature.getProperties().getMag() <= 1.00) {
+                vh.magnitudeTextView.setTextColor(Color.GREEN);
+            } else if (feature.getProperties().getMag() <= 2.50) {
+                vh.magnitudeTextView.setTextColor(Color.YELLOW);
+            } else if (feature.getProperties().getMag() <= 4.50) {
+                vh.magnitudeTextView.setTextColor(mContext.getResources().getColor(R.color.orange));
+            } else {
                 vh.magnitudeTextView.setTextColor(Color.RED);
             }
         }

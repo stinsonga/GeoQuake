@@ -4,5 +4,6 @@
     <color name="tab_select_color">#300A57</color>
     <color name="options_background">#802E0854</color>
     <color name="transparent">#00000000</color>
-
+    <color name="grey">#CCC</color>
+    <color name="orange">#FE9A2E</color>
 </resources>
