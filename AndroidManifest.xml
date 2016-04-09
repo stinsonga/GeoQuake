@@ -35,7 +35,6 @@
             android:name=".AboutActivity"
             android:label="About GeoQuake"
             android:parentActivityName=".MainActivity" />
-
         <activity
             android:name=".MainActivity"
             android:label="GeoQuake">
@@ -53,6 +52,10 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="@string/google_maps_api_key" />
 
+        <service
+            android:name=".QuakeService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>
