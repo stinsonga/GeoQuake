@@ -53,12 +53,9 @@ public class Utils {
      * @return true if the network connection is ok, false otherwise
      */
     public static boolean checkNetwork(Context context) {
-        boolean wifiOnly = context.getSharedPreferences(QUAKE_PREFS, Context.MODE_PRIVATE).getBoolean(WIFI_ONLY, false);
         try {
             ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo network = cm.getActiveNetworkInfo();
-
-            NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
             if (network.getType() == ConnectivityManager.TYPE_WIFI) {
                 if (network.isConnected()) {
@@ -86,8 +83,6 @@ public class Utils {
     public static void changeCache(int position, SharedPreferences sp, String[] cacheArray) {
         SharedPreferences.Editor editor = sp.edit();
         switch (position) {
-            //Crude fix for the fact that the spinner prompt doesn't seem to work, or perhaps
-            //I don't get precisely how it is supposed to work, if at all.
             case 0:
                 break;
             case 1:
@@ -218,14 +213,6 @@ public class Utils {
         } else {
             return false; //data still good, keep it
         }
-    }
-
-    /**
-     * @param context
-     */
-    public static void toggleKeyboard(Context context) {
-        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInput(0, 0);
     }
 
 

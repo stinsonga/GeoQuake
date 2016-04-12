@@ -8,7 +8,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.View;
 
 public class QuakeService extends Service {
 
