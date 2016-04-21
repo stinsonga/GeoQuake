@@ -8,8 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-
 import java.util.ArrayList;
 
 /**
@@ -20,32 +18,34 @@ public class QuakeListAdapter extends ArrayAdapter<Feature> {
     private Context mContext;
     ArrayList<Feature> mFeature;
 
-    public QuakeListAdapter(Context context, ArrayList<Feature> features){
+    public QuakeListAdapter(Context context, ArrayList<Feature> features) {
         super(context, R.layout.quake_list_item_layout, features);
         this.mContext = context;
         this.mFeature = features;
     }
 
-    static class ViewHolder {
+    static class QuakeListViewHolder {
         TextView magnitudeTextView;
         TextView locationTextView;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent){
+    public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
         if (view == null) {
             LayoutInflater inflater = LayoutInflater.from(mContext);
             view = inflater.inflate(R.layout.quake_list_item_layout, null);
-            ViewHolder viewHolder = new ViewHolder();
-            viewHolder.magnitudeTextView = (TextView) view.findViewById(R.id.list_magnitude_text);
-            viewHolder.locationTextView = (TextView) view.findViewById(R.id.list_location_text);
-            view.setTag(viewHolder);
+            QuakeListViewHolder quakeListViewHolder = new QuakeListViewHolder();
+            quakeListViewHolder.magnitudeTextView = (TextView) view.findViewById(R.id.list_magnitude_text);
+            quakeListViewHolder.locationTextView = (TextView) view.findViewById(R.id.list_location_text);
+            view.setTag(quakeListViewHolder);
         }
+
         Feature feature = mFeature.get(position);
-        if(feature != null){
-            ViewHolder vh = (ViewHolder) view.getTag();
-            vh.magnitudeTextView.setText(""+feature.getProperties().getMag());
+        
+        if (feature != null) {
+            QuakeListViewHolder vh = (QuakeListViewHolder) view.getTag();
+            vh.magnitudeTextView.setText("" + feature.getProperties().getMag());
             vh.magnitudeTextView.setTextColor(Color.WHITE);
             vh.locationTextView.setText(feature.getProperties().getPlace());
             if (feature.getProperties().getMag() <= 1.00) {
