@@ -42,10 +42,12 @@ public class QuakeListAdapter extends ArrayAdapter<Feature> {
         }
 
         Feature feature = mFeature.get(position);
-        
+
         if (feature != null) {
             QuakeListViewHolder vh = (QuakeListViewHolder) view.getTag();
-            vh.magnitudeTextView.setText("" + feature.getProperties().getMag());
+            String magnitude = "" + feature.getProperties().getMag(); //String var to get AS to quit complaining about concatenation
+
+            vh.magnitudeTextView.setText(magnitude);
             vh.magnitudeTextView.setTextColor(Color.WHITE);
             vh.locationTextView.setText(feature.getProperties().getPlace());
             if (feature.getProperties().getMag() <= 1.00) {

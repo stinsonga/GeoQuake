@@ -28,7 +28,7 @@ public class QuakeData {
     /**
      * Constructor... takes only the url for USGS, which should be a resource
      *
-     * @param usgsUrl
+     * @param usgsUrl url being used to get quake data
      */
     public QuakeData(String usgsUrl, int quakeDuration, int quakeType, IDataCallback dataCallback, Context context) {
         this.usgsUrl = usgsUrl;
@@ -38,16 +38,8 @@ public class QuakeData {
         this.mContext = context;
         this.mGeoQuakeDB = new GeoQuakeDB(context);
     }
-
     /**
-     * @return
-     */
-    public FeatureCollection getFeatureCollection() {
-        return mFeatureCollection;
-    }
-
-    /**
-     * @param context
+     * @param context needed for call to processData
      * @return
      */
     public void fetchData(Context context) {
@@ -55,7 +47,7 @@ public class QuakeData {
     }
 
     /**
-     * @param context
+     * @param context passing in context here, needed for calls within method
      */
     private void processData(final Context context) {
         if (needToRefreshData()) {
@@ -107,10 +99,9 @@ public class QuakeData {
             InputStream inputStream = connect.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
             String dataResponse = "";
-            String currentStream = "";
-            while ((currentStream = bufferedReader.readLine()) != null) {
+            String currentStream;
+            while ((currentStream = bufferedReader.readLine()) != null)
                 dataResponse += currentStream;
-            }
             if (mGeoQuakeDB.getData("" + mQuakeType, "" + mQuakeDuration).isEmpty()) {
                 mGeoQuakeDB.setData("" + mQuakeType, "" + mQuakeDuration, dataResponse);
             } else {
@@ -126,7 +117,7 @@ public class QuakeData {
     /**
      * Checking to see if there is already data stored, and if it should be used
      *
-     * @return
+     * @return true if we need to refresh data
      */
     private boolean needToRefreshData() {
         //first check to see if results are empty
