@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 /**
@@ -14,9 +13,7 @@ public class Utils {
 
     //SharedPrefs Constants
     public static final String QUAKE_PREFS = "quake_prefs";
-    public static final String CACHE_LIMITER = "cache_limiter";
     public static final String REFRESH_LIMITER = "refresh_limiter";
-    public static final String WIFI_ONLY = "wifi_only";
     public static final String CACHE_TIME = "cache_time";
 
     //Quake types
@@ -64,11 +61,7 @@ public class Utils {
                     return false;
                 }
             } else if (network.getType() == ConnectivityManager.TYPE_MOBILE) {
-                if (network.isConnected()) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return network.isConnected();
             } else {
                 return false;
             }
@@ -202,17 +195,14 @@ public class Utils {
      * We'll use this method to check a row's timestamp vs the current time, to determine whether
      * or not to overwrite
      *
-     * @param timeStamp
-     * @return
+     * @param timeStamp current timestamp
+     * @param context from the activity that calls this method
+     * @return boolean representing whether or not our DB row is expired
      */
     public static boolean isExpired(long timeStamp, Context context) {
         SharedPreferences sp = context.getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
         //default cache time set at 5 minutes (300000 ms)
-        if (GeoQuakeDB.getTime() - timeStamp > Long.parseLong(sp.getString(Utils.CACHE_TIME, "300000"))) {
-            return true; //need to refresh data
-        } else {
-            return false; //data still good, keep it
-        }
+        return (GeoQuakeDB.getTime() - timeStamp > Long.parseLong(sp.getString(Utils.CACHE_TIME, "300000")));
     }
 
 
