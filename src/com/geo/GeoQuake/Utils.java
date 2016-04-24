@@ -54,13 +54,7 @@ public class Utils {
             ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo network = cm.getActiveNetworkInfo();
 
-            if (network.getType() == ConnectivityManager.TYPE_WIFI) {
-                if (network.isConnected()) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else if (network.getType() == ConnectivityManager.TYPE_MOBILE) {
+            if (network.getType() == ConnectivityManager.TYPE_WIFI || network.getType() == ConnectivityManager.TYPE_MOBILE) {
                 return network.isConnected();
             } else {
                 return false;
