@@ -1,5 +1,7 @@
 package com.geo.GeoQuake;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,10 +22,6 @@ public class Feature {
     protected double depth;
     protected Properties properties;
 
-    public Feature(){
-
-    }
-
     public Feature(JSONObject jsonObject){
         try{
             this.type = jsonObject.getString("type");
@@ -35,7 +33,7 @@ public class Feature {
             this.depth = geometry.getJSONArray("coordinates").getDouble(2);
             this.properties = new Properties(propertiesJson);
         } catch(JSONException je){
-            //TODO handle it
+            Log.e("Feature object except", je.getMessage());
         }
     }
 

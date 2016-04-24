@@ -144,6 +144,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
                 mMap.setMyLocationEnabled(true);
             }
 
+            //TODO: handle deprecated methods
             mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
                 @Override
                 public void onMyLocationChange(Location arg0) {
@@ -227,7 +228,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     }
 
     /**
-     * @param config
+     * @param config value of Configuration object passed in by the system (as this is an overridden method)
      */
     @Override
     public void onConfigurationChanged(Configuration config) {
@@ -241,7 +242,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     }
 
     /**
-     * @param outState
+     * @param outState Bundle to be saved
      */
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -264,7 +265,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     /**
      * Called from activity on refresh
      *
-     * @param featureCollection
+     * @param featureCollection a FeatureCollection object sent by the activity
      */
     public void onUpdateData(FeatureCollection featureCollection) {
         Log.i(TAG, "onUpdateData");

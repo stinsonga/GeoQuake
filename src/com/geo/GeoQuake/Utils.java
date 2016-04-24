@@ -35,14 +35,15 @@ public class Utils {
     public static final String WEEK_45 = "week_45";
     public static final String WEEK_SIG = "week_significant";
 
-    public static final String MONTH_ALL = "month_all";
-    public static final String MONTH_1 = "month_1";
-    public static final String MONTH_25 = "month_25";
-    public static final String MONTH_45 = "month_45";
-    public static final String MONTH_SIG = "month_significant";
-
-    public static final String[] ALL_TYPES_ARRAY = {HOUR_ALL, HOUR_1, HOUR_25, HOUR_45, HOUR_SIG, DAY_ALL, DAY_1,
-            DAY_25, DAY_45, DAY_SIG, WEEK_ALL, WEEK_1, WEEK_25, WEEK_45, WEEK_SIG};
+    //TODO: reinstate if we ever use these
+//    public static final String MONTH_ALL = "month_all";
+//    public static final String MONTH_1 = "month_1";
+//    public static final String MONTH_25 = "month_25";
+//    public static final String MONTH_45 = "month_45";
+//    public static final String MONTH_SIG = "month_significant";
+//
+//    public static final String[] ALL_TYPES_ARRAY = {HOUR_ALL, HOUR_1, HOUR_25, HOUR_45, HOUR_SIG, DAY_ALL, DAY_1,
+//            DAY_25, DAY_45, DAY_SIG, WEEK_ALL, WEEK_1, WEEK_25, WEEK_45, WEEK_SIG};
 
     public static final long REFRESH_LIMITER_TIME = 10000;
 
@@ -54,11 +55,8 @@ public class Utils {
             ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo network = cm.getActiveNetworkInfo();
 
-            if (network.getType() == ConnectivityManager.TYPE_WIFI || network.getType() == ConnectivityManager.TYPE_MOBILE) {
-                return network.isConnected();
-            } else {
-                return false;
-            }
+            return (network.getType() == ConnectivityManager.TYPE_WIFI
+                    || network.getType() == ConnectivityManager.TYPE_MOBILE) && network.isConnected();
 
         } catch (Exception e) {
             e.printStackTrace();

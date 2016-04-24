@@ -54,7 +54,7 @@ public class AboutActivity extends Activity implements View.OnClickListener {
 
     /**
      * Handling onClick events
-     * @param v
+     * @param v View passed from activity
      */
     @Override
     public void onClick(View v){
