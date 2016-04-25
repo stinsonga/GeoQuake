@@ -43,8 +43,6 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
 
     FeatureCollection mFeatureCollection;
 
-    private static View mView;
-
     public static QuakeMapFragment newInstance() {
         return new QuakeMapFragment();
     }
@@ -65,11 +63,11 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.map_fragment, container, false);
-        ButterKnife.bind(this, mView);
+        View view  = inflater.inflate(R.layout.map_fragment, container, false);
+        ButterKnife.bind(this, view);
 
 
-        return mView;
+        return view;
 
     }
 
