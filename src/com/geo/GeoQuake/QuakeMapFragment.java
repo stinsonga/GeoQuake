@@ -113,7 +113,6 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     private void setUpMap() {
         if (Utils.checkNetwork(getActivity())) {
             if (mMap == null) {
-                Log.i(TAG, "setupMap, set listener");
                 mMapFragment.getMapAsync(new OnMapReadyCallback() {
                     @Override
                     public void onMapReady(GoogleMap googleMap) {

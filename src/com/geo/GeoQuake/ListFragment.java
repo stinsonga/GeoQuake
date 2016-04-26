@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -51,9 +50,6 @@ public class ListFragment extends Fragment implements IDataCallback {
 
     FeatureCollection mFeatureCollection;
     ArrayList<Feature> mFeatureList;
-
-    @Bind(R.id.search_bar)
-    LinearLayout mSearchBar;
 
     @Bind(R.id.search_view)
     SearchView mSearchView;
@@ -150,7 +146,7 @@ public class ListFragment extends Fragment implements IDataCallback {
     }
 
     /**
-     * @param config
+     * @param config Configuration passed in from superclass
      */
     @Override
     public void onConfigurationChanged(Configuration config) {
@@ -159,7 +155,7 @@ public class ListFragment extends Fragment implements IDataCallback {
     }
 
     /**
-     * @param outState
+     * @param outState Bundle state to be saved onSaveInstanceState
      */
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -195,7 +191,7 @@ public class ListFragment extends Fragment implements IDataCallback {
     /**
      * Sorting a feature collection.
      *
-     * @param features
+     * @param features ArrayList of Features
      */
     public void basicSort(ArrayList<Feature> features) {
         Collections.sort(features, new Comparator<Feature>() {
@@ -283,7 +279,6 @@ public class ListFragment extends Fragment implements IDataCallback {
 
     @Override
     public void dataCallback(FeatureCollection featureCollection) {
-        Log.i(TAG, "got callback in fragment, set data");
         mFeatureCollection = featureCollection;
         mFeatureList = featureCollection.getFeatures();
         basicSort(mFeatureList);
@@ -293,7 +288,7 @@ public class ListFragment extends Fragment implements IDataCallback {
     /**
      * Called from activity on refresh
      *
-     * @param featureCollection
+     * @param featureCollection FeatureCollection passed in by calling Activity
      */
     public void onUpdateData(FeatureCollection featureCollection) {
         Log.i(TAG, "onUpdateData");

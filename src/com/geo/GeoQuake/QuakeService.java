@@ -42,7 +42,7 @@ public class QuakeService extends Service {
                 mUserLatitude = location.getLatitude();
                 mUserLongitude = location.getLongitude();
             } else {
-                //TODO: Handle scenarios with no user location
+                Log.i(TAG, "No location info available");
             }
         } catch (SecurityException se) {
             Log.e(TAG, se.getMessage());
