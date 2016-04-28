@@ -12,10 +12,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -31,9 +27,6 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
 
     @Bind(R.id.drawer_root)
     RelativeLayout mDrawerLinearLayout;
-
-    @Bind(R.id.drawer_layout)
-    FrameLayout mDrawerLayout;
 
     @Bind(R.id.quake_type_spinner)
     Spinner mQuakeTypeSpinner;
@@ -112,7 +105,7 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
     }
 
     /**
-     * @param outState
+     * @param outState Bundle whose out state needs to be saved
      */
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -121,7 +114,7 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
     }
 
     /**
-     * @param savedInstanceState
+     * @param savedInstanceState Bundle to be restored from saved state
      */
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -130,8 +123,8 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
     }
 
     /**
-     * @param menu
-     * @return
+     * @param menu from superclass
+     * @return Menu
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -255,7 +248,7 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
     /**
      * Refresh the current fragment with new data
      *
-     * @param featureCollection
+     * @param featureCollection FeatureCollection that will be sent to the fragment
      */
     public void refreshCurrentFragment(FeatureCollection featureCollection) {
        if(mSelectedFragment == 0) {
@@ -298,7 +291,9 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
         runOnUiThread(new Runnable() {
             public void run() {
                 mLoadingOverlay.setVisibility(View.VISIBLE);
-                getActionBar().hide();
+                if(getActionBar() != null) {
+                    getActionBar().hide();
+                }
             }
         });
     }
@@ -307,21 +302,12 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
         runOnUiThread(new Runnable() {
             public void run() {
                 mLoadingOverlay.setVisibility(View.GONE);
-                getActionBar().show();
+                if(getActionBar() != null) {
+                    getActionBar().show();
+                }
             }
         });
     }
-
-    CheckBox.OnCheckedChangeListener checkListener = new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if (isChecked) {
-
-            } else {
-
-            }
-        }
-    };
 
 
     AdapterView.OnItemSelectedListener spinnerListener = new AdapterView.OnItemSelectedListener() {
