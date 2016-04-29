@@ -16,24 +16,25 @@ public class Utils {
     public static final String REFRESH_LIMITER = "refresh_limiter";
     public static final String CACHE_TIME = "cache_time";
 
+    //TODO: reinstate if we ever use these
     //Quake types
-    public static final String HOUR_ALL = "hour_all";
-    public static final String HOUR_1 = "hour_1";
-    public static final String HOUR_25 = "hour_25";
-    public static final String HOUR_45 = "hour_45";
-    public static final String HOUR_SIG = "hour_significant";
-
-    public static final String DAY_ALL = "day_all";
-    public static final String DAY_1 = "day_1";
-    public static final String DAY_25 = "day_25";
-    public static final String DAY_45 = "day_45";
-    public static final String DAY_SIG = "day_significant";
-
-    public static final String WEEK_ALL = "week_all";
-    public static final String WEEK_1 = "week_1";
-    public static final String WEEK_25 = "week_25";
-    public static final String WEEK_45 = "week_45";
-    public static final String WEEK_SIG = "week_significant";
+//    public static final String HOUR_ALL = "hour_all";
+//    public static final String HOUR_1 = "hour_1";
+//    public static final String HOUR_25 = "hour_25";
+//    public static final String HOUR_45 = "hour_45";
+//    public static final String HOUR_SIG = "hour_significant";
+//
+//    public static final String DAY_ALL = "day_all";
+//    public static final String DAY_1 = "day_1";
+//    public static final String DAY_25 = "day_25";
+//    public static final String DAY_45 = "day_45";
+//    public static final String DAY_SIG = "day_significant";
+//
+//    public static final String WEEK_ALL = "week_all";
+//    public static final String WEEK_1 = "week_1";
+//    public static final String WEEK_25 = "week_25";
+//    public static final String WEEK_45 = "week_45";
+//    public static final String WEEK_SIG = "week_significant";
 
     //TODO: reinstate if we ever use these
 //    public static final String MONTH_ALL = "month_all";

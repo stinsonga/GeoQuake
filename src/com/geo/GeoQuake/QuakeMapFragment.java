@@ -173,7 +173,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
      * The method that does the work of placing the markers on the map. Yes.
      */
     private void placeMarkers() {
-        if (mFeatureCollection.getFeatures().size() == 0) {
+        if (mFeatureCollection != null && mFeatureCollection.getFeatures().size() == 0) {
             Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.empty_list)
                     , Toast.LENGTH_SHORT).show();
         } else {
