@@ -1,5 +1,7 @@
 package com.geo.GeoQuake;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,7 +53,7 @@ public class FeatureCollection {
             this.status = jsonObject.getInt("status");
 
         } catch (JSONException je){
-
+            Log.e("FeatureCollection derp", je.getMessage());
         }
 
     }
