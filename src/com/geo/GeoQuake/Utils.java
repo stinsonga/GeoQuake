@@ -189,7 +189,7 @@ public class Utils {
      * or not to overwrite
      *
      * @param timeStamp current timestamp
-     * @param context from the activity that calls this method
+     * @param context   from the activity that calls this method
      * @return boolean representing whether or not our DB row is expired
      */
     public static boolean isExpired(long timeStamp, Context context) {

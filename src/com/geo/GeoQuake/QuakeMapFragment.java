@@ -63,7 +63,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view  = inflater.inflate(R.layout.map_fragment, container, false);
+        View view = inflater.inflate(R.layout.map_fragment, container, false);
         ButterKnife.bind(this, view);
 
 
@@ -158,12 +158,11 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
             settings.setMyLocationButtonEnabled(true);
 
 
-
-            if (((MainActivity)getActivity()).getFeatures() != null && ((MainActivity)getActivity()).getFeatures().getFeatures().size() > 0) {
-                mFeatureCollection = ((MainActivity)getActivity()).getFeatures();
+            if (((MainActivity) getActivity()).getFeatures() != null && ((MainActivity) getActivity()).getFeatures().getFeatures().size() > 0) {
+                mFeatureCollection = ((MainActivity) getActivity()).getFeatures();
                 placeMarkers();
             } else {
-                ((MainActivity)getActivity()).checkNetworkFetchData();
+                ((MainActivity) getActivity()).checkNetworkFetchData();
             }
         }
     }
@@ -231,11 +230,6 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     public void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
         //TODO: Possible actions for orientation change
-//        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            //Log.i("config", "landscape");
-//        } else if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
-//            //Log.i("config", "portrait");
-//        }
     }
 
     /**

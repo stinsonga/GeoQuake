@@ -37,7 +37,7 @@ public class GeoQuakeDB extends SQLiteOpenHelper {
      * When upgrading the db, stuff needed logic here. By default, it merely drops the table,
      * and calls onCreate()
      *
-     * @param db SQLiteDatabase object to upgrade
+     * @param db         SQLiteDatabase object to upgrade
      * @param oldVersion represents old version number
      * @param newVersion represents new version number
      */
@@ -52,7 +52,7 @@ public class GeoQuakeDB extends SQLiteOpenHelper {
      *
      * @param quakeStrength originates from the Spinner in the activity
      * @param quakeDuration originates from the Spinner in the activity
-     * @param data new data for DB insert
+     * @param data          new data for DB insert
      */
     public void setData(String quakeStrength, String quakeDuration, String data) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -70,7 +70,7 @@ public class GeoQuakeDB extends SQLiteOpenHelper {
      *
      * @param quakeStrength originates from the Spinner in the activity
      * @param quakeDuration originates from the Spinner in the activity
-     * @param data new data to be used in DB update
+     * @param data          new data to be used in DB update
      */
     public void updateData(String quakeStrength, String quakeDuration, String data) {
         SQLiteDatabase db = this.getWritableDatabase();
