@@ -257,6 +257,12 @@ public class ListFragment extends Fragment implements IDataCallback {
 
     }
 
+    /**
+     * The listener that handles changes in the query text box.
+     *
+     * In the case of a non-empty string, a search is conducted within the list of Features
+     *
+     */
     SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String query) {
@@ -277,6 +283,10 @@ public class ListFragment extends Fragment implements IDataCallback {
         //unused
     }
 
+    /**
+     *
+     * @param featureCollection a FeatureCollection passed by the parent activity
+     */
     @Override
     public void dataCallback(FeatureCollection featureCollection) {
         mFeatureCollection = featureCollection;
