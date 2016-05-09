@@ -128,6 +128,10 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
         }
     }
 
+    /**
+     * Called asynchronously. Initiates the map setup, and initial marker placement
+     *
+     */
     public void postSyncMapSetup() {
         if (mMap != null) {
             mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
