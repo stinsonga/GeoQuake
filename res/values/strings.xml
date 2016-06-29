@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">GeoQuake</string>
     <string name="app_subname"> </string>
-    <string name="version_number">1.1.1</string>
+    <string name="version_number">1.1.3</string>
     <string name="version">Version: </string>
     <string name="usgs_url">http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/</string>
     <string name="loading_data">Loading data.</string>
