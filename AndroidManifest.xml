@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.geo.GeoQuake"
-    android:versionCode="7"
-    android:versionName="1.1.3">
+    android:versionCode="8"
+    android:versionName="1.1.4">
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -16,6 +16,8 @@
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.hardware.location.gps" />
+    <uses-permission android:name="android.hardware.location.network" />
 
     <uses-feature
         android:glEsVersion="0x00020000"
