@@ -141,6 +141,8 @@ public class ListFragment extends Fragment implements IDataCallback {
             }
         } catch (SecurityException se) {
             mProximityImageButton.setVisibility(View.GONE);
+        } catch (IllegalArgumentException ie) {
+            Log.e("IllegalArgument", ie.getLocalizedMessage());
         }
 
     }
