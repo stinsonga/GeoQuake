@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="GeoQuakeTheme" parent="android:Theme.Holo">
+    <style name="GeoQuakeTheme" parent="Theme.AppCompat.DayNight">
         <item name="android:actionBarStyle">@style/ActionBarStyling</item>
     </style>
 
-    <style name="ActionBarStyling" parent="android:Widget.Holo.ActionBar">
+    <style name="ActionBarStyling" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:background">@color/actionbar_color</item>
     </style>
 
