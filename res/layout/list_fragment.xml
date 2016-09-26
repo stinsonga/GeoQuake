@@ -39,16 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textColor="@color/gray_700"
-                android:layout_weight="0.82" />
-
-            <ImageView
-                android:id="@+id/proximity_image_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.2"
-                android:contentDescription=" "
-                android:gravity="end"
-                android:src="@drawable/ic_menu_mylocation" />
+                android:layout_weight="1" />
 
         </LinearLayout>
 

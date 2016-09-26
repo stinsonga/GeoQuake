@@ -145,21 +145,9 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
                 mMap.setMyLocationEnabled(true);
             }
 
-            //TODO: handle deprecated methods
-            mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
-                @Override
-                public void onMyLocationChange(Location arg0) {
-                    LatLng latLng = new LatLng(arg0.getLatitude(), arg0.getLongitude());
-                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, getActivity().getResources().getInteger(R.integer.zoom_level));
-                    mMap.animateCamera(cameraUpdate);
-                    mMap.setOnMyLocationChangeListener(null);
-
-                }
-            });
-
             UiSettings settings = mMap.getUiSettings();
-            settings.setCompassEnabled(true);
-            settings.setMyLocationButtonEnabled(true);
+            //settings.setCompassEnabled(true);
+            //settings.setMyLocationButtonEnabled(true);
 
 
             if (((MainActivity) getActivity()).getFeatures() != null && ((MainActivity) getActivity()).getFeatures().getFeatures().size() > 0) {
@@ -169,6 +157,14 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
                 ((MainActivity) getActivity()).checkNetworkFetchData();
             }
         }
+    }
+
+    public void moveCameraToUserLocation(double latitude, double longitude) {
+        LatLng latLng = new LatLng(latitude, longitude);
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 4);
+        mMap.animateCamera(cameraUpdate);
+        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))
+                .title(getActivity().getString(R.string.menu_my_location)));
     }
 
 

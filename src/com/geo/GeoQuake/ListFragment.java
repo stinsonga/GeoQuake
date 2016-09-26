@@ -57,12 +57,6 @@ public class ListFragment extends Fragment implements IDataCallback {
     @Bind(R.id.count_textview)
     TextView mQuakeCountTextView;
 
-    @Bind(R.id.proximity_image_button)
-    ImageView mProximityImageButton;
-
-    double mUserLatitude = 0.0;
-    double mUserLongitude = 0.0;
-
     Context mContext;
 
     public static ListFragment newInstance() {
@@ -101,8 +95,6 @@ public class ListFragment extends Fragment implements IDataCallback {
         super.onResume();
 
         if (Utils.checkNetwork(getActivity())) {
-
-            setupLocation();
             if (((MainActivity) getActivity()).getFeatures() != null && ((MainActivity) getActivity()).getFeatures().getFeatures().size() > 0) {
                 mFeatureList = ((MainActivity) getActivity()).getFeatures().getFeatures();
                 setupList(mFeatureList);
@@ -124,27 +116,6 @@ public class ListFragment extends Fragment implements IDataCallback {
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-
-    }
-
-    public void setupLocation() {
-        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        Location location;
-        try {
-            location = locationManager.getLastKnownLocation(locationManager
-                    .getBestProvider(new Criteria(), false));
-            if (location != null) {
-                mProximityImageButton.setVisibility(View.VISIBLE);
-                mUserLatitude = location.getLatitude();
-                mUserLongitude = location.getLongitude();
-            } else {
-                mProximityImageButton.setVisibility(View.GONE);
-            }
-        } catch (SecurityException se) {
-            mProximityImageButton.setVisibility(View.GONE);
-        } catch (IllegalArgumentException ie) {
-            Log.e("IllegalArgument", ie.getLocalizedMessage());
-        }
 
     }
 
@@ -211,15 +182,14 @@ public class ListFragment extends Fragment implements IDataCallback {
     /**
      * Sorting list by distance from user
      */
-    @OnClick(R.id.proximity_image_button)
-    public void sortByProximity() {
+    public void sortByProximity(double latitude, double longitude) {
         Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.sorting_by_proximity)
                 , Toast.LENGTH_SHORT).show();
         ArrayList<Feature> proximityList = new ArrayList<>();
         TreeMap<Float, Feature> proximityMap = new TreeMap<>();
         for (Feature feature : mFeatureList) {
             float[] results = new float[3];
-            Location.distanceBetween(mUserLatitude, mUserLongitude, feature.getLatitude(),
+            Location.distanceBetween(latitude, longitude, feature.getLatitude(),
                     feature.getLongitude(), results);
             proximityMap.put(results[0] / 1000, feature);
         }

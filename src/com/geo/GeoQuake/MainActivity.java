@@ -1,10 +1,19 @@
 package com.geo.GeoQuake;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -22,10 +31,15 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements IDataCallback {
+public class MainActivity extends AppCompatActivity implements IDataCallback,
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "MainActivity";
     SharedPreferences mSharedPreferences;
     Bundle mBundle;
@@ -66,11 +80,19 @@ public class MainActivity extends AppCompatActivity implements IDataCallback {
     int mSelectedFragment = 0;
     boolean isFirstLoad = true;
 
+    double mUserLatitude = 0.0;
+    double mUserLongitude = 0.0;
+    boolean mHasUserLocation;
+
+    GoogleApiClient mGoogleApiClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        buildGoogleApiClient();
 
         mDrawerLayout.addDrawerListener(drawerListener);
 
@@ -79,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback {
 
         //set toolbar options
         final ActionBar ab = getSupportActionBar();
-        if(ab != null) {
+        if (ab != null) {
             //note that the custom navigation(home) logo is set in xml: toolbar_layout
             ab.setDisplayShowHomeEnabled(true);
             ab.setDisplayHomeAsUpEnabled(true);
@@ -99,6 +121,14 @@ public class MainActivity extends AppCompatActivity implements IDataCallback {
         mQuakeTypeSpinner.setSelection(4); //default selection
         mCacheTimeSpinner.setOnItemSelectedListener(spinnerListener);
 //        mWifiCheckbox.setOnCheckedChangeListener(checkListener);
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
     }
 
     @Override
@@ -127,6 +157,17 @@ public class MainActivity extends AppCompatActivity implements IDataCallback {
         //for potential use with larger data sets
         super.onLowMemory();
     }
+
+    protected void onStart() {
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
+
+    protected void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
+    }
+
 
     /**
      * @param outState Bundle whose out state needs to be saved
@@ -162,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback {
         FragmentManager fm = getSupportFragmentManager();
         switch (item.getItemId()) {
             case android.R.id.home:
-                if(!mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                if (!mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
                     mDrawerLayout.openDrawer(GravityCompat.START);
                 }
                 break;
@@ -192,6 +233,17 @@ public class MainActivity extends AppCompatActivity implements IDataCallback {
                     Toast.makeText(this, getResources().getString(R.string.wait_for_loading), Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case R.id.action_location:
+                if (mSelectedFragment == 0) {
+                    if(mHasUserLocation) {
+                        mMapFragment.moveCameraToUserLocation(mUserLatitude, mUserLongitude);
+                    }
+                } else {
+                    if (mHasUserLocation) {
+                        mListFragment.sortByProximity(mUserLatitude, mUserLongitude);
+                    }
+                }
+                break;
             case R.id.action_info:
                 startActivity(new Intent(MainActivity.this, AboutActivity.class));
                 break;
@@ -210,16 +262,96 @@ public class MainActivity extends AppCompatActivity implements IDataCallback {
             menu.findItem(R.id.action_map_view).setVisible(true);
             menu.findItem(R.id.action_list).setVisible(false);
         }
+
+        menu.findItem(R.id.action_location).setVisible(mHasUserLocation);
+
         return super.onPrepareOptionsPanel(view, menu);
     }
 
     public void checkNetworkFetchData() {
-
         if (Utils.checkNetwork(this)) {
             fetchData();
         } else {
             Utils.connectToast(this);
         }
+    }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            try {
+                Location location = LocationServices.FusedLocationApi.getLastLocation(
+                        mGoogleApiClient);
+                if (location != null) {
+                    Log.i(TAG, "Location found " + location.getLatitude() + " " + location.getLongitude());
+                    mUserLatitude = location.getLatitude();
+                    mUserLongitude = location.getLongitude();
+                    mHasUserLocation = true;
+                    invalidateOptionsMenu();
+                    if (mSelectedFragment == 0) {
+                        if(mHasUserLocation) {
+                            mMapFragment.moveCameraToUserLocation(mUserLatitude, mUserLongitude);
+                        }
+                    }
+                } else {
+                    Log.i(TAG, "No location.");
+                }
+            } catch (SecurityException se) {
+                Log.i(TAG, "SecurityException when fetching location");
+                mHasUserLocation = false;
+            }
+        } else {
+            Log.i(TAG, "No permission for ACCESS_FINE_LOCATION");
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 99);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 99: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    buildGoogleApiClient();
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 
     public FeatureCollection getFeatures() {
@@ -267,11 +399,11 @@ public class MainActivity extends AppCompatActivity implements IDataCallback {
      * @param featureCollection FeatureCollection that will be sent to the fragment
      */
     public void refreshCurrentFragment(FeatureCollection featureCollection) {
-       if(mSelectedFragment == 0) {
-           mMapFragment.onUpdateData(featureCollection);
-       } else {
-           mListFragment.onUpdateData(featureCollection);
-       }
+        if (mSelectedFragment == 0) {
+            mMapFragment.onUpdateData(featureCollection);
+        } else {
+            mListFragment.onUpdateData(featureCollection);
+        }
     }
 
     /**
@@ -307,7 +439,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback {
         runOnUiThread(new Runnable() {
             public void run() {
                 mLoadingOverlay.setVisibility(View.VISIBLE);
-                if(getSupportActionBar() != null) {
+                if (getSupportActionBar() != null) {
                     getSupportActionBar().hide();
                 }
             }
@@ -318,13 +450,12 @@ public class MainActivity extends AppCompatActivity implements IDataCallback {
         runOnUiThread(new Runnable() {
             public void run() {
                 mLoadingOverlay.setVisibility(View.GONE);
-                if(getSupportActionBar() != null) {
+                if (getSupportActionBar() != null) {
                     getSupportActionBar().show();
                 }
             }
         });
     }
-
 
     AdapterView.OnItemSelectedListener spinnerListener = new AdapterView.OnItemSelectedListener() {
         @Override
