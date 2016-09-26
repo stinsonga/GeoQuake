@@ -4,12 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -28,7 +30,10 @@ public class MainActivity extends AppCompatActivity implements IDataCallback {
     SharedPreferences mSharedPreferences;
     Bundle mBundle;
 
-    @Bind(R.id.drawer_root)
+    @Bind(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
+
+    @Bind(R.id.options_root)
     RelativeLayout mDrawerLinearLayout;
 
     @Bind(R.id.quake_type_spinner)
@@ -70,11 +75,13 @@ public class MainActivity extends AppCompatActivity implements IDataCallback {
         mToolbar = (Toolbar) findViewById(R.id.action_bar);
         setSupportActionBar(mToolbar);
 
+        //set toolbar options
         final ActionBar ab = getSupportActionBar();
         if(ab != null) {
-            ab.setDisplayShowHomeEnabled(true); // show or hide the default home button
+            //note that the custom navigation(home) logo is set in xml: toolbar_layout
+            ab.setDisplayShowHomeEnabled(true);
             ab.setDisplayHomeAsUpEnabled(true);
-            ab.setDisplayShowCustomEnabled(true); // enable overriding the default toolbar layout
+            ab.setDisplayShowCustomEnabled(true);
             ab.setDisplayShowTitleEnabled(false);
         }
 
@@ -147,18 +154,23 @@ public class MainActivity extends AppCompatActivity implements IDataCallback {
         menuInflater.inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
+//
 //    @Override
 //    public boolean onMenuItemSelected(int featureId, MenuItem item) {
 //        return super.onMenuItemSelected(featureId, item);
 //    }
-//
-//
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         FragmentManager fm = getSupportFragmentManager();
         switch (item.getItemId()) {
+            case android.R.id.home:
+                if(!mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    mDrawerLayout.openDrawer(GravityCompat.START);
+                }
+                break;
 
             case R.id.action_list:
                 mSelectedFragment = 1;
@@ -171,7 +183,6 @@ public class MainActivity extends AppCompatActivity implements IDataCallback {
                 invalidateOptionsMenu();
                 break;
             case R.id.action_refresh:
-                mDrawerLinearLayout.setVisibility(View.GONE);
                 if (!mAsyncUnderway) {
                     if (GeoQuakeDB.checkRefreshLimit(GeoQuakeDB.getTime(),
                             mSharedPreferences.getLong(Utils.REFRESH_LIMITER, 0))) {
