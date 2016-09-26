@@ -14,6 +14,7 @@
             android:id="@+id/list_magnitude_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/material_gray"
             android:textSize="@dimen/quake_list_font_size" />
 
         <TextView
@@ -21,6 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/quake_list_margin"
+            android:textColor="@color/gray_700"
             android:textSize="@dimen/quake_list_font_size" />
     </LinearLayout>
 

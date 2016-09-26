@@ -4,9 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,12 +25,15 @@ import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class MainActivity extends FragmentActivity implements IDataCallback {
+public class MainActivity extends AppCompatActivity implements IDataCallback {
     private static final String TAG = "MainActivity";
     SharedPreferences mSharedPreferences;
     Bundle mBundle;
 
-    @Bind(R.id.drawer_root)
+    @Bind(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
+
+    @Bind(R.id.options_root)
     RelativeLayout mDrawerLinearLayout;
 
     @Bind(R.id.quake_type_spinner)
@@ -50,6 +58,7 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
     QuakeData mQuakeData;
     QuakeMapFragment mMapFragment;
     ListFragment mListFragment;
+    Toolbar mToolbar;
 
     int mStrengthSelection = 4;
     int mDurationSelection = 0;
@@ -62,6 +71,21 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        mDrawerLayout.addDrawerListener(drawerListener);
+
+        mToolbar = (Toolbar) findViewById(R.id.action_bar);
+        setSupportActionBar(mToolbar);
+
+        //set toolbar options
+        final ActionBar ab = getSupportActionBar();
+        if(ab != null) {
+            //note that the custom navigation(home) logo is set in xml: toolbar_layout
+            ab.setDisplayShowHomeEnabled(true);
+            ab.setDisplayHomeAsUpEnabled(true);
+            ab.setDisplayShowCustomEnabled(true);
+            ab.setDisplayShowTitleEnabled(false);
+        }
 
         mBundle = new Bundle();
         mSharedPreferences = getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
@@ -132,16 +156,23 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
         menuInflater.inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
+//
+//    @Override
+//    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+//        return super.onMenuItemSelected(featureId, item);
+//    }
 
-    @Override
-    public boolean onMenuItemSelected(int featureId, MenuItem item) {
-        return super.onMenuItemSelected(featureId, item);
-    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         FragmentManager fm = getSupportFragmentManager();
         switch (item.getItemId()) {
+            case android.R.id.home:
+                if(!mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    mDrawerLayout.openDrawer(GravityCompat.START);
+                }
+                break;
 
             case R.id.action_list:
                 mSelectedFragment = 1;
@@ -154,7 +185,6 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
                 invalidateOptionsMenu();
                 break;
             case R.id.action_refresh:
-                mDrawerLinearLayout.setVisibility(View.GONE);
                 if (!mAsyncUnderway) {
                     if (GeoQuakeDB.checkRefreshLimit(GeoQuakeDB.getTime(),
                             mSharedPreferences.getLong(Utils.REFRESH_LIMITER, 0))) {
@@ -167,13 +197,6 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
                     }
                 } else {
                     Toast.makeText(this, getResources().getString(R.string.wait_for_loading), Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case R.id.action_settings:
-                if (mDrawerLinearLayout.getVisibility() == View.VISIBLE) {
-                    mDrawerLinearLayout.setVisibility(View.GONE);
-                } else {
-                    mDrawerLinearLayout.setVisibility(View.VISIBLE);
                 }
                 break;
             case R.id.action_info:
@@ -291,8 +314,8 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
         runOnUiThread(new Runnable() {
             public void run() {
                 mLoadingOverlay.setVisibility(View.VISIBLE);
-                if(getActionBar() != null) {
-                    getActionBar().hide();
+                if(getSupportActionBar() != null) {
+                    getSupportActionBar().hide();
                 }
             }
         });
@@ -302,8 +325,8 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
         runOnUiThread(new Runnable() {
             public void run() {
                 mLoadingOverlay.setVisibility(View.GONE);
-                if(getActionBar() != null) {
-                    getActionBar().show();
+                if(getSupportActionBar() != null) {
+                    getSupportActionBar().show();
                 }
             }
         });
@@ -332,6 +355,28 @@ public class MainActivity extends FragmentActivity implements IDataCallback {
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
+
+    DrawerLayout.DrawerListener drawerListener = new DrawerLayout.DrawerListener() {
+        @Override
+        public void onDrawerSlide(View drawerView, float slideOffset) {
+
+        }
+
+        @Override
+        public void onDrawerOpened(View drawerView) {
+            Utils.hideKeyboard(drawerView);
+        }
+
+        @Override
+        public void onDrawerClosed(View drawerView) {
+
+        }
+
+        @Override
+        public void onDrawerStateChanged(int newState) {
 
         }
     };

@@ -1,57 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/drawer_root"
+    android:id="@+id/options_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/actionbar_color"
     android:clickable="true"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@color/gray_200"
+    >
+
+    <TextView
+        android:id="@+id/filter_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:textSize="18sp"
+        android:textColor="@color/gray_200"
+        android:background="@color/actionbar_color"
+        android:text="@string/filter_data_by"/>
 
     <LinearLayout
         android:id="@+id/spinner_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_below="@id/filter_label"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:orientation="vertical">
 
         <Spinner
             android:id="@+id/quake_type_spinner"
             android:layout_width="match_parent"
             android:layout_height="35dp"
-            android:layout_weight="1"
             android:entries="@array/quake_types" />
 
         <Spinner
             android:id="@+id/duration_type_spinner"
             android:layout_width="match_parent"
             android:layout_height="35dp"
-            android:layout_weight="1"
+            android:layout_marginTop="8dp"
             android:entries="@array/duration_types" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/cache_label"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="start"
+        android:layout_below="@id/spinner_container"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:background="@color/actionbar_color"
+        android:text="@string/cache_label"
+        android:textColor="@color/gray_200"
+        android:textSize="18sp" />
 
     <LinearLayout
         android:id="@+id/cache_container"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/spinner_container"
+        android:layout_below="@id/cache_label"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/cache_label"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:gravity="start"
-            android:text="@string/cache_label"
-            android:textSize="16sp" />
+        android:orientation="vertical">
 
         <Spinner
             android:id="@+id/cache_spinner"
-            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"
+            android:layout_width="match_parent"
             android:entries="@array/cache_options"
             android:gravity="end"
             android:prompt="@string/cache_prompt"

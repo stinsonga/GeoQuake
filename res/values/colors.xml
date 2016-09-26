@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="actionbar_color">#2E0854</color>
-    <color name="tab_select_color">#300A57</color>
-    <color name="options_background">#802E0854</color>
+    <color name="actionbar_color">#4A148C</color>
+    <color name="tab_select_color">#7B1FA2</color>
+    <color name="options_background">#4A148C</color>
     <color name="transparent">#00000000</color>
     <color name="grey">#CCC</color>
-    <color name="orange">#FE9A2E</color>
+    <color name="gray_200">#EEEEEE</color>
+    <color name="gray_700">#616161</color>
+    <color name="material_gray">#9E9E9E</color>
+    <color name="material_green">#4CAF50</color>
+    <color name="material_yellow">#FFEB3B</color>
+    <color name="material_orange">#FF9800</color>
+    <color name="material_deeporange">#FF5722</color>
+    <color name="material_red">#F44336</color>
 </resources>

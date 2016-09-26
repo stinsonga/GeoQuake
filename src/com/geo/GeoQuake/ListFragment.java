@@ -91,7 +91,8 @@ public class ListFragment extends Fragment implements IDataCallback {
         ButterKnife.bind(this, view);
 
         mSearchView.setOnQueryTextListener(queryTextListener);
-
+        mSearchView.setQueryHint(getActivity().getString(R.string.search_hint));
+        mSearchView.setQuery(getActivity().getString(R.string.search_hint), false);
         return view;
     }
 
