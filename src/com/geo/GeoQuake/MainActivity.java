@@ -72,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements IDataCallback {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        mDrawerLayout.addDrawerListener(drawerListener);
+
         mToolbar = (Toolbar) findViewById(R.id.action_bar);
         setSupportActionBar(mToolbar);
 
@@ -195,13 +197,6 @@ public class MainActivity extends AppCompatActivity implements IDataCallback {
                     }
                 } else {
                     Toast.makeText(this, getResources().getString(R.string.wait_for_loading), Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case R.id.action_settings:
-                if (mDrawerLinearLayout.getVisibility() == View.VISIBLE) {
-                    mDrawerLinearLayout.setVisibility(View.GONE);
-                } else {
-                    mDrawerLinearLayout.setVisibility(View.VISIBLE);
                 }
                 break;
             case R.id.action_info:
@@ -360,6 +355,28 @@ public class MainActivity extends AppCompatActivity implements IDataCallback {
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
+
+    DrawerLayout.DrawerListener drawerListener = new DrawerLayout.DrawerListener() {
+        @Override
+        public void onDrawerSlide(View drawerView, float slideOffset) {
+
+        }
+
+        @Override
+        public void onDrawerOpened(View drawerView) {
+            Utils.hideKeyboard(drawerView);
+        }
+
+        @Override
+        public void onDrawerClosed(View drawerView) {
+
+        }
+
+        @Override
+        public void onDrawerStateChanged(int newState) {
 
         }
     };

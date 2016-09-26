@@ -2,6 +2,7 @@ package com.geo.GeoQuake;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,18 +47,18 @@ public class QuakeListAdapter extends ArrayAdapter<Feature> {
         if (feature != null) {
             QuakeListViewHolder vh = (QuakeListViewHolder) view.getTag();
             String magnitude = "" + feature.getProperties().getMag(); //String var to get AS to quit complaining about concatenation
-
+            Context context = view.getContext();
             vh.magnitudeTextView.setText(magnitude);
             vh.magnitudeTextView.setTextColor(Color.WHITE);
             vh.locationTextView.setText(feature.getProperties().getPlace());
             if (feature.getProperties().getMag() <= 1.00) {
-                vh.magnitudeTextView.setTextColor(Color.GREEN);
+                vh.magnitudeTextView.setTextColor(ContextCompat.getColor(view.getContext(), R.color.material_green));
             } else if (feature.getProperties().getMag() <= 2.50) {
-                vh.magnitudeTextView.setTextColor(Color.YELLOW);
+                vh.magnitudeTextView.setTextColor(ContextCompat.getColor(view.getContext(), R.color.material_orange));
             } else if (feature.getProperties().getMag() <= 4.50) {
-                vh.magnitudeTextView.setTextColor(mContext.getResources().getColor(R.color.orange));
+                vh.magnitudeTextView.setTextColor(ContextCompat.getColor(view.getContext(), R.color.material_deeporange));
             } else {
-                vh.magnitudeTextView.setTextColor(Color.RED);
+                vh.magnitudeTextView.setTextColor(ContextCompat.getColor(view.getContext(), R.color.material_red));
             }
         }
 

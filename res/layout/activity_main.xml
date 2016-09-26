@@ -48,8 +48,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="#000"
-        android:paddingTop="?attr/actionBarSize">
+        android:background="@color/gray_200"
+        android:paddingTop="20dp">
 
         <include
             layout="@layout/options_layout"
