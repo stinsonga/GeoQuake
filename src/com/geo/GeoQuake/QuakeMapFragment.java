@@ -146,8 +146,8 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
             }
 
             UiSettings settings = mMap.getUiSettings();
-            //settings.setCompassEnabled(true);
-            //settings.setMyLocationButtonEnabled(true);
+            settings.setCompassEnabled(true);
+            settings.setMyLocationButtonEnabled(false);
 
 
             if (((MainActivity) getActivity()).getFeatures() != null && ((MainActivity) getActivity()).getFeatures().getFeatures().size() > 0) {
@@ -163,6 +163,11 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
         LatLng latLng = new LatLng(latitude, longitude);
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 4);
         mMap.animateCamera(cameraUpdate);
+        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))
+                .title(getActivity().getString(R.string.menu_my_location)));
+    }
+
+    public void userLocationMarker(double latitude, double longitude) {
         mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))
                 .title(getActivity().getString(R.string.menu_my_location)));
     }

@@ -315,9 +315,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
+                    // permission was granted
                     buildGoogleApiClient();
                     if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         // TODO: Consider calling
@@ -401,6 +399,9 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     public void refreshCurrentFragment(FeatureCollection featureCollection) {
         if (mSelectedFragment == 0) {
             mMapFragment.onUpdateData(featureCollection);
+            if(mHasUserLocation) {
+                mMapFragment.userLocationMarker(mUserLatitude, mUserLongitude);
+            }
         } else {
             mListFragment.onUpdateData(featureCollection);
         }
