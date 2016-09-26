@@ -190,13 +190,13 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
                         LatLng coords = new LatLng(feature.getLatitude(), feature.getLongitude());
                         BitmapDescriptor quakeIcon;
                         if (feature.getProperties().getMag() <= 1.00) {
-                            quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake1);
+                            quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake1_trans60);
                         } else if (feature.getProperties().getMag() <= 2.50) {
-                            quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake2);
+                            quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake2_trans60);
                         } else if (feature.getProperties().getMag() <= 4.50) {
-                            quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake3);
+                            quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake3_trans60);
                         } else {
-                            quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake4);
+                            quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake4_trans60);
                         }
 
                         Marker m = mMap.addMarker(new MarkerOptions().icon(quakeIcon).position(coords).title(feature.getProperties().getPlace()).snippet(getResources().getString(R.string.magnitude) + feature.getProperties().getMag()));

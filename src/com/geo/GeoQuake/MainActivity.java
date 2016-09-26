@@ -156,13 +156,6 @@ public class MainActivity extends AppCompatActivity implements IDataCallback {
         menuInflater.inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
-//
-//    @Override
-//    public boolean onMenuItemSelected(int featureId, MenuItem item) {
-//        return super.onMenuItemSelected(featureId, item);
-//    }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
