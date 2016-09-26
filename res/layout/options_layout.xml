@@ -12,7 +12,7 @@
         android:id="@+id/spinner_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <Spinner
             android:id="@+id/quake_type_spinner"
@@ -36,22 +36,20 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/spinner_container"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/cache_label"
-            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"
+            android:layout_width="match_parent"
             android:gravity="start"
             android:text="@string/cache_label"
             android:textSize="16sp" />
 
         <Spinner
             android:id="@+id/cache_spinner"
-            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"
+            android:layout_width="match_parent"
             android:entries="@array/cache_options"
             android:gravity="end"
             android:prompt="@string/cache_prompt"

@@ -3,9 +3,11 @@
 
     <style name="GeoQuakeTheme" parent="Theme.AppCompat.DayNight">
         <item name="android:actionBarStyle">@style/ActionBarStyling</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="ActionBarStyling" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="ActionBarStyling" parent="Theme.AppCompat.Light">
         <item name="android:background">@color/actionbar_color</item>
     </style>
 

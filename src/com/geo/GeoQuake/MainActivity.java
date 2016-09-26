@@ -6,7 +6,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -51,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback {
     QuakeData mQuakeData;
     QuakeMapFragment mMapFragment;
     ListFragment mListFragment;
+    Toolbar mToolbar;
 
     int mStrengthSelection = 4;
     int mDurationSelection = 0;
@@ -63,6 +66,17 @@ public class MainActivity extends AppCompatActivity implements IDataCallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        mToolbar = (Toolbar) findViewById(R.id.action_bar);
+        setSupportActionBar(mToolbar);
+
+        final ActionBar ab = getSupportActionBar();
+        if(ab != null) {
+            ab.setDisplayShowHomeEnabled(true); // show or hide the default home button
+            ab.setDisplayHomeAsUpEnabled(true);
+            ab.setDisplayShowCustomEnabled(true); // enable overriding the default toolbar layout
+            ab.setDisplayShowTitleEnabled(false);
+        }
 
         mBundle = new Bundle();
         mSharedPreferences = getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
@@ -294,8 +308,8 @@ public class MainActivity extends AppCompatActivity implements IDataCallback {
         runOnUiThread(new Runnable() {
             public void run() {
                 mLoadingOverlay.setVisibility(View.VISIBLE);
-                if(getActionBar() != null) {
-                    getActionBar().hide();
+                if(getSupportActionBar() != null) {
+                    getSupportActionBar().hide();
                 }
             }
         });
@@ -305,8 +319,8 @@ public class MainActivity extends AppCompatActivity implements IDataCallback {
         runOnUiThread(new Runnable() {
             public void run() {
                 mLoadingOverlay.setVisibility(View.GONE);
-                if(getActionBar() != null) {
-                    getActionBar().show();
+                if(getSupportActionBar() != null) {
+                    getSupportActionBar().show();
                 }
             }
         });
