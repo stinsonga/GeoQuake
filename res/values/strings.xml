@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">GeoQuake</string>
     <string name="app_subname"> </string>
     <string name="version_number">1.2.0</string>
     <string name="version">Version: </string>

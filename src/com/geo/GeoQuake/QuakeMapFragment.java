@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
@@ -161,6 +162,14 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
 
     public void moveCameraToUserLocation(double latitude, double longitude) {
         LatLng latLng = new LatLng(latitude, longitude);
+        if(mMap == null) {
+            return;
+        } try {
+            MapsInitializer.initialize(getActivity());
+        } catch(Exception e) {
+            Log.i(TAG, "Problem initializing map");
+            return;
+        }
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 4);
         mMap.animateCamera(cameraUpdate);
         mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))

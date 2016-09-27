@@ -26,6 +26,17 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
 
+    productFlavors {
+        production {
+            resValue "string", "app_name", "GeoQuake"
+        }
+
+        development {
+            applicationIdSuffix = '.dev'
+            resValue "string", "app_name", "GeoQuake Dev"
+        }
+    }
+
     buildTypes {
         release {
 
