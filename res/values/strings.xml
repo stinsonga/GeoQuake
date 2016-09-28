@@ -14,6 +14,8 @@
 
     <string name="quake_list">Quake List</string>
     <string name="map_view">Map View</string>
+    <string name="map_tab">Map</string>
+    <string name="list_tab">List</string>
 
     <string name="map_tab_label">Map</string>
     <string name="list_tab_label">Quake List</string>
