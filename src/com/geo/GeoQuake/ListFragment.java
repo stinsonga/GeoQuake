@@ -70,6 +70,7 @@ public class ListFragment extends Fragment implements IDataCallback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG, "onCreate");
         setHasOptionsMenu(true);
 
         mBundle = new Bundle();
@@ -93,7 +94,7 @@ public class ListFragment extends Fragment implements IDataCallback {
     @Override
     public void onResume() {
         super.onResume();
-
+        Log.i(TAG, "onResume");
         if (Utils.checkNetwork(getActivity())) {
             if (((MainActivity) getActivity()).getFeatures() != null && ((MainActivity) getActivity()).getFeatures().getFeatures().size() > 0) {
                 mFeatureList = ((MainActivity) getActivity()).getFeatures().getFeatures();
@@ -182,8 +183,8 @@ public class ListFragment extends Fragment implements IDataCallback {
     /**
      * Sorting list by distance from user
      */
-    public void sortByProximity(double latitude, double longitude) {
-        Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.sorting_by_proximity)
+    public void sortByProximity(Context context, double latitude, double longitude) {
+        Toast.makeText(context, context.getResources().getString(R.string.sorting_by_proximity)
                 , Toast.LENGTH_SHORT).show();
         ArrayList<Feature> proximityList = new ArrayList<>();
         TreeMap<Float, Feature> proximityMap = new TreeMap<>();
@@ -273,9 +274,12 @@ public class ListFragment extends Fragment implements IDataCallback {
      *
      * @param featureCollection FeatureCollection passed in by calling Activity
      */
-    public void onUpdateData(FeatureCollection featureCollection) {
-        Log.i(TAG, "onUpdateData");
+    public void onUpdateData(Context context, FeatureCollection featureCollection) {
+        Log.i(TAG, "onUpdateData " + featureCollection.count + " " + featureCollection.getFeatures().size());
         mFeatureCollection = featureCollection;
+        if(mContext == null) {
+            mContext = context;
+        }
         if(featureCollection != null) {
             mFeatureList = featureCollection.getFeatures();
             basicSort(mFeatureList);

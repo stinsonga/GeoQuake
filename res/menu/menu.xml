@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/action_list" android:title="@string/menu_list_view" app:showAsAction="ifRoom" android:icon="@drawable/ic_perm_group_user_dictionary"/>
-    <item android:id="@+id/action_map_view" android:title="@string/menu_map_view" app:showAsAction="ifRoom" android:icon="@drawable/ic_menu_mapmode" android:visible="false"/>
     <item android:id="@+id/action_refresh" android:title="@string/menu_refresh" app:showAsAction="ifRoom" android:icon="@drawable/ic_refresh_white_24dp"/>
     <item android:id="@+id/action_location" android:title="@string/menu_my_location" app:showAsAction="ifRoom" android:icon="@drawable/ic_menu_mylocation"/>
     <item android:id="@+id/action_info" android:title="@string/about_geoquake" app:showAsAction="ifRoom" android:icon="@drawable/ic_info_white_24dp"/>

@@ -74,6 +74,7 @@ public class QuakeData {
                     protected void onPostExecute(FeatureCollection featureCollection) {
                         super.onPostExecute(featureCollection);
                         mFeatureCollection = featureCollection;
+                        Log.i(QuakeData.class.getSimpleName(), "onPostExecute " + featureCollection.count);
                         mDataCallback.dataCallback(mFeatureCollection);
                     }
                 }.execute(new URL(usgsUrl + Utils.getURLFrag(mQuakeType,

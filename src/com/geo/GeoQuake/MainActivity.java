@@ -79,19 +79,17 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     FeatureCollection mFeatureCollection;
     GeoQuakeDB mGeoQuakeDB;
     QuakeData mQuakeData;
-    QuakeMapFragment mMapFragment;
-    ListFragment mListFragment;
+//    QuakeMapFragment mMapFragment;
+//    ListFragment mListFragment;
     Toolbar mToolbar;
 
     int mStrengthSelection = 4;
     int mDurationSelection = 0;
 
-    int mSelectedFragment = 0;
-    boolean isFirstLoad = true;
-
     double mUserLatitude = 0.0;
     double mUserLongitude = 0.0;
     boolean mHasUserLocation;
+    boolean mDrawerIsOpen;
 
     GoogleApiClient mGoogleApiClient;
 
@@ -103,9 +101,12 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
         buildGoogleApiClient();
 
+//        mMapFragment = QuakeMapFragment.newInstance();
+//        mListFragment = ListFragment.newInstance();
         mDrawerLayout.addDrawerListener(drawerListener);
         mViewPager.setAdapter(new TabPagerAdapter(getSupportFragmentManager(), this));
         mTabLayout.setupWithViewPager(mViewPager);
+        mTabLayout.addOnTabSelectedListener(onTabSelectedListener);
 
         mToolbar = (Toolbar) findViewById(R.id.action_bar);
         setSupportActionBar(mToolbar);
@@ -124,9 +125,6 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
         mSharedPreferences = getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
         mGeoQuakeDB = new GeoQuakeDB(this);
 
-        mMapFragment = QuakeMapFragment.newInstance();
-        mListFragment = ListFragment.newInstance();
-
         mDurationTypeSpinner.setOnItemSelectedListener(spinnerListener);
         mQuakeTypeSpinner.setOnItemSelectedListener(spinnerListener);
         mQuakeTypeSpinner.setSelection(4); //default selection
@@ -144,8 +142,8 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
-            getSupportFragmentManager().popBackStackImmediate();
+        if(mDrawerIsOpen) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
             finish();
         }
@@ -218,17 +216,6 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                     mDrawerLayout.openDrawer(GravityCompat.START);
                 }
                 break;
-
-            case R.id.action_list:
-                mSelectedFragment = 1;
-                fm.beginTransaction().replace(R.id.fragment_container, mListFragment).addToBackStack("map").commit();
-                invalidateOptionsMenu();
-                break;
-            case R.id.action_map_view:
-                mSelectedFragment = 0;
-                onBackPressed();
-                invalidateOptionsMenu();
-                break;
             case R.id.action_refresh:
                 if (!mAsyncUnderway) {
                     if (GeoQuakeDB.checkRefreshLimit(GeoQuakeDB.getTime(),
@@ -245,15 +232,15 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                 }
                 break;
             case R.id.action_location:
-                if (mSelectedFragment == 0) {
+
                     if(mHasUserLocation) {
-                        mMapFragment.moveCameraToUserLocation(mUserLatitude, mUserLongitude);
+                        ((TabPagerAdapter) mViewPager.getAdapter()).moveCamera(getApplicationContext(), mUserLatitude, mUserLongitude);
                     }
-                } else {
+
                     if (mHasUserLocation) {
-                        mListFragment.sortByProximity(mUserLatitude, mUserLongitude);
+                        ((TabPagerAdapter) mViewPager.getAdapter()).sortByProximity(getApplicationContext(), mUserLatitude, mUserLongitude);
                     }
-                }
+
                 break;
             case R.id.action_info:
                 startActivity(new Intent(MainActivity.this, AboutActivity.class));
@@ -266,14 +253,6 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     @Override
     protected boolean onPrepareOptionsPanel(View view, Menu menu) {
-        if (mSelectedFragment == 0) {
-            menu.findItem(R.id.action_map_view).setVisible(false);
-            menu.findItem(R.id.action_list).setVisible(true);
-        } else {
-            menu.findItem(R.id.action_map_view).setVisible(true);
-            menu.findItem(R.id.action_list).setVisible(false);
-        }
-
         menu.findItem(R.id.action_location).setVisible(mHasUserLocation);
 
         return super.onPrepareOptionsPanel(view, menu);
@@ -299,10 +278,8 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                     mUserLongitude = location.getLongitude();
                     mHasUserLocation = true;
                     invalidateOptionsMenu();
-                    if (mSelectedFragment == 0) {
-                        if(mHasUserLocation) {
-                            mMapFragment.moveCameraToUserLocation(mUserLatitude, mUserLongitude);
-                        }
+                    if(mHasUserLocation) {
+                        ((TabPagerAdapter) mViewPager.getAdapter()).moveCamera(getApplicationContext(), mUserLatitude, mUserLongitude);
                     }
                 } else {
                     Log.i(TAG, "No location.");
@@ -377,13 +354,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                         + mDurationSelection)), this)) {
             mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection));
             Log.i(TAG, "no need for new data, setup fragment");
-            if (isFirstLoad) {
-                Log.i(TAG, "firstLoad, set map fragment");
-                isFirstLoad = false;
-                fireMapFragment();
-            } else {
-                refreshCurrentFragment(mFeatureCollection);
-            }
+            refreshCurrentFragment(mFeatureCollection);
         } else {
             Utils.fireToast(mDurationSelection, mStrengthSelection, this);
             mQuakeData = new QuakeData(this.getString(R.string.usgs_url),
@@ -394,28 +365,17 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     }
 
     /**
-     * Essentially the default behaviour when we first enter the app
-     */
-    public void fireMapFragment() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mMapFragment)
-                .addToBackStack("stack").commit();
-    }
-
-
-    /**
      * Refresh the current fragment with new data
      *
      * @param featureCollection FeatureCollection that will be sent to the fragment
      */
     public void refreshCurrentFragment(FeatureCollection featureCollection) {
-        if (mSelectedFragment == 0) {
-            mMapFragment.onUpdateData(featureCollection);
-            if(mHasUserLocation) {
-                mMapFragment.userLocationMarker(mUserLatitude, mUserLongitude);
-            }
-        } else {
-            mListFragment.onUpdateData(featureCollection);
-        }
+        ((TabPagerAdapter) mViewPager.getAdapter()).updateFragments(getApplicationContext(),
+                featureCollection, mHasUserLocation, mUserLatitude, mUserLongitude);
+
+
+
+
     }
 
     /**
@@ -423,19 +383,12 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
      */
     @Override
     public void dataCallback(FeatureCollection featureCollection) {
-        Log.i(TAG, "got callback, set data");
+        Log.i(TAG, "got callback, set data " + featureCollection.count);
         //update map with data
         mFeatureCollection = featureCollection; //mQuakeData.getFeatureCollection();
         mAsyncUnderway = false;
         setLoadingFinishedView();
-
-        if (isFirstLoad) {
-            Log.i(TAG, "firstLoad, set map fragment");
-            isFirstLoad = false;
-            fireMapFragment();
-        } else {
-            refreshCurrentFragment(featureCollection);
-        }
+        refreshCurrentFragment(featureCollection);
     }
 
     /**
@@ -503,16 +456,34 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
         @Override
         public void onDrawerOpened(View drawerView) {
+            mDrawerIsOpen = true;
             Utils.hideKeyboard(drawerView);
         }
 
         @Override
         public void onDrawerClosed(View drawerView) {
-
+            mDrawerIsOpen = false;
         }
 
         @Override
         public void onDrawerStateChanged(int newState) {
+
+        }
+    };
+
+    TabLayout.OnTabSelectedListener onTabSelectedListener = new TabLayout.OnTabSelectedListener() {
+        @Override
+        public void onTabSelected(TabLayout.Tab tab) {
+
+        }
+
+        @Override
+        public void onTabUnselected(TabLayout.Tab tab) {
+
+        }
+
+        @Override
+        public void onTabReselected(TabLayout.Tab tab) {
 
         }
     };
