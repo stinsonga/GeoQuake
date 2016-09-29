@@ -31,10 +31,10 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new QuakeMapFragment();
+                return mMapFragment;
             case 1:
             default:
-                return new ListFragment();
+                return mListFragment;
         }
     }
 
@@ -55,18 +55,18 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
     }
 
     public void updateFragments(Context context, FeatureCollection featureCollection, boolean hasUserLocation, double latitude, double longitude) {
-        mMapFragment.onUpdateData(context, featureCollection);
-        mListFragment.onUpdateData(context, featureCollection);
+        mMapFragment.onUpdateData(featureCollection);
+        mListFragment.onUpdateData(featureCollection);
         if(hasUserLocation) {
-            mMapFragment.userLocationMarker(context, latitude, longitude);
+            mMapFragment.userLocationMarker(latitude, longitude);
         }
     }
 
-    public void moveCamera(Context context, double latitude, double longitude) {
-        mMapFragment.moveCameraToUserLocation(context, latitude, longitude);
+    public void moveCamera(double latitude, double longitude) {
+        mMapFragment.moveCameraToUserLocation(latitude, longitude);
     }
 
-    public void sortByProximity(Context context, double latitude, double longitude) {
-        mListFragment.sortByProximity(context, latitude, longitude);
+    public void sortByProximity(double latitude, double longitude) {
+        mListFragment.sortByProximity(latitude, longitude);
     }
 }

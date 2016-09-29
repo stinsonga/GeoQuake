@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -38,7 +35,7 @@ import butterknife.OnClick;
  * Created by gstinson on 2014-08-25.
  */
 public class ListFragment extends Fragment implements IDataCallback {
-    private static final String TAG = "ListFragment";
+    private static final String TAG = ListFragment.class.getSimpleName();
 
     @Bind(R.id.quakeListView)
     ListView mQuakeListView;
@@ -160,6 +157,8 @@ public class ListFragment extends Fragment implements IDataCallback {
                 Toast.makeText(mContext, mContext.getResources().getString(R.string.empty_list)
                         , Toast.LENGTH_LONG).show();
             }
+        } else {
+            Log.i(TAG, "Null context " + (mContext == null));
         }
     }
 
@@ -176,16 +175,12 @@ public class ListFragment extends Fragment implements IDataCallback {
                 return Double.compare(rhs.getProperties().getMag(), lhs.getProperties().getMag());
             }
         });
-
-
     }
 
     /**
      * Sorting list by distance from user
      */
-    public void sortByProximity(Context context, double latitude, double longitude) {
-        Toast.makeText(context, context.getResources().getString(R.string.sorting_by_proximity)
-                , Toast.LENGTH_SHORT).show();
+    public void sortByProximity(double latitude, double longitude) {
         ArrayList<Feature> proximityList = new ArrayList<>();
         TreeMap<Float, Feature> proximityMap = new TreeMap<>();
         for (Feature feature : mFeatureList) {
@@ -274,12 +269,8 @@ public class ListFragment extends Fragment implements IDataCallback {
      *
      * @param featureCollection FeatureCollection passed in by calling Activity
      */
-    public void onUpdateData(Context context, FeatureCollection featureCollection) {
-        Log.i(TAG, "onUpdateData " + featureCollection.count + " " + featureCollection.getFeatures().size());
+    public void onUpdateData(FeatureCollection featureCollection) {
         mFeatureCollection = featureCollection;
-        if(mContext == null) {
-            mContext = context;
-        }
         if(featureCollection != null) {
             mFeatureList = featureCollection.getFeatures();
             basicSort(mFeatureList);

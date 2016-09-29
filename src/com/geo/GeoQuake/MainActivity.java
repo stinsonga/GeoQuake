@@ -5,16 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -22,7 +18,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -43,7 +38,7 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements IDataCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-    private static final String TAG = "MainActivity";
+    private static final String TAG = MainActivity.class.getSimpleName();
     SharedPreferences mSharedPreferences;
     Bundle mBundle;
 
@@ -79,8 +74,6 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     FeatureCollection mFeatureCollection;
     GeoQuakeDB mGeoQuakeDB;
     QuakeData mQuakeData;
-//    QuakeMapFragment mMapFragment;
-//    ListFragment mListFragment;
     Toolbar mToolbar;
 
     int mStrengthSelection = 4;
@@ -90,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     double mUserLongitude = 0.0;
     boolean mHasUserLocation;
     boolean mDrawerIsOpen;
+
+    int mCurrentTabPosition;
 
     GoogleApiClient mGoogleApiClient;
 
@@ -101,8 +96,6 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
         buildGoogleApiClient();
 
-//        mMapFragment = QuakeMapFragment.newInstance();
-//        mListFragment = ListFragment.newInstance();
         mDrawerLayout.addDrawerListener(drawerListener);
         mViewPager.setAdapter(new TabPagerAdapter(getSupportFragmentManager(), this));
         mTabLayout.setupWithViewPager(mViewPager);
@@ -209,7 +202,6 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        FragmentManager fm = getSupportFragmentManager();
         switch (item.getItemId()) {
             case android.R.id.home:
                 if (!mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -232,14 +224,16 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                 }
                 break;
             case R.id.action_location:
-
                     if(mHasUserLocation) {
-                        ((TabPagerAdapter) mViewPager.getAdapter()).moveCamera(getApplicationContext(), mUserLatitude, mUserLongitude);
+                        ((TabPagerAdapter) mViewPager.getAdapter()).moveCamera(mUserLatitude, mUserLongitude);
                     }
-
                     if (mHasUserLocation) {
-                        ((TabPagerAdapter) mViewPager.getAdapter()).sortByProximity(getApplicationContext(), mUserLatitude, mUserLongitude);
+                        ((TabPagerAdapter) mViewPager.getAdapter()).sortByProximity(mUserLatitude, mUserLongitude);
                     }
+                if(mCurrentTabPosition == 1) {
+                  Toast.makeText(this, this.getResources().getString(R.string.sorting_by_proximity)
+                , Toast.LENGTH_SHORT).show();
+                }
 
                 break;
             case R.id.action_info:
@@ -279,7 +273,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                     mHasUserLocation = true;
                     invalidateOptionsMenu();
                     if(mHasUserLocation) {
-                        ((TabPagerAdapter) mViewPager.getAdapter()).moveCamera(getApplicationContext(), mUserLatitude, mUserLongitude);
+                        ((TabPagerAdapter) mViewPager.getAdapter()).moveCamera(mUserLatitude, mUserLongitude);
                     }
                 } else {
                     Log.i(TAG, "No location.");
@@ -306,27 +300,16 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                     // permission was granted
                     buildGoogleApiClient();
                     if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
+                        //TODO: more permission handling?
                         return;
                     }
 
                 } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                     Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
                 }
-                return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
+            //case 1111:
+                //other
         }
     }
 
@@ -370,12 +353,9 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
      * @param featureCollection FeatureCollection that will be sent to the fragment
      */
     public void refreshCurrentFragment(FeatureCollection featureCollection) {
-        ((TabPagerAdapter) mViewPager.getAdapter()).updateFragments(getApplicationContext(),
+        ((TabPagerAdapter) mViewPager.getAdapter()).updateFragments(this,
                 featureCollection, mHasUserLocation, mUserLatitude, mUserLongitude);
-
-
-
-
+        mViewPager.getAdapter().notifyDataSetChanged();
     }
 
     /**
@@ -474,7 +454,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     TabLayout.OnTabSelectedListener onTabSelectedListener = new TabLayout.OnTabSelectedListener() {
         @Override
         public void onTabSelected(TabLayout.Tab tab) {
-
+            mCurrentTabPosition = tab.getPosition();
         }
 
         @Override

@@ -10,6 +10,18 @@
         <item name="android:textColorHint">@color/gray_700</item>
     </style>
 
+    <style name="TabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabBackground">@color/actionbar_color</item>
+        <item name="tabIndicatorColor">@color/tab_select_color</item>
+        <item name="tabTextAppearance">@style/TabTextStyle</item>
+        <item name="tabSelectedTextColor">#FFF</item>
+    </style>
+
+    <style name="TabTextStyle" parent="TextAppearance.Design.Tab">
+        <item name="android:textColor">@color/gray_500</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
     <style name="ActionBarStyling" parent="Theme.AppCompat.DayNight">
         <item name="android:background">@color/actionbar_color</item>
     </style>
