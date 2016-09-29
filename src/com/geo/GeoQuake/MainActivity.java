@@ -263,25 +263,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     @Override
     public void onConnected(Bundle connectionHint) {
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            try {
-                Location location = LocationServices.FusedLocationApi.getLastLocation(
-                        mGoogleApiClient);
-                if (location != null) {
-                    Log.i(TAG, "Location found " + location.getLatitude() + " " + location.getLongitude());
-                    mUserLatitude = location.getLatitude();
-                    mUserLongitude = location.getLongitude();
-                    mHasUserLocation = true;
-                    invalidateOptionsMenu();
-                    if(mHasUserLocation) {
-                        ((TabPagerAdapter) mViewPager.getAdapter()).moveCamera(mUserLatitude, mUserLongitude);
-                    }
-                } else {
-                    Log.i(TAG, "No location.");
-                }
-            } catch (SecurityException se) {
-                Log.i(TAG, "SecurityException when fetching location");
-                mHasUserLocation = false;
-            }
+            getAndHandleLocation();
         } else {
             Log.i(TAG, "No permission for ACCESS_FINE_LOCATION");
             ActivityCompat.requestPermissions(this,
@@ -298,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted
-                    buildGoogleApiClient();
+                    getAndHandleLocation();
                     if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         //TODO: more permission handling?
                         return;
@@ -310,6 +292,28 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
             }
             //case 1111:
                 //other
+        }
+    }
+
+    public void getAndHandleLocation() {
+        try {
+            Location location = LocationServices.FusedLocationApi.getLastLocation(
+                    mGoogleApiClient);
+            if (location != null) {
+                Log.i(TAG, "Location found " + location.getLatitude() + " " + location.getLongitude());
+                mUserLatitude = location.getLatitude();
+                mUserLongitude = location.getLongitude();
+                mHasUserLocation = true;
+                invalidateOptionsMenu();
+                if(mHasUserLocation) {
+                    ((TabPagerAdapter) mViewPager.getAdapter()).moveCamera(mUserLatitude, mUserLongitude);
+                }
+            } else {
+                Log.i(TAG, "No location.");
+            }
+        } catch (SecurityException se) {
+            Log.i(TAG, "SecurityException when fetching location");
+            mHasUserLocation = false;
         }
     }
 
