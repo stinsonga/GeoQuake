@@ -36,21 +36,37 @@ public class FeatureCollection {
 
     public FeatureCollection(String jsonString){
         try{
+            Log.d("FeatureCollection json", jsonString);
             JSONObject jsonObject = new JSONObject(jsonString);
             //setup arrays
             this.metadata = jsonObject.getJSONObject("metadata");
-            this.bbox = jsonObject.getJSONArray("bbox");
+            if(jsonObject.has("bbox")) {
+                this.bbox = jsonObject.getJSONArray("bbox");
+            }
             JSONArray featuresArray = jsonObject.getJSONArray("features");
             for(int i = 0; i < featuresArray.length(); i++){
                 features.add(new Feature(featuresArray.getJSONObject(i)));
             }
+            Log.i("FeatureCollection", "size " + features.size());
             //setup metadata
-            this.generated = jsonObject.getLong("generated");
-            this.url = jsonObject.getString("url");
-            this.title = jsonObject.getString("title");
-            this.api = jsonObject.getString("api");
-            this.count = jsonObject.getInt("count");
-            this.status = jsonObject.getInt("status");
+            if(jsonObject.has("generated")) {
+                this.generated = jsonObject.getLong("generated");
+            }
+            if(jsonObject.has("url")) {
+                this.url = jsonObject.getString("url");
+            }
+            if(jsonObject.has("title")) {
+                this.title = jsonObject.getString("title");
+            }
+            if(jsonObject.has("api")) {
+                this.api = jsonObject.getString("api");
+            }
+            if(jsonObject.has("count")) {
+                this.count = jsonObject.getInt("count");
+            }
+            if(jsonObject.has("status")) {
+                this.status = jsonObject.getInt("status");
+            }
 
         } catch (JSONException je){
             Log.e("FeatureCollection derp", je.getMessage());

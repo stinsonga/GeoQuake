@@ -5,22 +5,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -31,6 +28,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 
+import com.geo.GeoQuake.adapters.TabPagerAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -40,7 +38,7 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements IDataCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-    private static final String TAG = "MainActivity";
+    private static final String TAG = MainActivity.class.getSimpleName();
     SharedPreferences mSharedPreferences;
     Bundle mBundle;
 
@@ -65,24 +63,28 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     @Bind(R.id.loading_overlay)
     RelativeLayout mLoadingOverlay;
 
+    @Bind(R.id.tab_layout)
+    TabLayout mTabLayout;
+
+    @Bind(R.id.view_pager)
+    ViewPager mViewPager;
+
     boolean mAsyncUnderway = false;
 
     FeatureCollection mFeatureCollection;
     GeoQuakeDB mGeoQuakeDB;
     QuakeData mQuakeData;
-    QuakeMapFragment mMapFragment;
-    ListFragment mListFragment;
     Toolbar mToolbar;
 
     int mStrengthSelection = 4;
     int mDurationSelection = 0;
 
-    int mSelectedFragment = 0;
-    boolean isFirstLoad = true;
-
     double mUserLatitude = 0.0;
     double mUserLongitude = 0.0;
     boolean mHasUserLocation;
+    boolean mDrawerIsOpen;
+
+    int mCurrentTabPosition;
 
     GoogleApiClient mGoogleApiClient;
 
@@ -95,6 +97,9 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
         buildGoogleApiClient();
 
         mDrawerLayout.addDrawerListener(drawerListener);
+        mViewPager.setAdapter(new TabPagerAdapter(getSupportFragmentManager(), this));
+        mTabLayout.setupWithViewPager(mViewPager);
+        mTabLayout.addOnTabSelectedListener(onTabSelectedListener);
 
         mToolbar = (Toolbar) findViewById(R.id.action_bar);
         setSupportActionBar(mToolbar);
@@ -113,9 +118,6 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
         mSharedPreferences = getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
         mGeoQuakeDB = new GeoQuakeDB(this);
 
-        mMapFragment = QuakeMapFragment.newInstance();
-        mListFragment = ListFragment.newInstance();
-
         mDurationTypeSpinner.setOnItemSelectedListener(spinnerListener);
         mQuakeTypeSpinner.setOnItemSelectedListener(spinnerListener);
         mQuakeTypeSpinner.setSelection(4); //default selection
@@ -133,8 +135,8 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
-            getSupportFragmentManager().popBackStackImmediate();
+        if(mDrawerIsOpen) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
             finish();
         }
@@ -200,23 +202,11 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        FragmentManager fm = getSupportFragmentManager();
         switch (item.getItemId()) {
             case android.R.id.home:
                 if (!mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
                     mDrawerLayout.openDrawer(GravityCompat.START);
                 }
-                break;
-
-            case R.id.action_list:
-                mSelectedFragment = 1;
-                fm.beginTransaction().replace(R.id.fragment_container, mListFragment).addToBackStack("map").commit();
-                invalidateOptionsMenu();
-                break;
-            case R.id.action_map_view:
-                mSelectedFragment = 0;
-                onBackPressed();
-                invalidateOptionsMenu();
                 break;
             case R.id.action_refresh:
                 if (!mAsyncUnderway) {
@@ -234,15 +224,17 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                 }
                 break;
             case R.id.action_location:
-                if (mSelectedFragment == 0) {
                     if(mHasUserLocation) {
-                        mMapFragment.moveCameraToUserLocation(mUserLatitude, mUserLongitude);
+                        ((TabPagerAdapter) mViewPager.getAdapter()).moveCamera(mUserLatitude, mUserLongitude);
                     }
-                } else {
                     if (mHasUserLocation) {
-                        mListFragment.sortByProximity(mUserLatitude, mUserLongitude);
+                        ((TabPagerAdapter) mViewPager.getAdapter()).sortByProximity(mUserLatitude, mUserLongitude);
                     }
+                if(mCurrentTabPosition == 1) {
+                  Toast.makeText(this, this.getResources().getString(R.string.sorting_by_proximity)
+                , Toast.LENGTH_SHORT).show();
                 }
+
                 break;
             case R.id.action_info:
                 startActivity(new Intent(MainActivity.this, AboutActivity.class));
@@ -255,14 +247,6 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     @Override
     protected boolean onPrepareOptionsPanel(View view, Menu menu) {
-        if (mSelectedFragment == 0) {
-            menu.findItem(R.id.action_map_view).setVisible(false);
-            menu.findItem(R.id.action_list).setVisible(true);
-        } else {
-            menu.findItem(R.id.action_map_view).setVisible(true);
-            menu.findItem(R.id.action_list).setVisible(false);
-        }
-
         menu.findItem(R.id.action_location).setVisible(mHasUserLocation);
 
         return super.onPrepareOptionsPanel(view, menu);
@@ -288,10 +272,8 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                     mUserLongitude = location.getLongitude();
                     mHasUserLocation = true;
                     invalidateOptionsMenu();
-                    if (mSelectedFragment == 0) {
-                        if(mHasUserLocation) {
-                            mMapFragment.moveCameraToUserLocation(mUserLatitude, mUserLongitude);
-                        }
+                    if(mHasUserLocation) {
+                        ((TabPagerAdapter) mViewPager.getAdapter()).moveCamera(mUserLatitude, mUserLongitude);
                     }
                 } else {
                     Log.i(TAG, "No location.");
@@ -318,27 +300,16 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                     // permission was granted
                     buildGoogleApiClient();
                     if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
+                        //TODO: more permission handling?
                         return;
                     }
 
                 } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                     Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
                 }
-                return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
+            //case 1111:
+                //other
         }
     }
 
@@ -366,13 +337,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                         + mDurationSelection)), this)) {
             mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection));
             Log.i(TAG, "no need for new data, setup fragment");
-            if (isFirstLoad) {
-                Log.i(TAG, "firstLoad, set map fragment");
-                isFirstLoad = false;
-                fireMapFragment();
-            } else {
-                refreshCurrentFragment(mFeatureCollection);
-            }
+            refreshCurrentFragment(mFeatureCollection);
         } else {
             Utils.fireToast(mDurationSelection, mStrengthSelection, this);
             mQuakeData = new QuakeData(this.getString(R.string.usgs_url),
@@ -383,28 +348,14 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     }
 
     /**
-     * Essentially the default behaviour when we first enter the app
-     */
-    public void fireMapFragment() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mMapFragment)
-                .addToBackStack("stack").commit();
-    }
-
-
-    /**
      * Refresh the current fragment with new data
      *
      * @param featureCollection FeatureCollection that will be sent to the fragment
      */
     public void refreshCurrentFragment(FeatureCollection featureCollection) {
-        if (mSelectedFragment == 0) {
-            mMapFragment.onUpdateData(featureCollection);
-            if(mHasUserLocation) {
-                mMapFragment.userLocationMarker(mUserLatitude, mUserLongitude);
-            }
-        } else {
-            mListFragment.onUpdateData(featureCollection);
-        }
+        ((TabPagerAdapter) mViewPager.getAdapter()).updateFragments(this,
+                featureCollection, mHasUserLocation, mUserLatitude, mUserLongitude);
+        mViewPager.getAdapter().notifyDataSetChanged();
     }
 
     /**
@@ -412,19 +363,12 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
      */
     @Override
     public void dataCallback(FeatureCollection featureCollection) {
-        Log.i(TAG, "got callback, set data");
+        Log.i(TAG, "got callback, set data " + featureCollection.count);
         //update map with data
         mFeatureCollection = featureCollection; //mQuakeData.getFeatureCollection();
         mAsyncUnderway = false;
         setLoadingFinishedView();
-
-        if (isFirstLoad) {
-            Log.i(TAG, "firstLoad, set map fragment");
-            isFirstLoad = false;
-            fireMapFragment();
-        } else {
-            refreshCurrentFragment(featureCollection);
-        }
+        refreshCurrentFragment(featureCollection);
     }
 
     /**
@@ -492,16 +436,34 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
         @Override
         public void onDrawerOpened(View drawerView) {
+            mDrawerIsOpen = true;
             Utils.hideKeyboard(drawerView);
         }
 
         @Override
         public void onDrawerClosed(View drawerView) {
-
+            mDrawerIsOpen = false;
         }
 
         @Override
         public void onDrawerStateChanged(int newState) {
+
+        }
+    };
+
+    TabLayout.OnTabSelectedListener onTabSelectedListener = new TabLayout.OnTabSelectedListener() {
+        @Override
+        public void onTabSelected(TabLayout.Tab tab) {
+            mCurrentTabPosition = tab.getPosition();
+        }
+
+        @Override
+        public void onTabUnselected(TabLayout.Tab tab) {
+
+        }
+
+        @Override
+        public void onTabReselected(TabLayout.Tab tab) {
 
         }
     };

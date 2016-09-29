@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_subname"> </string>
-    <string name="version_number">1.2.0</string>
+    <string name="version_number">1.3.0</string>
     <string name="version">Version: </string>
     <string name="usgs_url">http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/</string>
     <string name="loading_data">Loading data.</string>
@@ -14,6 +14,8 @@
 
     <string name="quake_list">Quake List</string>
     <string name="map_view">Map View</string>
+    <string name="map_tab">Map</string>
+    <string name="list_tab">List</string>
 
     <string name="map_tab_label">Map</string>
     <string name="list_tab_label">Quake List</string>

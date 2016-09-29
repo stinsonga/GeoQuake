@@ -4,7 +4,6 @@ import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -33,7 +32,7 @@ import butterknife.ButterKnife;
 
 
 public class QuakeMapFragment extends Fragment implements IDataCallback {
-    private static final String TAG = "QuakeMapFragment";
+    private static final String TAG = QuakeMapFragment.class.getSimpleName();
     Bundle mBundle;
     HashMap<String, String> markerInfo = new HashMap<String, String>();
 
@@ -177,8 +176,11 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     }
 
     public void userLocationMarker(double latitude, double longitude) {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))
-                .title(getActivity().getString(R.string.menu_my_location)));
+        if (mMap != null) {
+            mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))
+                    .title(getActivity().getString(R.string.menu_my_location)));
+        }
+
     }
 
 
@@ -195,7 +197,6 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
             }
             try {
                 if (mFeatureCollection != null && mMap != null) {
-                    Log.i(TAG, "placeMarkers, with size: " + mFeatureCollection.getFeatures().size());
                     for (Feature feature : mFeatureCollection.getFeatures()) {
                         LatLng coords = new LatLng(feature.getLatitude(), feature.getLongitude());
                         BitmapDescriptor quakeIcon;
@@ -277,7 +278,6 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
      * @param featureCollection a FeatureCollection object sent by the activity
      */
     public void onUpdateData(FeatureCollection featureCollection) {
-        Log.i(TAG, "onUpdateData");
         mFeatureCollection = featureCollection;
         placeMarkers();
     }
