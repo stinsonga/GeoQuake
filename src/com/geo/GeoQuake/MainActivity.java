@@ -248,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     @Override
     protected boolean onPrepareOptionsPanel(View view, Menu menu) {
         menu.findItem(R.id.action_location).setVisible(mHasUserLocation);
-
+        menu.findItem(R.id.action_search).setVisible(mCurrentTabPosition == 1);
         return super.onPrepareOptionsPanel(view, menu);
     }
 
@@ -459,6 +459,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
         @Override
         public void onTabSelected(TabLayout.Tab tab) {
             mCurrentTabPosition = tab.getPosition();
+            invalidateOptionsMenu();
         }
 
         @Override

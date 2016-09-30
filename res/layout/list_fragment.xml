@@ -5,17 +5,14 @@
     android:background="@color/gray_200"
     android:orientation="vertical">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
         <LinearLayout
             android:id="@+id/search_bar"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:orientation="horizontal"
-            android:padding="8dp">
+            android:baselineAligned="false"
+            android:padding="8dp"
+            android:visibility="gone">
 
             <SearchView
                 android:id="@+id/search_view"
@@ -49,6 +46,5 @@
             android:layout_height="match_parent"
 
             />
-    </LinearLayout>
 
 </LinearLayout>
