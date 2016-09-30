@@ -10,10 +10,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -48,6 +50,9 @@ public class ListFragment extends Fragment implements IDataCallback {
     FeatureCollection mFeatureCollection;
     ArrayList<Feature> mFeatureList;
 
+    @Bind(R.id.search_bar)
+    LinearLayout mSearchBar;
+
     @Bind(R.id.search_view)
     SearchView mSearchView;
 
@@ -72,7 +77,7 @@ public class ListFragment extends Fragment implements IDataCallback {
 
         mBundle = new Bundle();
         mGeoQuakeDB = new GeoQuakeDB(getActivity());
-
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -133,6 +138,30 @@ public class ListFragment extends Fragment implements IDataCallback {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBundle("mBundle", mBundle);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_search:
+                handleSearchBar();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void handleSearchBar() {
+        if(mSearchBar.getVisibility() == View.VISIBLE) {
+            mSearchBar.setVisibility(View.GONE);
+            mSearchView.setIconified(true);
+            mSearchView.clearFocus();
+            Utils.hideKeyboard(mSearchBar);
+        } else {
+            mSearchBar.setVisibility(View.VISIBLE);
+            mSearchView.setIconified(false);
+            mSearchView.requestFocus();
+            Utils.showKeyboard(mSearchBar);
+        }
     }
 
     /**
