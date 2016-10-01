@@ -54,7 +54,7 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
-    public void updateFragments(Context context, FeatureCollection featureCollection, boolean hasUserLocation, double latitude, double longitude) {
+    public void updateFragments(FeatureCollection featureCollection, boolean hasUserLocation, double latitude, double longitude) {
         mMapFragment.onUpdateData(featureCollection);
         mListFragment.onUpdateData(featureCollection);
         if(hasUserLocation) {

@@ -357,8 +357,8 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
      * @param featureCollection FeatureCollection that will be sent to the fragment
      */
     public void refreshCurrentFragment(FeatureCollection featureCollection) {
-        ((TabPagerAdapter) mViewPager.getAdapter()).updateFragments(this,
-                featureCollection, mHasUserLocation, mUserLatitude, mUserLongitude);
+        ((TabPagerAdapter) mViewPager.getAdapter()).updateFragments(featureCollection,
+                mHasUserLocation, mUserLatitude, mUserLongitude);
         mViewPager.getAdapter().notifyDataSetChanged();
     }
 
