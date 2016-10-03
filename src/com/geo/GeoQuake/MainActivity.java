@@ -416,7 +416,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     public void getAlertDiagloBuilder(Context context) {
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
         alertBuilder.setMessage(context.getResources().getString(R.string.parameters_changed))
-                .setPositiveButton(context.getResources().getString(R.string.menu_refresh), new DialogInterface.OnClickListener() {
+                .setPositiveButton(context.getString(R.string.menu_refresh), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         doRefresh();

@@ -21,6 +21,8 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.geo.GeoQuake.adapters.QuakeListAdapter;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -31,7 +33,6 @@ import java.util.TreeMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by gstinson on 2014-08-25.

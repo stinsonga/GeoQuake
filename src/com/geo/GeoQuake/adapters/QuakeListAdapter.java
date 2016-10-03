@@ -1,4 +1,4 @@
-package com.geo.GeoQuake;
+package com.geo.GeoQuake.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.geo.GeoQuake.Feature;
+import com.geo.GeoQuake.R;
 
 import java.util.ArrayList;
 
@@ -52,13 +55,13 @@ public class QuakeListAdapter extends ArrayAdapter<Feature> {
             vh.magnitudeTextView.setTextColor(Color.WHITE);
             vh.locationTextView.setText(feature.getProperties().getPlace());
             if (feature.getProperties().getMag() <= 1.00) {
-                vh.magnitudeTextView.setTextColor(ContextCompat.getColor(view.getContext(), R.color.material_green));
+                vh.magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_green));
             } else if (feature.getProperties().getMag() <= 2.50) {
-                vh.magnitudeTextView.setTextColor(ContextCompat.getColor(view.getContext(), R.color.material_orange));
+                vh.magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_orange));
             } else if (feature.getProperties().getMag() <= 4.50) {
-                vh.magnitudeTextView.setTextColor(ContextCompat.getColor(view.getContext(), R.color.material_deeporange));
+                vh.magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_deeporange));
             } else {
-                vh.magnitudeTextView.setTextColor(ContextCompat.getColor(view.getContext(), R.color.material_red));
+                vh.magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_red));
             }
         }
 
