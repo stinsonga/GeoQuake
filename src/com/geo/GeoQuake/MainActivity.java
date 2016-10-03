@@ -2,6 +2,7 @@ package com.geo.GeoQuake;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -15,6 +16,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -83,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     double mUserLongitude = 0.0;
     boolean mHasUserLocation;
     boolean mDrawerIsOpen;
+    boolean mParametersAreChanged;
 
     int mCurrentTabPosition;
 
@@ -209,19 +212,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                 }
                 break;
             case R.id.action_refresh:
-                if (!mAsyncUnderway) {
-                    if (GeoQuakeDB.checkRefreshLimit(GeoQuakeDB.getTime(),
-                            mSharedPreferences.getLong(Utils.REFRESH_LIMITER, 0))) {
-                        SharedPreferences.Editor editor = mSharedPreferences.edit();
-                        editor.putLong(Utils.REFRESH_LIMITER, GeoQuakeDB.getTime());
-                        editor.apply();
-                        checkNetworkFetchData();
-                    } else {
-                        Toast.makeText(this, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(this, getResources().getString(R.string.wait_for_loading), Toast.LENGTH_SHORT).show();
-                }
+                doRefresh();
                 break;
             case R.id.action_location:
                     if(mHasUserLocation) {
@@ -257,6 +248,22 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
             fetchData();
         } else {
             Utils.connectToast(this);
+        }
+    }
+
+    public void doRefresh() {
+        if (!mAsyncUnderway) {
+            if (GeoQuakeDB.checkRefreshLimit(GeoQuakeDB.getTime(),
+                    mSharedPreferences.getLong(Utils.REFRESH_LIMITER, 0))) {
+                SharedPreferences.Editor editor = mSharedPreferences.edit();
+                editor.putLong(Utils.REFRESH_LIMITER, GeoQuakeDB.getTime());
+                editor.apply();
+                checkNetworkFetchData();
+            } else {
+                Toast.makeText(this, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, getResources().getString(R.string.wait_for_loading), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -406,15 +413,38 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
         });
     }
 
+    public void getAlertDiagloBuilder(Context context) {
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
+        alertBuilder.setMessage(context.getResources().getString(R.string.parameters_changed))
+                .setPositiveButton(context.getResources().getString(R.string.menu_refresh), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        doRefresh();
+                        mParametersAreChanged = false;
+                    }
+                })
+                .setNegativeButton(context.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //nuthin'
+                        mParametersAreChanged = false;
+                    }
+                });
+        alertBuilder.create();
+        alertBuilder.show();
+    }
+
     AdapterView.OnItemSelectedListener spinnerListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (parent.getId()) {
                 case (R.id.quake_type_spinner):
                     mStrengthSelection = mQuakeTypeSpinner.getSelectedItemPosition();
+                    mParametersAreChanged = true;
                     break;
                 case (R.id.duration_type_spinner):
                     mDurationSelection = mDurationTypeSpinner.getSelectedItemPosition();
+                    mParametersAreChanged = true;
                     break;
                 case (R.id.cache_spinner):
                     Utils.changeCache(mCacheTimeSpinner.getSelectedItemPosition(), mSharedPreferences,
@@ -447,6 +477,9 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
         @Override
         public void onDrawerClosed(View drawerView) {
             mDrawerIsOpen = false;
+            if(mParametersAreChanged) {
+                getAlertDiagloBuilder(MainActivity.this);
+            }
         }
 
         @Override
