@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.geo.GeoQuake.Feature;
 import com.geo.GeoQuake.R;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 
 /**
@@ -31,6 +32,7 @@ public class QuakeListAdapter extends ArrayAdapter<Feature> {
     static class QuakeListViewHolder {
         TextView magnitudeTextView;
         TextView locationTextView;
+        TextView timeTextViewHolder;
     }
 
     @Override
@@ -42,6 +44,7 @@ public class QuakeListAdapter extends ArrayAdapter<Feature> {
             QuakeListViewHolder quakeListViewHolder = new QuakeListViewHolder();
             quakeListViewHolder.magnitudeTextView = (TextView) view.findViewById(R.id.list_magnitude_text);
             quakeListViewHolder.locationTextView = (TextView) view.findViewById(R.id.list_location_text);
+            quakeListViewHolder.timeTextViewHolder = (TextView) view.findViewById(R.id.list_time_text);
             view.setTag(quakeListViewHolder);
         }
 
@@ -49,7 +52,13 @@ public class QuakeListAdapter extends ArrayAdapter<Feature> {
 
         if (feature != null) {
             QuakeListViewHolder vh = (QuakeListViewHolder) view.getTag();
-            String magnitude = "" + feature.getProperties().getMag(); //String var to get AS to quit complaining about concatenation
+            String magnitude = "";
+            //deal with weird, negative magnitudes
+            if(feature.getProperties().getMag() < 0.0) {
+                magnitude += 0.0;
+            } else {
+                magnitude += feature.getProperties().getMag(); //String var to get AS to quit complaining about concatenation
+            }
             Context context = view.getContext();
             vh.magnitudeTextView.setText(magnitude);
             vh.magnitudeTextView.setTextColor(Color.WHITE);
@@ -63,6 +72,8 @@ public class QuakeListAdapter extends ArrayAdapter<Feature> {
             } else {
                 vh.magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_red));
             }
+            java.text.DateFormat df = java.text.DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM);
+            vh.timeTextViewHolder.setText(df.format(feature.getProperties().getTime()));
         }
 
         return view;

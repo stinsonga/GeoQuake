@@ -2,28 +2,42 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:padding="@dimen/quake_list_padding">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/list_magnitude_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/material_gray"
-            android:textSize="@dimen/quake_list_font_size" />
+    <TextView
+        android:id="@+id/list_magnitude_text"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginRight="@dimen/quake_list_margin"
+        android:gravity="center"
+        android:textColor="@color/material_gray"
+        android:textSize="@dimen/quake_list_mag_font_size"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/quake_list_margin"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/list_location_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/quake_list_margin"
             android:textColor="@color/gray_700"
             android:textSize="@dimen/quake_list_font_size" />
+
+        <TextView
+            android:id="@+id/list_time_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="January 1, 2016 23:45"
+            android:textColor="@color/gray_700"
+            android:textSize="@dimen/quake_list_font_size" />
+
     </LinearLayout>
 
 </LinearLayout>
