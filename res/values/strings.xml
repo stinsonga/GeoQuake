@@ -3,7 +3,7 @@
     <string name="app_subname"> </string>
     <string name="version_number">1.3.1</string>
     <string name="version">Version: </string>
-    <string name="usgs_url">http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/</string>
+
     <string name="loading_data">Loading data.</string>
     <string name="loading_data_long">Loading data. *NOTE*: this may take a while!</string>
     <string name="wait_for_loading">Please wait before continuing.</string>
@@ -39,6 +39,7 @@
     <string name="sorting_by_proximity">Now Listing Based on Nearest Earthquakes</string>
     <string name="parameters_changed">Parameters have changed. Refresh data?</string>
 
+    <string name="usgs_url">http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/</string>
     <!-- Past Hour, Updated Every Minute -->
     <string name="significant_hour">significant_hour.geojson</string>
     <string name="_4.5_hour">4.5_hour.geojson</string>
@@ -66,6 +67,11 @@
     <string name="_2.5_month">2.5_month.geojson</string>
     <string name="_1.0_month">1.0_month.geojson</string>
     <string name="all_month">all_month.geojson</string>
+
+    <string name="canada_url">http://www.earthquakescanada.nrcan.gc.ca/api/earthquakes/latest/</string>
+    <string name="canada_7_days">7d.json</string>
+    <string name="canada_30_days">30d.json</string>
+    <string name="canada_365_days">365d.json</string>
 
     <!-- Settings -->
     <string name="hide_action_bar">Hide Action Bar?</string>
