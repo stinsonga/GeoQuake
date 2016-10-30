@@ -31,9 +31,12 @@ import android.widget.Toast;
 
 
 import com.geo.GeoQuake.adapters.TabPagerAdapter;
+import com.geo.GeoQuake.models.Earthquake;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -74,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     boolean mAsyncUnderway = false;
 
     FeatureCollection mFeatureCollection;
+    ArrayList<Earthquake> mEarthquakes = new ArrayList<Earthquake>();
     GeoQuakeDB mGeoQuakeDB;
     QuakeData mQuakeData;
     Toolbar mToolbar;

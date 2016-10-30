@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.geo.GeoQuake.adapters.QuakeListAdapter;
+import com.geo.GeoQuake.models.Earthquake;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -50,6 +51,7 @@ public class ListFragment extends Fragment implements IDataCallback {
 
     FeatureCollection mFeatureCollection;
     ArrayList<Feature> mFeatureList;
+    ArrayList<Earthquake> mEarthquakes = new ArrayList<Earthquake>();
 
     @Bind(R.id.search_bar)
     LinearLayout mSearchBar;
