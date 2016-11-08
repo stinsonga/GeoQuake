@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.geo.GeoQuake.FeatureCollection;
+import com.geo.GeoQuake.models.FeatureCollection;
 import com.geo.GeoQuake.ListFragment;
 import com.geo.GeoQuake.QuakeMapFragment;
 import com.geo.GeoQuake.R;

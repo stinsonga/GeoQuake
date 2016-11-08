@@ -9,6 +9,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.geo.GeoQuake.models.Earthquake;
+import com.geo.GeoQuake.models.Feature;
+import com.geo.GeoQuake.models.FeatureCollection;
 
 import java.util.ArrayList;
 

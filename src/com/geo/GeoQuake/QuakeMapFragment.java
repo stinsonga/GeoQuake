@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.geo.GeoQuake.models.Earthquake;
+import com.geo.GeoQuake.models.Feature;
+import com.geo.GeoQuake.models.FeatureCollection;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;

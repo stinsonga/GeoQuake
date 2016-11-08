@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.geo.GeoQuake.Feature;
+import com.geo.GeoQuake.models.Feature;
 import com.geo.GeoQuake.R;
 
 import java.text.DateFormat;
