@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.geo.GeoQuake.models.FeatureCollection;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -74,7 +76,7 @@ public class QuakeData {
                     protected void onPostExecute(FeatureCollection featureCollection) {
                         super.onPostExecute(featureCollection);
                         mFeatureCollection = featureCollection;
-                        Log.i(QuakeData.class.getSimpleName(), "onPostExecute " + featureCollection.count);
+                        Log.i(QuakeData.class.getSimpleName(), "onPostExecute " + featureCollection.getCount());
                         mDataCallback.dataCallback(mFeatureCollection);
                     }
                 }.execute(new URL(usgsUrl + Utils.getURLFrag(mQuakeType,

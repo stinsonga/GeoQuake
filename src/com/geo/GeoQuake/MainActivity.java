@@ -31,9 +31,13 @@ import android.widget.Toast;
 
 
 import com.geo.GeoQuake.adapters.TabPagerAdapter;
+import com.geo.GeoQuake.models.Earthquake;
+import com.geo.GeoQuake.models.FeatureCollection;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -74,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     boolean mAsyncUnderway = false;
 
     FeatureCollection mFeatureCollection;
+    ArrayList<Earthquake> mEarthquakes = new ArrayList<Earthquake>();
     GeoQuakeDB mGeoQuakeDB;
     QuakeData mQuakeData;
     Toolbar mToolbar;
@@ -374,7 +379,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
      */
     @Override
     public void dataCallback(FeatureCollection featureCollection) {
-        Log.i(TAG, "got callback, set data " + featureCollection.count);
+        Log.i(TAG, "got callback, set data " + featureCollection.getCount());
         //update map with data
         mFeatureCollection = featureCollection; //mQuakeData.getFeatureCollection();
         mAsyncUnderway = false;

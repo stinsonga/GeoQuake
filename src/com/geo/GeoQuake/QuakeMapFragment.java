@@ -13,6 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.geo.GeoQuake.models.Earthquake;
+import com.geo.GeoQuake.models.Feature;
+import com.geo.GeoQuake.models.FeatureCollection;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -26,6 +29,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import butterknife.ButterKnife;
@@ -42,6 +46,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     SupportMapFragment mMapFragment;
 
     FeatureCollection mFeatureCollection;
+    ArrayList<Earthquake> mEarthquakes = new ArrayList<Earthquake>();
 
     public static QuakeMapFragment newInstance() {
         return new QuakeMapFragment();
@@ -188,8 +193,8 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
      * The method that does the work of placing the markers on the map. Yes.
      */
     private void placeMarkers() {
-        if (mFeatureCollection != null && mFeatureCollection.getFeatures().size() == 0) {
-            Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.empty_list)
+        if (mFeatureCollection != null && mFeatureCollection.getFeatures() != null && mFeatureCollection.getFeatures().size() == 0) {
+            Toast.makeText(getActivity(), getActivity().getString(R.string.empty_list)
                     , Toast.LENGTH_SHORT).show();
         } else {
             if (mMap != null) {
@@ -210,7 +215,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
                             quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake4_trans60);
                         }
 
-                        Marker m = mMap.addMarker(new MarkerOptions().icon(quakeIcon).position(coords).title(feature.getProperties().getPlace()).snippet(getResources().getString(R.string.magnitude) + feature.getProperties().getMag()));
+                        Marker m = mMap.addMarker(new MarkerOptions().icon(quakeIcon).position(coords).title(feature.getProperties().getPlace()).snippet(getString(R.string.magnitude) + feature.getProperties().getMag()));
                         markerInfo.put(m.getId(), feature.getProperties().getUrl());
 
                         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {

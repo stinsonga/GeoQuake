@@ -8,6 +8,12 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.geo.GeoQuake.models.Earthquake;
+import com.geo.GeoQuake.models.Feature;
+import com.geo.GeoQuake.models.FeatureCollection;
+
+import java.util.ArrayList;
+
 /**
  * Created by gaius on 15-03-05.
  */
@@ -212,6 +218,15 @@ public class Utils {
         InputMethodManager imm = (InputMethodManager) view.getContext()
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(view, InputMethodManager.SHOW_FORCED);
+    }
+
+    public ArrayList<Earthquake> convertFeatureModel(FeatureCollection featureCollection) {
+        ArrayList<Earthquake> quakes = new ArrayList<Earthquake>();
+        for(Feature f : featureCollection.getFeatures()) {
+            quakes.add(new Earthquake(f.getLatitude(), f.getLongitude(), f.getProperties().getMag(),
+                    f.getProperties().getPlace(), f.getProperties().getTime(), f.getProperties().getUrl()));
+        }
+        return quakes;
     }
 
 

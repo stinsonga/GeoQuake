@@ -1,4 +1,4 @@
-package com.geo.GeoQuake;
+package com.geo.GeoQuake.models;
 
 import android.util.Log;
 

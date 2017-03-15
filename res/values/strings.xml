@@ -39,7 +39,7 @@
     <string name="sorting_by_proximity">Now Listing Based on Nearest Earthquakes</string>
     <string name="parameters_changed">Parameters have changed. Refresh data?</string>
 
-    <string name="usgs_url">http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/</string>
+    <string name="usgs_url">https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/</string>
     <!-- Past Hour, Updated Every Minute -->
     <string name="significant_hour">significant_hour.geojson</string>
     <string name="_4.5_hour">4.5_hour.geojson</string>
