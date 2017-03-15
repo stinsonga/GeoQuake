@@ -175,7 +175,7 @@ public class ListFragment extends Fragment implements IDataCallback {
     public void setupList(final ArrayList<Feature> features) {
         if (features != null && mContext != null) {
             Log.i(TAG, "setupList, with size: " + mFeatureList.size());
-            mQuakeCountTextView.setText(String.format(mContext.getResources().getString(R.string.quake_count), mFeatureList.size()));
+            mQuakeCountTextView.setText(String.format(mContext.getString(R.string.quake_count), mFeatureList.size()));
             //TODO: This could use some cleaning up
             mQuakeListAdapter = new QuakeListAdapter(mContext, features);
             mQuakeListView.setAdapter(mQuakeListAdapter);
@@ -188,7 +188,7 @@ public class ListFragment extends Fragment implements IDataCallback {
                 }
             });
             if (features.size() == 0) {
-                Toast.makeText(mContext, mContext.getResources().getString(R.string.empty_list)
+                Toast.makeText(mContext, mContext.getString(R.string.empty_list)
                         , Toast.LENGTH_LONG).show();
             }
         } else {
@@ -247,10 +247,10 @@ public class ListFragment extends Fragment implements IDataCallback {
         }
 
         if (searchFeatures.size() == 0) {
-            Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.empty_search_list)
+            Toast.makeText(getActivity(), getActivity().getString(R.string.empty_search_list)
                     , Toast.LENGTH_LONG).show();
         } else {
-            mQuakeCountTextView.setText(String.format(getActivity().getResources().getString(R.string.quake_count), mFeatureList.size()));
+            mQuakeCountTextView.setText(String.format(getActivity().getString(R.string.quake_count), mFeatureList.size()));
             mSearchView.setQuery("", false);
             //close keyboard
             InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);

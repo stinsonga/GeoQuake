@@ -193,8 +193,8 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
      * The method that does the work of placing the markers on the map. Yes.
      */
     private void placeMarkers() {
-        if (mFeatureCollection != null && mFeatureCollection.getFeatures().size() == 0) {
-            Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.empty_list)
+        if (mFeatureCollection != null && mFeatureCollection.getFeatures() != null && mFeatureCollection.getFeatures().size() == 0) {
+            Toast.makeText(getActivity(), getActivity().getString(R.string.empty_list)
                     , Toast.LENGTH_SHORT).show();
         } else {
             if (mMap != null) {
@@ -215,7 +215,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
                             quakeIcon = BitmapDescriptorFactory.fromResource(R.drawable.quake4_trans60);
                         }
 
-                        Marker m = mMap.addMarker(new MarkerOptions().icon(quakeIcon).position(coords).title(feature.getProperties().getPlace()).snippet(getResources().getString(R.string.magnitude) + feature.getProperties().getMag()));
+                        Marker m = mMap.addMarker(new MarkerOptions().icon(quakeIcon).position(coords).title(feature.getProperties().getPlace()).snippet(getString(R.string.magnitude) + feature.getProperties().getMag()));
                         markerInfo.put(m.getId(), feature.getProperties().getUrl());
 
                         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
