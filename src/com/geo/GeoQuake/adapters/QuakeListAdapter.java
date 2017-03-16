@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class QuakeListAdapter extends ArrayAdapter<Feature> {
 
     private Context mContext;
-    ArrayList<Feature> mFeature;
+    private ArrayList<Feature> mFeature;
 
     public QuakeListAdapter(Context context, ArrayList<Feature> features) {
         super(context, R.layout.quake_list_item_layout, features);
@@ -29,7 +29,7 @@ public class QuakeListAdapter extends ArrayAdapter<Feature> {
         this.mFeature = features;
     }
 
-    static class QuakeListViewHolder {
+    private static class QuakeListViewHolder {
         TextView magnitudeTextView;
         TextView locationTextView;
         TextView timeTextViewHolder;
