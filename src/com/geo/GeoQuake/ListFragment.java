@@ -8,20 +8,20 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.geo.GeoQuake.adapters.QuakeListAdapter;
+import com.geo.GeoQuake.adapters.QuakeAdapter;
 import com.geo.GeoQuake.models.Earthquake;
 import com.geo.GeoQuake.models.Feature;
 import com.geo.GeoQuake.models.FeatureCollection;
@@ -44,9 +44,9 @@ public class ListFragment extends Fragment implements IDataCallback {
     private static final String TAG = ListFragment.class.getSimpleName();
 
     @Bind(R.id.quakeListView)
-    ListView mQuakeListView;
+    RecyclerView mQuakeListView;
 
-    QuakeListAdapter mQuakeListAdapter;
+    QuakeAdapter mQuakeListAdapter;
     Bundle mBundle;
 
     GeoQuakeDB mGeoQuakeDB;
@@ -74,6 +74,37 @@ public class ListFragment extends Fragment implements IDataCallback {
 
     }
 
+    /**
+     * The listener that handles changes in the query text box.
+     *
+     * In the case of a non-empty string, a search is conducted within the list of Features
+     *
+     */
+    SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            if(!StringUtils.isEmpty(query)) {
+                doSearch();
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            return false;
+        }
+    };
+
+
+    final QuakeAdapter.OnQuakeItemClickedListener onQuakeItemClickedListener = new QuakeAdapter.OnQuakeItemClickedListener() {
+        @Override
+        public void onQuakeClicked(Feature feature) {
+            Intent intent = new Intent(mContext, WebInfoActivity.class);
+            intent.putExtra("url", feature.getProperties().getUrl());
+            startActivity(intent);
+        }
+    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +123,9 @@ public class ListFragment extends Fragment implements IDataCallback {
         View view = inflater.inflate(R.layout.list_fragment, container, false);
         ButterKnife.bind(this, view);
 
+        mQuakeListView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mQuakeListAdapter = new QuakeAdapter(onQuakeItemClickedListener);
+        mQuakeListView.setAdapter(mQuakeListAdapter);
         mSearchView.setOnQueryTextListener(queryTextListener);
         mSearchView.setQueryHint(getActivity().getString(R.string.search_hint));
         mSearchView.setQuery(getActivity().getString(R.string.search_hint), false);
@@ -176,17 +210,7 @@ public class ListFragment extends Fragment implements IDataCallback {
         if (features != null && mContext != null) {
             Log.i(TAG, "setupList, with size: " + mFeatureList.size());
             mQuakeCountTextView.setText(String.format(mContext.getString(R.string.quake_count), mFeatureList.size()));
-            //TODO: This could use some cleaning up
-            mQuakeListAdapter = new QuakeListAdapter(mContext, features);
-            mQuakeListView.setAdapter(mQuakeListAdapter);
-            mQuakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(mContext, WebInfoActivity.class);
-                    intent.putExtra("url", features.get(position).getProperties().getUrl());
-                    startActivity(intent);
-                }
-            });
+            mQuakeListAdapter.setQuakeList(features);
             if (features.size() == 0) {
                 Toast.makeText(mContext, mContext.getString(R.string.empty_list)
                         , Toast.LENGTH_LONG).show();
@@ -260,27 +284,6 @@ public class ListFragment extends Fragment implements IDataCallback {
 
     }
 
-    /**
-     * The listener that handles changes in the query text box.
-     *
-     * In the case of a non-empty string, a search is conducted within the list of Features
-     *
-     */
-    SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
-        @Override
-        public boolean onQueryTextSubmit(String query) {
-            if(!StringUtils.isEmpty(query)) {
-                doSearch();
-            }
-            return true;
-        }
-
-        @Override
-        public boolean onQueryTextChange(String newText) {
-            return false;
-        }
-    };
-
     @Override
     public void asyncUnderway() {
         //unused
@@ -311,4 +314,5 @@ public class ListFragment extends Fragment implements IDataCallback {
             setupList(mFeatureList);
         }
     }
+
 }
