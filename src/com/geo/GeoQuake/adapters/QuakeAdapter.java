@@ -15,6 +15,7 @@ import com.geo.GeoQuake.models.Feature;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -74,7 +75,7 @@ public class QuakeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public void bind(final Feature feature) {
             String magnitude = "";
             //deal with weird, negative magnitudes
-            if(TextUtils.isEmpty(magnitudeTextView.getText().toString())) {
+            if(magnitude.equals("")) {
                 if (feature.getProperties().getMag() < 0.0) {
                     magnitude += 0.0;
                 } else {
