@@ -50,7 +50,7 @@ public class QuakeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return mFeature.size();
+        return mFeature == null ? 0 : mFeature.size();
     }
 
     public interface OnQuakeItemClickedListener {
