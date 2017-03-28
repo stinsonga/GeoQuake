@@ -106,7 +106,9 @@ public class ListFragment extends Fragment implements IDataCallback {
 
         @Override
         public void onQuakeLongClick(Feature feature) {
-            Log.d(TAG, "onQuakeLongClick");
+            Intent intent = new Intent(mContext, WebInfoActivity.class);
+            intent.putExtra("url", feature.getProperties().getUrl());
+            startActivity(intent);
         }
     };
 
