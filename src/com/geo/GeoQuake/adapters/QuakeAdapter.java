@@ -50,11 +50,12 @@ public class QuakeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return mFeature.size();
+        return mFeature == null ? 0 : mFeature.size();
     }
 
     public interface OnQuakeItemClickedListener {
         void onQuakeClicked(Feature feature);
+        void onQuakeLongClick(Feature feature);
     }
 
     public class QuakeViewHolder extends RecyclerView.ViewHolder {
@@ -100,6 +101,13 @@ public class QuakeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     @Override
                     public void onClick(View v) {
                         listener.onQuakeClicked(feature);
+                    }
+                });
+                itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        listener.onQuakeLongClick(feature);
+                        return true;
                     }
                 });
             }
