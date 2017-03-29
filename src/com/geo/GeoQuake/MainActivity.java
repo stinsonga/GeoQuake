@@ -80,7 +80,6 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     boolean mAsyncUnderway = false;
 
-    FeatureCollection mFeatureCollection;
     ArrayList<Earthquake> mEarthquakes = new ArrayList<Earthquake>();
     GeoQuakeDB mGeoQuakeDB;
     QuakeData mQuakeData;
@@ -303,7 +302,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                     }
 
                 } else {
-                    Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show();
                 }
             }
             //case 1111:
@@ -343,9 +342,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     }
 
-    public FeatureCollection getFeatures() {
-        return mFeatureCollection;
-    }
+    public ArrayList<Earthquake> getEarthquakes() { return mEarthquakes; }
 
     /**
      * Send the request to the QuakeData class to grab new data
@@ -355,9 +352,9 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
         if (!mGeoQuakeDB.getData("" + mSourceSelection, "" + mStrengthSelection, "" + mDurationSelection).isEmpty() &&
                 !Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mSourceSelection, "" + mStrengthSelection, ""
                         + mDurationSelection)), this)) {
-            mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mSourceSelection, "" + mStrengthSelection, "" + mDurationSelection));
+            mEarthquakes = Utils.convertModelBySource(mSourceSelection, mGeoQuakeDB.getData("" + mSourceSelection, "" + mStrengthSelection, "" + mDurationSelection));
             Log.i(TAG, "no need for new data, setup fragment");
-            refreshCurrentFragment(mFeatureCollection);
+            refreshCurrentFragment(mEarthquakes);
         } else {
             Utils.fireToast(mDurationSelection, mStrengthSelection, this);
             //TODO: change url string depending on source in Prefs
@@ -380,25 +377,21 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     /**
      * Refresh the current fragment with new data
      *
-     * @param featureCollection FeatureCollection that will be sent to the fragment
      */
-    public void refreshCurrentFragment(FeatureCollection featureCollection) {
-        ((TabPagerAdapter) mViewPager.getAdapter()).updateFragments(featureCollection,
+    public void refreshCurrentFragment(ArrayList<Earthquake> mEarthquakes) {
+        ((TabPagerAdapter) mViewPager.getAdapter()).updateFragments(mEarthquakes,
                 mHasUserLocation, mUserLatitude, mUserLongitude);
         mViewPager.getAdapter().notifyDataSetChanged();
     }
 
-    /**
-     * Interface callback when fetching data
-     */
     @Override
-    public void dataCallback(FeatureCollection featureCollection) {
-        Log.i(TAG, "got callback, set data " + featureCollection.getCount());
+    public void dataCallBack(ArrayList<Earthquake> earthquakes) {
+        Log.i(TAG, "got callback, set data " + earthquakes.size());
         //update map with data
-        mFeatureCollection = featureCollection; //mQuakeData.getFeatureCollection();
+        mEarthquakes = earthquakes;
         mAsyncUnderway = false;
         setLoadingFinishedView();
-        refreshCurrentFragment(featureCollection);
+        refreshCurrentFragment(mEarthquakes);
     }
 
     /**

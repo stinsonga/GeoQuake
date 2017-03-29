@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.geo.GeoQuake.models.CanadaQuakes;
 import com.geo.GeoQuake.models.Earthquake;
 import com.geo.GeoQuake.models.Feature;
 import com.geo.GeoQuake.models.FeatureCollection;
@@ -178,11 +179,18 @@ public class Utils {
         imm.showSoftInput(view, InputMethodManager.SHOW_FORCED);
     }
 
-    public ArrayList<Earthquake> convertFeatureModel(FeatureCollection featureCollection) {
+    public static ArrayList<Earthquake> convertModelBySource(int source, String json) {
         ArrayList<Earthquake> quakes = new ArrayList<Earthquake>();
-        for(Feature f : featureCollection.getFeatures()) {
-            quakes.add(new Earthquake(f.getLatitude(), f.getLongitude(), f.getProperties().getMag(),
-                    f.getProperties().getPlace(), f.getProperties().getTime(), f.getProperties().getUrl()));
+        if(source == 0) {
+            FeatureCollection featureCollection = new FeatureCollection(json);
+            for(Feature f : featureCollection.getFeatures()) {
+                quakes.add(new Earthquake(f));
+            }
+            return quakes;
+        } else if(source == 1) {
+            //TODO Canada quake model....
+            CanadaQuakes canadaQuakes = new CanadaQuakes(json);
+            return canadaQuakes.getEarthquakes();
         }
         return quakes;
     }
