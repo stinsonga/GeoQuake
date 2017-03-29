@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -49,10 +50,6 @@ public class ListFragment extends Fragment implements IDataCallback {
     QuakeAdapter mQuakeListAdapter;
     Bundle mBundle;
 
-    GeoQuakeDB mGeoQuakeDB;
-
-    FeatureCollection mFeatureCollection;
-    ArrayList<Feature> mFeatureList;
     ArrayList<Earthquake> mEarthquakes = new ArrayList<Earthquake>();
 
     @Bind(R.id.search_bar)
@@ -76,14 +73,13 @@ public class ListFragment extends Fragment implements IDataCallback {
 
     /**
      * The listener that handles changes in the query text box.
-     *
+     * <p>
      * In the case of a non-empty string, a search is conducted within the list of Features
-     *
      */
     SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String query) {
-            if(!StringUtils.isEmpty(query)) {
+            if (!StringUtils.isEmpty(query)) {
                 doSearch();
             }
             return true;
@@ -98,17 +94,19 @@ public class ListFragment extends Fragment implements IDataCallback {
 
     final QuakeAdapter.OnQuakeItemClickedListener onQuakeItemClickedListener = new QuakeAdapter.OnQuakeItemClickedListener() {
         @Override
-        public void onQuakeClicked(Feature feature) {
+        public void onQuakeClicked(Earthquake earthquake) {
             Intent intent = new Intent(mContext, WebInfoActivity.class);
-            intent.putExtra("url", feature.getProperties().getUrl());
+            intent.putExtra("url", earthquake.getUrl());
             startActivity(intent);
+
         }
 
         @Override
-        public void onQuakeLongClick(Feature feature) {
+        public void onQuakeLongClick(Earthquake earthquake) {
             Intent intent = new Intent(mContext, WebInfoActivity.class);
-            intent.putExtra("url", feature.getProperties().getUrl());
+            intent.putExtra("url", earthquake.getUrl());
             startActivity(intent);
+
         }
     };
 
@@ -119,7 +117,6 @@ public class ListFragment extends Fragment implements IDataCallback {
         setHasOptionsMenu(true);
 
         mBundle = new Bundle();
-        mGeoQuakeDB = new GeoQuakeDB(getActivity());
         setHasOptionsMenu(true);
     }
 
@@ -144,9 +141,9 @@ public class ListFragment extends Fragment implements IDataCallback {
         super.onResume();
         Log.i(TAG, "onResume");
         if (Utils.checkNetwork(getActivity())) {
-            if (((MainActivity) getActivity()).getFeatures() != null && ((MainActivity) getActivity()).getFeatures().getFeatures().size() > 0) {
-                mFeatureList = ((MainActivity) getActivity()).getFeatures().getFeatures();
-                setupList(mFeatureList);
+            if (((MainActivity) getActivity()).getEarthquakes() != null && ((MainActivity) getActivity()).getEarthquakes().size() > 0) {
+                mEarthquakes = ((MainActivity) getActivity()).getEarthquakes();
+                setupList(mEarthquakes);
             } else {
                 ((MainActivity) getActivity()).checkNetworkFetchData();
             }
@@ -188,7 +185,7 @@ public class ListFragment extends Fragment implements IDataCallback {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.action_search:
                 handleSearchBar();
                 return true;
@@ -197,7 +194,7 @@ public class ListFragment extends Fragment implements IDataCallback {
     }
 
     public void handleSearchBar() {
-        if(mSearchBar.getVisibility() == View.VISIBLE) {
+        if (mSearchBar.getVisibility() == View.VISIBLE) {
             mSearchBar.setVisibility(View.GONE);
             mSearchView.setIconified(true);
             mSearchView.clearFocus();
@@ -213,12 +210,12 @@ public class ListFragment extends Fragment implements IDataCallback {
     /**
      * This sorts the list and sets the adapter
      */
-    public void setupList(final ArrayList<Feature> features) {
-        if (features != null && mContext != null) {
-            Log.i(TAG, "setupList, with size: " + mFeatureList.size());
-            mQuakeCountTextView.setText(String.format(mContext.getString(R.string.quake_count), mFeatureList.size()));
-            mQuakeListAdapter.setQuakeList(features);
-            if (features.size() == 0) {
+    public void setupList(final ArrayList<Earthquake> earthquakes) {
+        if (earthquakes != null && mContext != null) {
+            Log.i(TAG, "setupList, with size: " + earthquakes.size());
+            mQuakeCountTextView.setText(String.format(mContext.getString(R.string.quake_count), mEarthquakes.size()));
+            mQuakeListAdapter.setQuakeList(earthquakes);
+            if (earthquakes.size() == 0) {
                 Toast.makeText(mContext, mContext.getString(R.string.empty_list)
                         , Toast.LENGTH_LONG).show();
             }
@@ -230,14 +227,14 @@ public class ListFragment extends Fragment implements IDataCallback {
     /**
      * Sorting a feature collection.
      *
-     * @param features ArrayList of Features
+     * @param earthquakes ArrayList of earthquakes
      */
-    public void basicSort(ArrayList<Feature> features) {
-        Collections.sort(features, new Comparator<Feature>() {
+    public void basicSort(ArrayList<Earthquake> earthquakes) {
+        Collections.sort(earthquakes, new Comparator<Earthquake>() {
             @Override
-            public int compare(Feature lhs, Feature rhs) {
+            public int compare(Earthquake lhs, Earthquake rhs) {
                 //Using Double's compare method makes this pretty straightforward.
-                return Double.compare(rhs.getProperties().getMag(), lhs.getProperties().getMag());
+                return Double.compare(rhs.getMag(), lhs.getMag());
             }
         });
     }
@@ -246,47 +243,46 @@ public class ListFragment extends Fragment implements IDataCallback {
      * Sorting list by distance from user
      */
     public void sortByProximity(double latitude, double longitude) {
-        ArrayList<Feature> proximityList = new ArrayList<>();
-        TreeMap<Float, Feature> proximityMap = new TreeMap<>();
-        for (Feature feature : mFeatureList) {
+        ArrayList<Earthquake> proximityList = new ArrayList<>();
+        TreeMap<Float, Earthquake> proximityMap = new TreeMap<>();
+        for (Earthquake earthquake : mEarthquakes) {
             float[] results = new float[3];
-            Location.distanceBetween(latitude, longitude, feature.getLatitude(),
-                    feature.getLongitude(), results);
-            proximityMap.put(results[0] / 1000, feature);
+            Location.distanceBetween(latitude, longitude, earthquake.getLatitude(),
+                    earthquake.getLongitude(), results);
+            proximityMap.put(results[0] / 1000, earthquake);
         }
-        for (Map.Entry<Float, Feature> entry : proximityMap.entrySet()) {
+        for (Map.Entry<Float, Earthquake> entry : proximityMap.entrySet()) {
             proximityList.add(entry.getValue());
         }
-        mFeatureList.clear();
-        mFeatureList = proximityList;
-        setupList(mFeatureList);
+        mEarthquakes.clear();
+        mEarthquakes = proximityList;
+        setupList(mEarthquakes);
     }
 
     /**
      * Crude indeed. But it works 'enough'
-     *
      */
     public void doSearch() {
-        ArrayList<Feature> searchFeatures = new ArrayList<>();
+        ArrayList<Earthquake> searchEarhquakes = new ArrayList<>();
         String searchTerm = mSearchView.getQuery().toString();
-        for (Feature feature : mFeatureList) {
+        for (Earthquake earthquake : mEarthquakes) {
             //For "expected" input, this should handle cases
-            if (feature.getProperties().getPlace() != null
-                    && feature.getProperties().getPlace().toLowerCase().contains(searchTerm)) {
-                searchFeatures.add(feature);
+            if (earthquake.getPlace() != null
+                    && earthquake.getPlace().toLowerCase().contains(searchTerm)) {
+                searchEarhquakes.add(earthquake);
             }
         }
 
-        if (searchFeatures.size() == 0) {
+        if (searchEarhquakes.size() == 0) {
             Toast.makeText(getActivity(), getActivity().getString(R.string.empty_search_list)
                     , Toast.LENGTH_LONG).show();
         } else {
-            mQuakeCountTextView.setText(String.format(getActivity().getString(R.string.quake_count), mFeatureList.size()));
+            mQuakeCountTextView.setText(String.format(getActivity().getString(R.string.quake_count), mEarthquakes.size()));
             mSearchView.setQuery("", false);
             //close keyboard
             InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
-            setupList(searchFeatures);
+            setupList(searchEarhquakes);
         }
 
     }
@@ -296,29 +292,21 @@ public class ListFragment extends Fragment implements IDataCallback {
         //unused
     }
 
-    /**
-     *
-     * @param featureCollection a FeatureCollection passed by the parent activity
-     */
     @Override
-    public void dataCallback(FeatureCollection featureCollection) {
-        mFeatureCollection = featureCollection;
-        mFeatureList = featureCollection.getFeatures();
-        basicSort(mFeatureList);
-        setupList(mFeatureList);
+    public void dataCallBack(ArrayList<Earthquake> earthquakes) {
+        mEarthquakes = earthquakes;
+        basicSort(mEarthquakes);
+        setupList(mEarthquakes);
     }
 
     /**
      * Called from activity on refresh
-     *
-     * @param featureCollection FeatureCollection passed in by calling Activity
      */
-    public void onUpdateData(FeatureCollection featureCollection) {
-        mFeatureCollection = featureCollection;
-        if(featureCollection != null) {
-            mFeatureList = featureCollection.getFeatures();
-            basicSort(mFeatureList);
-            setupList(mFeatureList);
+    public void onUpdateData(ArrayList<Earthquake> earthquakes) {
+        mEarthquakes = earthquakes;
+        if (mEarthquakes != null) {
+            basicSort(mEarthquakes);
+            setupList(mEarthquakes);
         }
     }
 

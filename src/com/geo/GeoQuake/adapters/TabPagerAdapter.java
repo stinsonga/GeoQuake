@@ -5,10 +5,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.geo.GeoQuake.models.Earthquake;
 import com.geo.GeoQuake.models.FeatureCollection;
 import com.geo.GeoQuake.ListFragment;
 import com.geo.GeoQuake.QuakeMapFragment;
 import com.geo.GeoQuake.R;
+
+import java.util.ArrayList;
 
 /**
  * Created by George Stinson on 2016-09-27.
@@ -54,9 +57,9 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
-    public void updateFragments(FeatureCollection featureCollection, boolean hasUserLocation, double latitude, double longitude) {
-        mMapFragment.onUpdateData(featureCollection);
-        mListFragment.onUpdateData(featureCollection);
+    public void updateFragments(ArrayList<Earthquake> earthquakes, boolean hasUserLocation, double latitude, double longitude) {
+        mMapFragment.onUpdateData(earthquakes);
+        mListFragment.onUpdateData(earthquakes);
         if(hasUserLocation) {
             mMapFragment.userLocationMarker(latitude, longitude);
         }

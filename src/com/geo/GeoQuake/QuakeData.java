@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.geo.GeoQuake.models.Earthquake;
 import com.geo.GeoQuake.models.FeatureCollection;
 
 import java.io.BufferedReader;
@@ -13,15 +14,19 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * Class to be used for handling data fetching
  */
 public class QuakeData {
 
+    protected static final String TAG = QuakeData.class.getSimpleName();
     protected String usgsUrl;
     protected FeatureCollection mFeatureCollection = new FeatureCollection();
+    protected ArrayList<Earthquake> mEarthquakes;
     protected IDataCallback mDataCallback;
+    protected int mQuakeSource;
     protected int mQuakeType;
     protected int mQuakeDuration;
     protected Context mContext;
@@ -32,13 +37,15 @@ public class QuakeData {
      *
      * @param usgsUrl url being used to get quake data
      */
-    public QuakeData(String usgsUrl, int quakeDuration, int quakeType, IDataCallback dataCallback, Context context) {
+    public QuakeData(String usgsUrl, int quakeSource, int quakeDuration, int quakeType, IDataCallback dataCallback, Context context) {
         this.usgsUrl = usgsUrl;
+        this.mQuakeSource = quakeSource;
         this.mQuakeDuration = quakeDuration;
         this.mQuakeType = quakeType;
         this.mDataCallback = dataCallback;
         this.mContext = context;
         this.mGeoQuakeDB = new GeoQuakeDB(context);
+        this.mEarthquakes = new ArrayList<Earthquake>();
     }
     /**
      * @param context needed for call to processData
@@ -54,12 +61,12 @@ public class QuakeData {
     private void processData(final Context context) {
         if (needToRefreshData()) {
             try {
-                new AsyncTask<URL, Void, FeatureCollection>() {
+                new AsyncTask<URL, Void, ArrayList<Earthquake>>() {
                     @Override
-                    protected FeatureCollection doInBackground(URL... params) {
+                    protected ArrayList<Earthquake> doInBackground(URL... params) {
                         try {
                             mDataCallback.asyncUnderway();
-                            return getJSON(new URL(usgsUrl + Utils.getURLFrag(
+                            return getJSON(new URL(usgsUrl + Utils.getURLFrag(mQuakeSource,
                                     mQuakeType, mQuakeDuration, context)));
                         } catch (MalformedURLException me) {
                             return null;
@@ -73,13 +80,13 @@ public class QuakeData {
                     }
 
                     @Override
-                    protected void onPostExecute(FeatureCollection featureCollection) {
-                        super.onPostExecute(featureCollection);
-                        mFeatureCollection = featureCollection;
-                        Log.i(QuakeData.class.getSimpleName(), "onPostExecute " + featureCollection.getCount());
-                        mDataCallback.dataCallback(mFeatureCollection);
+                    protected void onPostExecute(ArrayList<Earthquake> earthquakes) {
+                        super.onPostExecute(earthquakes);
+                        mEarthquakes = earthquakes;
+                        Log.i(QuakeData.class.getSimpleName(), "onPostExecute " + mEarthquakes.size());
+                        mDataCallback.dataCallBack(mEarthquakes);
                     }
-                }.execute(new URL(usgsUrl + Utils.getURLFrag(mQuakeType,
+                }.execute(new URL(usgsUrl + Utils.getURLFrag(mQuakeSource, mQuakeType,
                         mQuakeDuration, context)));
             } catch (MalformedURLException me) {
                 Log.e(me.getMessage(), "URL Problem...");
@@ -87,8 +94,8 @@ public class QuakeData {
             }
         } else {
             //no need to refresh, so we send them back the persisted data
-            mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mQuakeType, "" + mQuakeDuration));
-            mDataCallback.dataCallback(mFeatureCollection);
+            mEarthquakes = Utils.convertModelBySource(mQuakeSource, mGeoQuakeDB.getData("" + mQuakeSource, "" + mQuakeType, "" + mQuakeDuration));
+            mDataCallback.dataCallBack(mEarthquakes);
         }
     }
 
@@ -96,8 +103,9 @@ public class QuakeData {
      * @param url The url we'll use to fetch the data
      * @return A JSONObject containing the requested data
      */
-    private FeatureCollection getJSON(URL url) {
+    private ArrayList<Earthquake> getJSON(URL url) {
         try {
+            Log.d(TAG, url.toString());
             HttpURLConnection connect = (HttpURLConnection) url.openConnection();
             InputStream inputStream = connect.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
@@ -105,12 +113,13 @@ public class QuakeData {
             String currentStream;
             while ((currentStream = bufferedReader.readLine()) != null)
                 dataResponse += currentStream;
-            if (mGeoQuakeDB.getData("" + mQuakeType, "" + mQuakeDuration).isEmpty()) {
-                mGeoQuakeDB.setData("" + mQuakeType, "" + mQuakeDuration, dataResponse);
+            if (mGeoQuakeDB.getData("" + mQuakeSource, "" + mQuakeType, "" + mQuakeDuration).isEmpty()) {
+                mGeoQuakeDB.setData("" + mQuakeSource, "" + mQuakeType, "" + mQuakeDuration, dataResponse);
             } else {
-                mGeoQuakeDB.updateData("" + mQuakeType, "" + mQuakeDuration, dataResponse);
+                mGeoQuakeDB.updateData("" + mQuakeSource, "" + mQuakeType, "" + mQuakeDuration, dataResponse);
             }
-            return new FeatureCollection(dataResponse);
+            Log.d(TAG, dataResponse);
+            return Utils.convertModelBySource(mQuakeSource, dataResponse);
         } catch (IOException ioe) {
             ioe.printStackTrace();
             return null;
@@ -124,13 +133,13 @@ public class QuakeData {
      */
     private boolean needToRefreshData() {
         //first check to see if results are empty
-        if (!mGeoQuakeDB.getData("" + mQuakeType, "" + mQuakeDuration).isEmpty()) {
+        if (!mGeoQuakeDB.getData("" + mQuakeSource, "" + mQuakeType, "" + mQuakeDuration).isEmpty()) {
             //is the data too old?
-            if (Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mQuakeType, "" + mQuakeDuration)), mContext)) {
+            if (Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mQuakeSource, "" + mQuakeType, "" + mQuakeDuration)), mContext)) {
                 return true;
             } else {
                 //use existing data set, and return false
-                mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mQuakeType, "" + mQuakeDuration));
+                mEarthquakes= Utils.convertModelBySource(mQuakeSource, mGeoQuakeDB.getData("" + mQuakeSource, "" + mQuakeType, "" + mQuakeDuration));
                 return false;
             }
         } else {

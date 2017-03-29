@@ -7,12 +7,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class GeoQuakeDB extends SQLiteOpenHelper {
-    private static final int DB_VERSION = 18;
+    private static final int DB_VERSION = 19;
     private static final String DB_NAME = "GeoQuake";
     private static final String TABLE_NAME = "quakes";
     //Columns
+    private static final String QUAKE_SOURCE = "quake_source";
     private static final String QUAKE_STRENGTH_TYPE = "quake_strength_type";
     private static final String QUAKE_PERIOD_TYPE = "quake_period_type";
     private static final String QUAKE_DATA = "quake_data";
@@ -30,7 +32,7 @@ public class GeoQuakeDB extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + TABLE_NAME + " (id INTEGER PRIMARY KEY," + QUAKE_STRENGTH_TYPE + " TEXT, " + QUAKE_PERIOD_TYPE + " TEXT, " + QUAKE_DATA + " TEXT, " + QUAKE_DATE + " TEXT)");
+        db.execSQL("CREATE TABLE " + TABLE_NAME + " (id INTEGER PRIMARY KEY," +QUAKE_SOURCE+ " TEXT,"+ QUAKE_STRENGTH_TYPE + " TEXT, " + QUAKE_PERIOD_TYPE + " TEXT, " + QUAKE_DATA + " TEXT, " + QUAKE_DATE + " TEXT)");
     }
 
     /**
@@ -43,7 +45,12 @@ public class GeoQuakeDB extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME); //we'll just drop the table for now
+        if(oldVersion == 18 && newVersion == 19) {
+//            Log.d("DB", "Execute DB upgrade.");
+//            String upgrade = "ALTER TABLE "+TABLE_NAME+" ADD COLUMN "+QUAKE_SOURCE+" TEXT";
+//            db.execSQL(upgrade);
+        }
         onCreate(db);
     }
 
@@ -54,9 +61,10 @@ public class GeoQuakeDB extends SQLiteOpenHelper {
      * @param quakeDuration originates from the Spinner in the activity
      * @param data          new data for DB insert
      */
-    public void setData(String quakeStrength, String quakeDuration, String data) {
+    public void setData(String source, String quakeStrength, String quakeDuration, String data) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
+        cv.put(QUAKE_SOURCE, source);
         cv.put(QUAKE_STRENGTH_TYPE, quakeStrength);
         cv.put(QUAKE_PERIOD_TYPE, quakeDuration);
         cv.put(QUAKE_DATA, data);
@@ -72,13 +80,13 @@ public class GeoQuakeDB extends SQLiteOpenHelper {
      * @param quakeDuration originates from the Spinner in the activity
      * @param data          new data to be used in DB update
      */
-    public void updateData(String quakeStrength, String quakeDuration, String data) {
+    public void updateData(String source, String quakeStrength, String quakeDuration, String data) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(QUAKE_DATA, data);
         cv.put(QUAKE_DATE, "" + getTime());
-        String where = QUAKE_STRENGTH_TYPE + "=? AND " + QUAKE_PERIOD_TYPE + " =?";
-        String[] value = {quakeStrength, quakeDuration};
+        String where = QUAKE_SOURCE +"=? AND " + QUAKE_STRENGTH_TYPE + "=? AND " + QUAKE_PERIOD_TYPE + " =?";
+        String[] value = {source, quakeStrength, quakeDuration};
         db.update(TABLE_NAME, cv, where, value);
         db.close();
     }
@@ -90,11 +98,11 @@ public class GeoQuakeDB extends SQLiteOpenHelper {
      * @param quakeDuration originates from the Spinner in the activity
      * @return data column value
      */
-    public String getData(String quakeStrength, String quakeDuration) {
+    public String getData(String source, String quakeStrength, String quakeDuration) {
         SQLiteDatabase db = this.getWritableDatabase();
         String result = "";
         //TODO: use query method here... rawQuery is a bit fugly. Just look at it.
-        Cursor rowCursor = db.rawQuery("SELECT " + QUAKE_DATA + " FROM " + TABLE_NAME + " WHERE " + QUAKE_STRENGTH_TYPE
+        Cursor rowCursor = db.rawQuery("SELECT " + QUAKE_DATA + " FROM " + TABLE_NAME + " WHERE " +QUAKE_SOURCE +"='"+source+"' AND " + QUAKE_STRENGTH_TYPE
                 + "='" + quakeStrength + "' AND " + QUAKE_PERIOD_TYPE + "='" + quakeDuration + "'", null);
         if (rowCursor.moveToFirst()) {
             do {
@@ -114,11 +122,11 @@ public class GeoQuakeDB extends SQLiteOpenHelper {
      * @param quakeDuration originates from the Spinner in the activity
      * @return date column value
      */
-    public String getDateColumn(String quakeStrength, String quakeDuration) {
+    public String getDateColumn(String source, String quakeStrength, String quakeDuration) {
         SQLiteDatabase db = this.getWritableDatabase();
         String result = "";
         //TODO: use query method here
-        Cursor rowCursor = db.rawQuery("SELECT " + QUAKE_DATE + " FROM " + TABLE_NAME + " WHERE " + QUAKE_STRENGTH_TYPE
+        Cursor rowCursor = db.rawQuery("SELECT " + QUAKE_DATE + " FROM " + TABLE_NAME + " WHERE " +QUAKE_SOURCE +"='"+source+"' AND " + QUAKE_STRENGTH_TYPE
                 + "='" + quakeStrength + "' AND " + QUAKE_PERIOD_TYPE + "='" + quakeDuration + "'", null);
         if (rowCursor.moveToFirst()) {
             do {

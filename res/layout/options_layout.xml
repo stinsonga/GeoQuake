@@ -27,8 +27,15 @@
         android:orientation="vertical">
 
         <Spinner
+            android:id="@+id/source_type_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:entries="@array/source_types" />
+
+        <Spinner
             android:id="@+id/quake_type_spinner"
             android:layout_width="match_parent"
+            android:layout_marginTop="8dp"
             android:layout_height="35dp"
             android:entries="@array/quake_types" />
 

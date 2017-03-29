@@ -8,9 +8,11 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.geo.GeoQuake.models.CanadaQuakes;
 import com.geo.GeoQuake.models.Earthquake;
 import com.geo.GeoQuake.models.Feature;
 import com.geo.GeoQuake.models.FeatureCollection;
+import com.geo.GeoQuake.models.Prefs;
 
 import java.util.ArrayList;
 
@@ -18,41 +20,6 @@ import java.util.ArrayList;
  * Created by gaius on 15-03-05.
  */
 public class Utils {
-
-    //SharedPrefs Constants
-    public static final String QUAKE_PREFS = "quake_prefs";
-    public static final String REFRESH_LIMITER = "refresh_limiter";
-    public static final String CACHE_TIME = "cache_time";
-
-    //TODO: reinstate if we ever use these
-    //Quake types
-//    public static final String HOUR_ALL = "hour_all";
-//    public static final String HOUR_1 = "hour_1";
-//    public static final String HOUR_25 = "hour_25";
-//    public static final String HOUR_45 = "hour_45";
-//    public static final String HOUR_SIG = "hour_significant";
-//
-//    public static final String DAY_ALL = "day_all";
-//    public static final String DAY_1 = "day_1";
-//    public static final String DAY_25 = "day_25";
-//    public static final String DAY_45 = "day_45";
-//    public static final String DAY_SIG = "day_significant";
-//
-//    public static final String WEEK_ALL = "week_all";
-//    public static final String WEEK_1 = "week_1";
-//    public static final String WEEK_25 = "week_25";
-//    public static final String WEEK_45 = "week_45";
-//    public static final String WEEK_SIG = "week_significant";
-
-    //TODO: reinstate if we ever use these
-//    public static final String MONTH_ALL = "month_all";
-//    public static final String MONTH_1 = "month_1";
-//    public static final String MONTH_25 = "month_25";
-//    public static final String MONTH_45 = "month_45";
-//    public static final String MONTH_SIG = "month_significant";
-//
-//    public static final String[] ALL_TYPES_ARRAY = {HOUR_ALL, HOUR_1, HOUR_25, HOUR_45, HOUR_SIG, DAY_ALL, DAY_1,
-//            DAY_25, DAY_45, DAY_SIG, WEEK_ALL, WEEK_1, WEEK_25, WEEK_45, WEEK_SIG};
 
     public static final long REFRESH_LIMITER_TIME = 10000;
 
@@ -71,37 +38,19 @@ public class Utils {
             e.printStackTrace();
             return false;
         }
-
     }
 
-    public static void changeCache(int position, SharedPreferences sp, String[] cacheArray) {
-        SharedPreferences.Editor editor = sp.edit();
+    public static void changeCache(int position, String[] cacheArray) {
         switch (position) {
             case 0:
                 break;
             case 1:
-                editor.putString(CACHE_TIME, cacheArray[position]);
-                editor.apply();
-                break;
             case 2:
-                editor.putString(CACHE_TIME, cacheArray[position]);
-                editor.apply();
-                break;
             case 3:
-                editor.putString(CACHE_TIME, cacheArray[position]);
-                editor.apply();
-                break;
             case 4:
-                editor.putString(CACHE_TIME, cacheArray[position]);
-                editor.apply();
-                break;
             case 5:
-                editor.putString(CACHE_TIME, cacheArray[position]);
-                editor.apply();
-                break;
             case 6:
-                editor.putString(CACHE_TIME, cacheArray[position]);
-                editor.apply();
+                Prefs.getInstance().setCacheTime(cacheArray[position]);
                 break;
             default:
                 break;
@@ -114,60 +63,71 @@ public class Utils {
      *
      * @return a string representing the proper fragment to pass to the URL string
      */
-    public static String getURLFrag(int quakeSelection, int durationSelection, Context context) {
-        if (durationSelection == 0) {
-            if (quakeSelection == 0) {
-                return context.getString(R.string.significant_hour);
-            } else if (quakeSelection == 1) {
-                return context.getString(R.string._4_5_hour);
-            } else if (quakeSelection == 2) {
-                return context.getString(R.string._2_5_hour);
-            } else if (quakeSelection == 3) {
-                return context.getString(R.string._1_0_hour);
-            } else if (quakeSelection == 4) {
-                return context.getString(R.string.all_hour);
+    public static String getURLFrag(int quakeSource, int quakeSelection, int durationSelection, Context context) {
+        if(quakeSource == 0) {
+            if (durationSelection == 0) {
+                if (quakeSelection == 0) {
+                    return context.getString(R.string.significant_hour);
+                } else if (quakeSelection == 1) {
+                    return context.getString(R.string._4_5_hour);
+                } else if (quakeSelection == 2) {
+                    return context.getString(R.string._2_5_hour);
+                } else if (quakeSelection == 3) {
+                    return context.getString(R.string._1_0_hour);
+                } else if (quakeSelection == 4) {
+                    return context.getString(R.string.all_hour);
+                }
+            } else if (durationSelection == 1) {
+                if (quakeSelection == 0) {
+                    return context.getString(R.string.significant_day);
+                } else if (quakeSelection == 1) {
+                    return context.getString(R.string._4_5_day);
+                } else if (quakeSelection == 2) {
+                    return context.getString(R.string._2_5_day);
+                } else if (quakeSelection == 3) {
+                    return context.getString(R.string._1_0_day);
+                } else if (quakeSelection == 4) {
+                    return context.getString(R.string.all_day);
+                }
+            } else if (durationSelection == 2) {
+                if (quakeSelection == 0) {
+                    return context.getString(R.string.significant_week);
+                } else if (quakeSelection == 1) {
+                    return context.getString(R.string._4_5_week);
+                } else if (quakeSelection == 2) {
+                    return context.getString(R.string._2_5_week);
+                } else if (quakeSelection == 3) {
+                    return context.getString(R.string._1_0_week);
+                } else if (quakeSelection == 4) {
+                    return context.getString(R.string.all_week);
+                }
             }
-        } else if (durationSelection == 1) {
-            if (quakeSelection == 0) {
-                return context.getString(R.string.significant_day);
-            } else if (quakeSelection == 1) {
-                return context.getString(R.string._4_5_day);
-            } else if (quakeSelection == 2) {
-                return context.getString(R.string._2_5_day);
-            } else if (quakeSelection == 3) {
-                return context.getString(R.string._1_0_day);
-            } else if (quakeSelection == 4) {
-                return context.getString(R.string.all_day);
+            //Unreachable with current UI options... may return soon
+            else if (durationSelection == 3) {
+                if (quakeSelection == 0) {
+                    return context.getString(R.string.significant_month);
+                } else if (quakeSelection == 1) {
+                    return context.getString(R.string._4_5_month);
+                } else if (quakeSelection == 2) {
+                    return context.getString(R.string._2_5_month);
+                } else if (quakeSelection == 3) {
+                    return context.getString(R.string._1_0_month);
+                } else if (quakeSelection == 4) {
+                    return context.getString(R.string.all_month);
+                }
             }
-        } else if (durationSelection == 2) {
-            if (quakeSelection == 0) {
-                return context.getString(R.string.significant_week);
-            } else if (quakeSelection == 1) {
-                return context.getString(R.string._4_5_week);
-            } else if (quakeSelection == 2) {
-                return context.getString(R.string._2_5_week);
-            } else if (quakeSelection == 3) {
-                return context.getString(R.string._1_0_week);
-            } else if (quakeSelection == 4) {
-                return context.getString(R.string.all_week);
+            return context.getString(R.string.significant_week);
+        } else if(quakeSource == 1) {
+            //Canada won't filter by magnitude, just date
+            if(durationSelection == 0) {
+                return context.getString(R.string.canada_7_days);
+            } else if(durationSelection == 1) {
+                return context.getString(R.string.canada_30_days);
+            } else if(durationSelection == 2) {
+                return context.getString(R.string.canada_365_days);
             }
         }
-        //Unreachable with current UI options... may return soon
-        else if (durationSelection == 3) {
-            if (quakeSelection == 0) {
-                return context.getString(R.string.significant_month);
-            } else if (quakeSelection == 1) {
-                return context.getString(R.string._4_5_month);
-            } else if (quakeSelection == 2) {
-                return context.getString(R.string._2_5_month);
-            } else if (quakeSelection == 3) {
-                return context.getString(R.string._1_0_month);
-            } else if (quakeSelection == 4) {
-                return context.getString(R.string.all_month);
-            }
-        }
-        return context.getString(R.string.significant_week);
-
+        return "";
     }
 
     /**
@@ -201,9 +161,8 @@ public class Utils {
      * @return boolean representing whether or not our DB row is expired
      */
     public static boolean isExpired(long timeStamp, Context context) {
-        SharedPreferences sp = context.getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
         //default cache time set at 5 minutes (300000 ms)
-        return (GeoQuakeDB.getTime() - timeStamp > Long.parseLong(sp.getString(Utils.CACHE_TIME, "300000")));
+        return (GeoQuakeDB.getTime() - timeStamp > Long.parseLong(Prefs.getInstance().getCacheTime()));
     }
 
     public static void hideKeyboard(View view) {
@@ -220,11 +179,18 @@ public class Utils {
         imm.showSoftInput(view, InputMethodManager.SHOW_FORCED);
     }
 
-    public ArrayList<Earthquake> convertFeatureModel(FeatureCollection featureCollection) {
+    public static ArrayList<Earthquake> convertModelBySource(int source, String json) {
         ArrayList<Earthquake> quakes = new ArrayList<Earthquake>();
-        for(Feature f : featureCollection.getFeatures()) {
-            quakes.add(new Earthquake(f.getLatitude(), f.getLongitude(), f.getProperties().getMag(),
-                    f.getProperties().getPlace(), f.getProperties().getTime(), f.getProperties().getUrl()));
+        if(source == 0) {
+            FeatureCollection featureCollection = new FeatureCollection(json);
+            for(Feature f : featureCollection.getFeatures()) {
+                quakes.add(new Earthquake(f));
+            }
+            return quakes;
+        } else if(source == 1) {
+            //TODO Canada quake model....
+            CanadaQuakes canadaQuakes = new CanadaQuakes(json);
+            return canadaQuakes.getEarthquakes();
         }
         return quakes;
     }

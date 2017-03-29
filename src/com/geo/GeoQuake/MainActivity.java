@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -25,6 +24,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.geo.GeoQuake.adapters.TabPagerAdapter;
 import com.geo.GeoQuake.models.Earthquake;
 import com.geo.GeoQuake.models.FeatureCollection;
+import com.geo.GeoQuake.models.Prefs;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -45,7 +46,6 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity implements IDataCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = MainActivity.class.getSimpleName();
-    SharedPreferences mSharedPreferences;
     Bundle mBundle;
 
     @Bind(R.id.drawer_layout)
@@ -53,6 +53,9 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     @Bind(R.id.options_root)
     RelativeLayout mDrawerLinearLayout;
+
+    @Bind(R.id.source_type_spinner)
+    Spinner mSourceTypeSpinner;
 
     @Bind(R.id.quake_type_spinner)
     Spinner mQuakeTypeSpinner;
@@ -77,12 +80,12 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     boolean mAsyncUnderway = false;
 
-    FeatureCollection mFeatureCollection;
     ArrayList<Earthquake> mEarthquakes = new ArrayList<Earthquake>();
     GeoQuakeDB mGeoQuakeDB;
     QuakeData mQuakeData;
     Toolbar mToolbar;
 
+    int mSourceSelection = 0;
     int mStrengthSelection = 4;
     int mDurationSelection = 0;
 
@@ -123,13 +126,15 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
         }
 
         mBundle = new Bundle();
-        mSharedPreferences = getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
         mGeoQuakeDB = new GeoQuakeDB(this);
 
+        mSourceSelection = Prefs.getInstance().getSource();
+        mSourceTypeSpinner.setSelection(mSourceSelection);
         mDurationTypeSpinner.setOnItemSelectedListener(spinnerListener);
         mQuakeTypeSpinner.setOnItemSelectedListener(spinnerListener);
         mQuakeTypeSpinner.setSelection(4); //default selection
         mCacheTimeSpinner.setOnItemSelectedListener(spinnerListener);
+        mSourceTypeSpinner.setOnItemSelectedListener(spinnerListener);
 //        mWifiCheckbox.setOnCheckedChangeListener(checkListener);
     }
 
@@ -259,10 +264,8 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     public void doRefresh() {
         if (!mAsyncUnderway) {
             if (GeoQuakeDB.checkRefreshLimit(GeoQuakeDB.getTime(),
-                    mSharedPreferences.getLong(Utils.REFRESH_LIMITER, 0))) {
-                SharedPreferences.Editor editor = mSharedPreferences.edit();
-                editor.putLong(Utils.REFRESH_LIMITER, GeoQuakeDB.getTime());
-                editor.apply();
+                    Prefs.getInstance().getRefreshLimiter())) {
+                Prefs.getInstance().setRefreshLimiter();
                 checkNetworkFetchData();
             } else {
                 Toast.makeText(this, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
@@ -299,7 +302,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                     }
 
                 } else {
-                    Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show();
                 }
             }
             //case 1111:
@@ -339,24 +342,32 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     }
 
-    public FeatureCollection getFeatures() {
-        return mFeatureCollection;
-    }
+    public ArrayList<Earthquake> getEarthquakes() { return mEarthquakes; }
 
     /**
      * Send the request to the QuakeData class to grab new data
      */
     private void fetchData() {
 
-        if (!mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection).isEmpty() &&
-                !Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mStrengthSelection, ""
+        if (!mGeoQuakeDB.getData("" + mSourceSelection, "" + mStrengthSelection, "" + mDurationSelection).isEmpty() &&
+                !Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mSourceSelection, "" + mStrengthSelection, ""
                         + mDurationSelection)), this)) {
-            mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection));
+            mEarthquakes = Utils.convertModelBySource(mSourceSelection, mGeoQuakeDB.getData("" + mSourceSelection, "" + mStrengthSelection, "" + mDurationSelection));
             Log.i(TAG, "no need for new data, setup fragment");
-            refreshCurrentFragment(mFeatureCollection);
+            refreshCurrentFragment(mEarthquakes);
         } else {
             Utils.fireToast(mDurationSelection, mStrengthSelection, this);
-            mQuakeData = new QuakeData(this.getString(R.string.usgs_url),
+            //TODO: change url string depending on source in Prefs
+            String apiURL = "";
+            switch(mSourceSelection) {
+                case 0:
+                    apiURL = this.getString(R.string.usgs_url);
+                    break;
+                case 1:
+                    apiURL = this.getString(R.string.canada_url);
+                    break;
+            }
+            mQuakeData = new QuakeData(apiURL, mSourceSelection,
                     mDurationSelection, mStrengthSelection, this, this);
             Log.i(TAG, "fetching data... await callback");
             mQuakeData.fetchData(this);
@@ -366,25 +377,21 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     /**
      * Refresh the current fragment with new data
      *
-     * @param featureCollection FeatureCollection that will be sent to the fragment
      */
-    public void refreshCurrentFragment(FeatureCollection featureCollection) {
-        ((TabPagerAdapter) mViewPager.getAdapter()).updateFragments(featureCollection,
+    public void refreshCurrentFragment(ArrayList<Earthquake> mEarthquakes) {
+        ((TabPagerAdapter) mViewPager.getAdapter()).updateFragments(mEarthquakes,
                 mHasUserLocation, mUserLatitude, mUserLongitude);
         mViewPager.getAdapter().notifyDataSetChanged();
     }
 
-    /**
-     * Interface callback when fetching data
-     */
     @Override
-    public void dataCallback(FeatureCollection featureCollection) {
-        Log.i(TAG, "got callback, set data " + featureCollection.getCount());
+    public void dataCallBack(ArrayList<Earthquake> earthquakes) {
+        Log.i(TAG, "got callback, set data " + earthquakes.size());
         //update map with data
-        mFeatureCollection = featureCollection; //mQuakeData.getFeatureCollection();
+        mEarthquakes = earthquakes;
         mAsyncUnderway = false;
         setLoadingFinishedView();
-        refreshCurrentFragment(featureCollection);
+        refreshCurrentFragment(mEarthquakes);
     }
 
     /**
@@ -443,6 +450,28 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (parent.getId()) {
+                case (R.id.source_type_spinner):
+                    switch (mSourceTypeSpinner.getSelectedItemPosition()) {
+                        //USGS
+                        case 0:
+                            Prefs.getInstance().setSource(0);
+                            mSourceSelection = 0;
+                            mQuakeTypeSpinner.setVisibility(View.VISIBLE);
+                            ArrayAdapter<String> usaAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, MainActivity.this.getResources().getStringArray(R.array.duration_types));
+                            usaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            mDurationTypeSpinner.setAdapter(usaAdapter);
+                            break;
+                        //Canada
+                        case 1:
+                            Prefs.getInstance().setSource(1);
+                            mSourceSelection = 1;
+                            mQuakeTypeSpinner.setVisibility(View.GONE);
+                            ArrayAdapter<String> canAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, MainActivity.this.getResources().getStringArray(R.array.canada_duration_types));
+                            canAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            mDurationTypeSpinner.setAdapter(canAdapter);
+                            break;
+                    }
+                    break;
                 case (R.id.quake_type_spinner):
                     mStrengthSelection = mQuakeTypeSpinner.getSelectedItemPosition();
                     mParametersAreChanged = true;
@@ -452,7 +481,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                     mParametersAreChanged = true;
                     break;
                 case (R.id.cache_spinner):
-                    Utils.changeCache(mCacheTimeSpinner.getSelectedItemPosition(), mSharedPreferences,
+                    Utils.changeCache(mCacheTimeSpinner.getSelectedItemPosition(),
                             getResources().getStringArray(R.array.cache_values));
                     break;
                 default:

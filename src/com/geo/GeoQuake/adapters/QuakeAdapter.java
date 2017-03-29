@@ -4,18 +4,16 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.geo.GeoQuake.R;
-import com.geo.GeoQuake.models.Feature;
+import com.geo.GeoQuake.models.Earthquake;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -25,15 +23,15 @@ import butterknife.ButterKnife;
  */
 public class QuakeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private ArrayList<Feature> mFeature;
+    private ArrayList<Earthquake> mEarthquakes;
     OnQuakeItemClickedListener listener;
 
     public QuakeAdapter(OnQuakeItemClickedListener listener) {
         this.listener = listener;
     }
 
-    public void setQuakeList(ArrayList<Feature> features) {
-        this.mFeature = features;
+    public void setQuakeList(ArrayList<Earthquake> earthquakes) {
+        this.mEarthquakes = earthquakes;
         notifyDataSetChanged();
     }
 
@@ -45,17 +43,17 @@ public class QuakeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((QuakeViewHolder)holder).bind(mFeature.get(position));
+        ((QuakeViewHolder)holder).bind(mEarthquakes.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return mFeature == null ? 0 : mFeature.size();
+        return mEarthquakes == null ? 0 : mEarthquakes.size();
     }
 
     public interface OnQuakeItemClickedListener {
-        void onQuakeClicked(Feature feature);
-        void onQuakeLongClick(Feature feature);
+        void onQuakeClicked(Earthquake earthquake);
+        void onQuakeLongClick(Earthquake earthquake);
     }
 
     public class QuakeViewHolder extends RecyclerView.ViewHolder {
@@ -73,40 +71,44 @@ public class QuakeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             this.listener = listener;
         }
 
-        public void bind(final Feature feature) {
+        public void bind(final Earthquake earthquake) {
             String magnitude = "";
             //deal with weird, negative magnitudes
             if(magnitude.equals("")) {
-                if (feature.getProperties().getMag() < 0.0) {
+                if (earthquake.getMag() < 0.0) {
                     magnitude += 0.0;
                 } else {
-                    magnitude += feature.getProperties().getMag(); //String var to get AS to quit complaining about concatenation
+                    magnitude += earthquake.getMag(); //String var to get AS to quit complaining about concatenation
                 }
                 Context context = itemView.getContext();
                 magnitudeTextView.setText(magnitude);
                 magnitudeTextView.setTextColor(Color.WHITE);
-                locationTextView.setText(feature.getProperties().getPlace());
-                if (feature.getProperties().getMag() <= 1.00) {
+                locationTextView.setText(earthquake.getPlace());
+                if (earthquake.getMag() <= 1.00) {
                     magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_green));
-                } else if (feature.getProperties().getMag() <= 2.50) {
+                } else if (earthquake.getMag() <= 2.50) {
                     magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_orange));
-                } else if (feature.getProperties().getMag() <= 4.50) {
+                } else if (earthquake.getMag() <= 4.50) {
                     magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_deeporange));
                 } else {
                     magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_red));
                 }
-                java.text.DateFormat df = java.text.DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM);
-                timeTextViewHolder.setText(df.format(feature.getProperties().getTime()));
+                if(earthquake.getTime() != 0) {
+                    java.text.DateFormat df = java.text.DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM);
+                    timeTextViewHolder.setText(df.format(earthquake.getTime()));
+                } else {
+                    timeTextViewHolder.setText(earthquake.getTimeString());
+                }
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        listener.onQuakeClicked(feature);
+                        listener.onQuakeClicked(earthquake);
                     }
                 });
                 itemView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        listener.onQuakeLongClick(feature);
+                        listener.onQuakeLongClick(earthquake);
                         return true;
                     }
                 });

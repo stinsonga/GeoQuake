@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_subname"> </string>
-    <string name="version_number">1.4.0</string>
+    <string name="version_number">1.5.0</string>
     <string name="version">Version: </string>
 
     <string name="loading_data">Loading data.</string>
@@ -76,6 +76,11 @@
     <!-- Settings -->
     <string name="hide_action_bar">Hide Action Bar?</string>
 
+    <string-array name="source_types">
+        <item>USGS</item>
+        <item>Earthquakes Canada</item>
+    </string-array>
+
     <string-array name="quake_types">
         <item>Significant Earthquakes</item>
         <item>M4.5+ Earthquakes</item>
@@ -89,6 +94,12 @@
         <item>Past Day</item>
         <item>Past 7 Days</item>
         <!-- <item>Past 30 Days</item>  -->
+    </string-array>
+
+    <string-array name="canada_duration_types">
+        <item>Past Week</item>
+        <item>Past Month</item>
+        <item>Past Year</item>
     </string-array>
 
     <string name="cache_label">Data Refresh</string>
