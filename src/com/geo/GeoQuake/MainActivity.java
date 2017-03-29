@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     QuakeData mQuakeData;
     Toolbar mToolbar;
 
+    int mSourceSelection = 0;
     int mStrengthSelection = 4;
     int mDurationSelection = 0;
 
@@ -128,6 +129,8 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
         mBundle = new Bundle();
         mGeoQuakeDB = new GeoQuakeDB(this);
 
+        mSourceSelection = Prefs.getInstance().getSource();
+        mSourceTypeSpinner.setSelection(mSourceSelection);
         mDurationTypeSpinner.setOnItemSelectedListener(spinnerListener);
         mQuakeTypeSpinner.setOnItemSelectedListener(spinnerListener);
         mQuakeTypeSpinner.setSelection(4); //default selection
@@ -349,16 +352,25 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
      */
     private void fetchData() {
 
-        if (!mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection).isEmpty() &&
-                !Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mStrengthSelection, ""
+        if (!mGeoQuakeDB.getData("" + mSourceSelection, "" + mStrengthSelection, "" + mDurationSelection).isEmpty() &&
+                !Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mSourceSelection, "" + mStrengthSelection, ""
                         + mDurationSelection)), this)) {
-            mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mStrengthSelection, "" + mDurationSelection));
+            mFeatureCollection = new FeatureCollection(mGeoQuakeDB.getData("" + mSourceSelection, "" + mStrengthSelection, "" + mDurationSelection));
             Log.i(TAG, "no need for new data, setup fragment");
             refreshCurrentFragment(mFeatureCollection);
         } else {
             Utils.fireToast(mDurationSelection, mStrengthSelection, this);
             //TODO: change url string depending on source in Prefs
-            mQuakeData = new QuakeData(this.getString(R.string.usgs_url),
+            String apiURL = "";
+            switch(mSourceSelection) {
+                case 0:
+                    apiURL = this.getString(R.string.usgs_url);
+                    break;
+                case 1:
+                    apiURL = this.getString(R.string.canada_url);
+                    break;
+            }
+            mQuakeData = new QuakeData(apiURL, mSourceSelection,
                     mDurationSelection, mStrengthSelection, this, this);
             Log.i(TAG, "fetching data... await callback");
             mQuakeData.fetchData(this);
@@ -449,7 +461,8 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                     switch (mSourceTypeSpinner.getSelectedItemPosition()) {
                         //USGS
                         case 0:
-                            Prefs.getInstance().setSource(Prefs.USA);
+                            Prefs.getInstance().setSource(0);
+                            mSourceSelection = 0;
                             mQuakeTypeSpinner.setVisibility(View.VISIBLE);
                             ArrayAdapter<String> usaAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, MainActivity.this.getResources().getStringArray(R.array.duration_types));
                             usaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -457,7 +470,8 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                             break;
                         //Canada
                         case 1:
-                            Prefs.getInstance().setSource(Prefs.CANADA);
+                            Prefs.getInstance().setSource(1);
+                            mSourceSelection = 1;
                             mQuakeTypeSpinner.setVisibility(View.GONE);
                             ArrayAdapter<String> canAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, MainActivity.this.getResources().getStringArray(R.array.canada_duration_types));
                             canAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

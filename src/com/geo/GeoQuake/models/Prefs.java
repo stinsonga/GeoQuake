@@ -52,14 +52,14 @@ public class Prefs {
         return sharedPreferences.getString(KEYS.CACHE_TIME, "300000");
     }
 
-    public void setSource(String source) {
+    public void setSource(int source) {
         SharedPreferences.Editor e = sharedPreferences.edit();
-        e.putString(KEYS.SOURCE, source);
+        e.putInt(KEYS.SOURCE, source);
         e.apply();
     }
 
-    public String getSource() {
-        return sharedPreferences.getString(KEYS.SOURCE, USA);
+    public int getSource() {
+        return sharedPreferences.getInt(KEYS.SOURCE, 0);
     }
 
     private static class KEYS {

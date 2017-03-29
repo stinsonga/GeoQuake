@@ -62,60 +62,71 @@ public class Utils {
      *
      * @return a string representing the proper fragment to pass to the URL string
      */
-    public static String getURLFrag(int quakeSelection, int durationSelection, Context context) {
-        if (durationSelection == 0) {
-            if (quakeSelection == 0) {
-                return context.getString(R.string.significant_hour);
-            } else if (quakeSelection == 1) {
-                return context.getString(R.string._4_5_hour);
-            } else if (quakeSelection == 2) {
-                return context.getString(R.string._2_5_hour);
-            } else if (quakeSelection == 3) {
-                return context.getString(R.string._1_0_hour);
-            } else if (quakeSelection == 4) {
-                return context.getString(R.string.all_hour);
+    public static String getURLFrag(int quakeSource, int quakeSelection, int durationSelection, Context context) {
+        if(quakeSource == 0) {
+            if (durationSelection == 0) {
+                if (quakeSelection == 0) {
+                    return context.getString(R.string.significant_hour);
+                } else if (quakeSelection == 1) {
+                    return context.getString(R.string._4_5_hour);
+                } else if (quakeSelection == 2) {
+                    return context.getString(R.string._2_5_hour);
+                } else if (quakeSelection == 3) {
+                    return context.getString(R.string._1_0_hour);
+                } else if (quakeSelection == 4) {
+                    return context.getString(R.string.all_hour);
+                }
+            } else if (durationSelection == 1) {
+                if (quakeSelection == 0) {
+                    return context.getString(R.string.significant_day);
+                } else if (quakeSelection == 1) {
+                    return context.getString(R.string._4_5_day);
+                } else if (quakeSelection == 2) {
+                    return context.getString(R.string._2_5_day);
+                } else if (quakeSelection == 3) {
+                    return context.getString(R.string._1_0_day);
+                } else if (quakeSelection == 4) {
+                    return context.getString(R.string.all_day);
+                }
+            } else if (durationSelection == 2) {
+                if (quakeSelection == 0) {
+                    return context.getString(R.string.significant_week);
+                } else if (quakeSelection == 1) {
+                    return context.getString(R.string._4_5_week);
+                } else if (quakeSelection == 2) {
+                    return context.getString(R.string._2_5_week);
+                } else if (quakeSelection == 3) {
+                    return context.getString(R.string._1_0_week);
+                } else if (quakeSelection == 4) {
+                    return context.getString(R.string.all_week);
+                }
             }
-        } else if (durationSelection == 1) {
-            if (quakeSelection == 0) {
-                return context.getString(R.string.significant_day);
-            } else if (quakeSelection == 1) {
-                return context.getString(R.string._4_5_day);
-            } else if (quakeSelection == 2) {
-                return context.getString(R.string._2_5_day);
-            } else if (quakeSelection == 3) {
-                return context.getString(R.string._1_0_day);
-            } else if (quakeSelection == 4) {
-                return context.getString(R.string.all_day);
+            //Unreachable with current UI options... may return soon
+            else if (durationSelection == 3) {
+                if (quakeSelection == 0) {
+                    return context.getString(R.string.significant_month);
+                } else if (quakeSelection == 1) {
+                    return context.getString(R.string._4_5_month);
+                } else if (quakeSelection == 2) {
+                    return context.getString(R.string._2_5_month);
+                } else if (quakeSelection == 3) {
+                    return context.getString(R.string._1_0_month);
+                } else if (quakeSelection == 4) {
+                    return context.getString(R.string.all_month);
+                }
             }
-        } else if (durationSelection == 2) {
-            if (quakeSelection == 0) {
-                return context.getString(R.string.significant_week);
-            } else if (quakeSelection == 1) {
-                return context.getString(R.string._4_5_week);
-            } else if (quakeSelection == 2) {
-                return context.getString(R.string._2_5_week);
-            } else if (quakeSelection == 3) {
-                return context.getString(R.string._1_0_week);
-            } else if (quakeSelection == 4) {
-                return context.getString(R.string.all_week);
+            return context.getString(R.string.significant_week);
+        } else if(quakeSource == 1) {
+            //Canada won't filter by magnitude, just date
+            if(durationSelection == 0) {
+                return context.getString(R.string.canada_7_days);
+            } else if(durationSelection == 1) {
+                return context.getString(R.string.canada_30_days);
+            } else if(durationSelection == 2) {
+                return context.getString(R.string.canada_365_days);
             }
         }
-        //Unreachable with current UI options... may return soon
-        else if (durationSelection == 3) {
-            if (quakeSelection == 0) {
-                return context.getString(R.string.significant_month);
-            } else if (quakeSelection == 1) {
-                return context.getString(R.string._4_5_month);
-            } else if (quakeSelection == 2) {
-                return context.getString(R.string._2_5_month);
-            } else if (quakeSelection == 3) {
-                return context.getString(R.string._1_0_month);
-            } else if (quakeSelection == 4) {
-                return context.getString(R.string.all_month);
-            }
-        }
-        return context.getString(R.string.significant_week);
-
+        return "";
     }
 
     /**

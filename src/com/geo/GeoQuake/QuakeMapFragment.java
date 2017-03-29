@@ -194,8 +194,10 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
      */
     private void placeMarkers() {
         if (mFeatureCollection != null && mFeatureCollection.getFeatures() != null && mFeatureCollection.getFeatures().size() == 0) {
-            Toast.makeText(getActivity(), getActivity().getString(R.string.empty_list)
-                    , Toast.LENGTH_SHORT).show();
+            if(getActivity() != null) {
+                Toast.makeText(getActivity(), getActivity().getString(R.string.empty_list)
+                        , Toast.LENGTH_SHORT).show();
+            }
         } else {
             if (mMap != null) {
                 mMap.clear();
@@ -284,6 +286,8 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
      */
     public void onUpdateData(FeatureCollection featureCollection) {
         mFeatureCollection = featureCollection;
-        placeMarkers();
+        if(mFeatureCollection != null) {
+            placeMarkers();
+        }
     }
 }
