@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -33,6 +32,7 @@ import android.widget.Toast;
 import com.geo.GeoQuake.adapters.TabPagerAdapter;
 import com.geo.GeoQuake.models.Earthquake;
 import com.geo.GeoQuake.models.FeatureCollection;
+import com.geo.GeoQuake.models.Prefs;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -45,7 +45,6 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity implements IDataCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = MainActivity.class.getSimpleName();
-    SharedPreferences mSharedPreferences;
     Bundle mBundle;
 
     @Bind(R.id.drawer_layout)
@@ -123,7 +122,6 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
         }
 
         mBundle = new Bundle();
-        mSharedPreferences = getSharedPreferences(Utils.QUAKE_PREFS, Context.MODE_PRIVATE);
         mGeoQuakeDB = new GeoQuakeDB(this);
 
         mDurationTypeSpinner.setOnItemSelectedListener(spinnerListener);
@@ -259,10 +257,8 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     public void doRefresh() {
         if (!mAsyncUnderway) {
             if (GeoQuakeDB.checkRefreshLimit(GeoQuakeDB.getTime(),
-                    mSharedPreferences.getLong(Utils.REFRESH_LIMITER, 0))) {
-                SharedPreferences.Editor editor = mSharedPreferences.edit();
-                editor.putLong(Utils.REFRESH_LIMITER, GeoQuakeDB.getTime());
-                editor.apply();
+                    Prefs.getInstance().getRefreshLimiter())) {
+                Prefs.getInstance().setRefreshLimiter();
                 checkNetworkFetchData();
             } else {
                 Toast.makeText(this, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
@@ -356,6 +352,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
             refreshCurrentFragment(mFeatureCollection);
         } else {
             Utils.fireToast(mDurationSelection, mStrengthSelection, this);
+            //TODO: change url string depending on source in Prefs
             mQuakeData = new QuakeData(this.getString(R.string.usgs_url),
                     mDurationSelection, mStrengthSelection, this, this);
             Log.i(TAG, "fetching data... await callback");
@@ -452,7 +449,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                     mParametersAreChanged = true;
                     break;
                 case (R.id.cache_spinner):
-                    Utils.changeCache(mCacheTimeSpinner.getSelectedItemPosition(), mSharedPreferences,
+                    Utils.changeCache(mCacheTimeSpinner.getSelectedItemPosition(),
                             getResources().getStringArray(R.array.cache_values));
                     break;
                 default:
