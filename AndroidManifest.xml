@@ -37,7 +37,8 @@
         <activity
             android:name=".AboutActivity"
             android:label="About GeoQuake"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AboutTheme"/>
         <activity
             android:name=".MainActivity"
             android:label="GeoQuake">

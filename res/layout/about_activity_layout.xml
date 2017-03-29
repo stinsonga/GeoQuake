@@ -75,56 +75,11 @@
         android:background="@android:color/darker_gray" />
 
     <TextView
-        android:id="@+id/other_social"
-        android:layout_width="wrap_content"
+        android:id="@+id/canada_license_text"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/other_social_label" />
+        />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/bar_margin"
-        android:layout_marginTop="@dimen/bar_margin"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/gplus_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:onClick="onClick"
-            android:src="@drawable/g80" />
-
-        <TextView
-            android:id="@+id/g_plus_link"
-            android:layout_gravity="center_vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/bar_margin"
-        android:layout_marginTop="@dimen/bar_margin"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/linkedin_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:onClick="onClick"
-            android:src="@drawable/in81" />
-
-        <TextView
-            android:id="@+id/linkedin_link"
-            android:layout_gravity="center_vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
     <!-- The View below is meant to push the TextView beneath it to the bottom of the screen.-->
     <View
         android:layout_width="wrap_content"
