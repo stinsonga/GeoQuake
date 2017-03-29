@@ -32,9 +32,6 @@
             android:name=".WebInfoActivity"
             android:label="Additional Information" />
         <activity
-            android:name=".SettingsActivity"
-            android:label="Settings" />
-        <activity
             android:name=".AboutActivity"
             android:label="About GeoQuake"
             android:parentActivityName=".MainActivity"
