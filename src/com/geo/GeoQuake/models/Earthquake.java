@@ -6,6 +6,9 @@ package com.geo.GeoQuake.models;
 
 public class Earthquake {
 
+    public static final int USA = 0;
+    public static final int CANADA = 1;
+
     protected String place = "";
     protected String url;
     protected double mag;
@@ -13,6 +16,7 @@ public class Earthquake {
     protected double longitude;
     protected long time;
     protected String timeString = "";
+    protected int source;
 
     public Earthquake() {
 
@@ -35,6 +39,7 @@ public class Earthquake {
         this.place = feature.getProperties().getPlace();
         this.time = feature.getProperties().getTime();
         this.url = feature.getProperties().getUrl();
+        this.source = Earthquake.USA;
     }
 
     public double getLatitude() {
@@ -91,5 +96,13 @@ public class Earthquake {
 
     public void setTimeString(String timeString) {
         this.timeString = timeString;
+    }
+
+    public int getSource() {
+        return source;
+    }
+
+    public void setSource(int source) {
+        this.source = source;
     }
 }

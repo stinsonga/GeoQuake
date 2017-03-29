@@ -49,6 +49,7 @@ public class CanadaQuakes {
                        earthquake.setLongitude(coords.getDouble(1));
                    }
                    earthquake.setUrl("http://www.earthquakescanada.nrcan.gc.ca/index-en.php");
+                   earthquake.setSource(Earthquake.CANADA);
                    earthquakes.add(earthquake);
                }
            }
