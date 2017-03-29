@@ -24,6 +24,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -52,6 +53,9 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     @Bind(R.id.options_root)
     RelativeLayout mDrawerLinearLayout;
+
+    @Bind(R.id.source_type_spinner)
+    Spinner mSourceTypeSpinner;
 
     @Bind(R.id.quake_type_spinner)
     Spinner mQuakeTypeSpinner;
@@ -128,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
         mQuakeTypeSpinner.setOnItemSelectedListener(spinnerListener);
         mQuakeTypeSpinner.setSelection(4); //default selection
         mCacheTimeSpinner.setOnItemSelectedListener(spinnerListener);
+        mSourceTypeSpinner.setOnItemSelectedListener(spinnerListener);
 //        mWifiCheckbox.setOnCheckedChangeListener(checkListener);
     }
 
@@ -440,6 +445,26 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             switch (parent.getId()) {
+                case (R.id.source_type_spinner):
+                    switch (mSourceTypeSpinner.getSelectedItemPosition()) {
+                        //USGS
+                        case 0:
+                            Prefs.getInstance().setSource(Prefs.USA);
+                            mQuakeTypeSpinner.setVisibility(View.VISIBLE);
+                            ArrayAdapter<String> usaAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, MainActivity.this.getResources().getStringArray(R.array.duration_types));
+                            usaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            mDurationTypeSpinner.setAdapter(usaAdapter);
+                            break;
+                        //Canada
+                        case 1:
+                            Prefs.getInstance().setSource(Prefs.CANADA);
+                            mQuakeTypeSpinner.setVisibility(View.GONE);
+                            ArrayAdapter<String> canAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, MainActivity.this.getResources().getStringArray(R.array.canada_duration_types));
+                            canAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            mDurationTypeSpinner.setAdapter(canAdapter);
+                            break;
+                    }
+                    break;
                 case (R.id.quake_type_spinner):
                     mStrengthSelection = mQuakeTypeSpinner.getSelectedItemPosition();
                     mParametersAreChanged = true;
