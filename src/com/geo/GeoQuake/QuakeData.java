@@ -83,7 +83,7 @@ public class QuakeData {
                     protected void onPostExecute(ArrayList<Earthquake> earthquakes) {
                         super.onPostExecute(earthquakes);
                         mEarthquakes = earthquakes;
-                        Log.i(QuakeData.class.getSimpleName(), "onPostExecute " + mEarthquakes.size());
+                        //Log.i(QuakeData.class.getSimpleName(), "onPostExecute " + mEarthquakes.size());
                         mDataCallback.dataCallBack(mEarthquakes);
                     }
                 }.execute(new URL(usgsUrl + Utils.getURLFrag(mQuakeSource, mQuakeType,
@@ -105,7 +105,7 @@ public class QuakeData {
      */
     private ArrayList<Earthquake> getJSON(URL url) {
         try {
-            Log.d(TAG, url.toString());
+            //Log.d(TAG, url.toString());
             HttpURLConnection connect = (HttpURLConnection) url.openConnection();
             InputStream inputStream = connect.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
@@ -118,7 +118,7 @@ public class QuakeData {
             } else {
                 mGeoQuakeDB.updateData("" + mQuakeSource, "" + mQuakeType, "" + mQuakeDuration, dataResponse);
             }
-            Log.d(TAG, dataResponse);
+            //Log.d(TAG, dataResponse);
             return Utils.convertModelBySource(mQuakeSource, dataResponse);
         } catch (IOException ioe) {
             ioe.printStackTrace();

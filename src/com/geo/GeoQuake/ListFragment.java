@@ -209,7 +209,7 @@ public class ListFragment extends Fragment implements IDataCallback {
      */
     public void setupList(final ArrayList<Earthquake> earthquakes) {
         if (earthquakes != null && mContext != null) {
-            Log.i(TAG, "setupList, with size: " + earthquakes.size());
+            //Log.i(TAG, "setupList, with size: " + earthquakes.size());
             mQuakeCountTextView.setText(String.format(mContext.getString(R.string.quake_count), mEarthquakes.size()));
             mQuakeListAdapter.setQuakeList(earthquakes);
             if (earthquakes.size() == 0) {
@@ -217,7 +217,7 @@ public class ListFragment extends Fragment implements IDataCallback {
                         , Toast.LENGTH_LONG).show();
             }
         } else {
-            Log.i(TAG, "Null context " + (mContext == null));
+           // Log.i(TAG, "Null context " + (mContext == null));
         }
     }
 

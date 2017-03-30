@@ -36,7 +36,7 @@ public class FeatureCollection {
 
     public FeatureCollection(String jsonString){
         try{
-            Log.d("FeatureCollection json", jsonString);
+            //Log.d("FeatureCollection json", jsonString);
             JSONObject jsonObject = new JSONObject(jsonString);
             //setup arrays
             this.metadata = jsonObject.getJSONObject("metadata");
@@ -47,7 +47,7 @@ public class FeatureCollection {
             for(int i = 0; i < featuresArray.length(); i++){
                 features.add(new Feature(featuresArray.getJSONObject(i)));
             }
-            Log.i("FeatureCollection", "size " + features.size());
+            //Log.i("FeatureCollection", "size " + features.size());
             //setup metadata
             if(jsonObject.has("generated")) {
                 this.generated = jsonObject.getLong("generated");

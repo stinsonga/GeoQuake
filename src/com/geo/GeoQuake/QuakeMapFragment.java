@@ -7,7 +7,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +14,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.geo.GeoQuake.models.Earthquake;
-import com.geo.GeoQuake.models.Feature;
-import com.geo.GeoQuake.models.FeatureCollection;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -270,7 +267,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
 
     @Override
     public void dataCallBack(ArrayList<Earthquake> earthquakes) {
-        Log.i(TAG, "got callback in fragment, set data");
+        //Log.i(TAG, "got callback in fragment, set data");
         mEarthquakes = earthquakes;
         placeMarkers();
     }
