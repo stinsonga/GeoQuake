@@ -10,6 +10,11 @@
         <item name="android:textColorHint">@color/gray_700</item>
     </style>
 
+    <style name="AboutTheme" parent="GeoQuakeTheme">
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">false</item>
+    </style>
+
     <style name="TabLayout" parent="Widget.Design.TabLayout">
         <item name="tabBackground">@color/actionbar_color</item>
         <item name="tabIndicatorColor">@color/tab_select_color</item>

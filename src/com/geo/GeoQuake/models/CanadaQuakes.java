@@ -33,7 +33,7 @@ public class CanadaQuakes {
                    Earthquake earthquake = new Earthquake();
                    JSONObject quakeItem = jsonObject.getJSONObject(s);
                    if(quakeItem.has("origin_time")) {
-                       earthquake.setTimeString(quakeItem.getString("origin_time"));
+                       earthquake.setTimeString(processTimeString(quakeItem.getString("origin_time")));
                    }
                    if(quakeItem.has("magnitude")) {
                        earthquake.setMag(quakeItem.getDouble("magnitude"));
@@ -49,6 +49,7 @@ public class CanadaQuakes {
                        earthquake.setLongitude(coords.getDouble(1));
                    }
                    earthquake.setUrl("http://www.earthquakescanada.nrcan.gc.ca/index-en.php");
+                   earthquake.setSource(Earthquake.CANADA);
                    earthquakes.add(earthquake);
                }
            }
@@ -60,5 +61,11 @@ public class CanadaQuakes {
 
     public ArrayList<Earthquake> getEarthquakes() {
         return earthquakes;
+    }
+
+    private String processTimeString(String dateTime) {
+        String dateString = dateTime.substring(0, dateTime.indexOf("T"));
+        String timeString = dateTime.substring(dateTime.indexOf("T")+1, dateTime.indexOf("+"));
+        return dateString + " " + timeString;
     }
 }

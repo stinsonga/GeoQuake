@@ -15,9 +15,6 @@ public class Prefs {
     private static final String TAG = Prefs.class.getSimpleName();
     public static final String QUAKE_PREFS = "quake_prefs";
 
-    public static final String USA = "usa";
-    public static final String CANADA = "canada";
-
     private static Prefs prefs;
     private final SharedPreferences sharedPreferences;
 

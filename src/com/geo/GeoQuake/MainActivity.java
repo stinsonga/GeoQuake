@@ -32,7 +32,6 @@ import android.widget.Toast;
 
 import com.geo.GeoQuake.adapters.TabPagerAdapter;
 import com.geo.GeoQuake.models.Earthquake;
-import com.geo.GeoQuake.models.FeatureCollection;
 import com.geo.GeoQuake.models.Prefs;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="actionbar_color">#4A148C</color>
+    <color name="actionbar_color_trans">#804A148C</color>
     <color name="tab_select_color">#CE93D8</color>
     <color name="options_background">#4A148C</color>
     <color name="transparent">#00000000</color>
