@@ -8,6 +8,8 @@
         <item name="windowNoTitle">true</item>
         <item name="android:editTextColor">@color/gray_700</item>
         <item name="android:textColorHint">@color/gray_700</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/actionbar_color_trans</item>
     </style>
 
     <style name="AboutTheme" parent="GeoQuakeTheme">

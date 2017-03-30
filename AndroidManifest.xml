@@ -30,15 +30,18 @@
         android:theme="@style/GeoQuakeTheme">
         <activity
             android:name=".WebInfoActivity"
-            android:label="Additional Information" />
+            android:label="Additional Information"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".AboutActivity"
             android:label="About GeoQuake"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AboutTheme"/>
         <activity
             android:name=".MainActivity"
-            android:label="GeoQuake">
+            android:label="GeoQuake"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

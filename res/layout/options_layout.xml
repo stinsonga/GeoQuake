@@ -67,6 +67,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/cache_label"
         android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:orientation="vertical">
 
         <Spinner
