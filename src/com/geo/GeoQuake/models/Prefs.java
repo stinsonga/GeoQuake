@@ -26,7 +26,7 @@ public class Prefs {
     }
 
     private Prefs() {
-        this.sharedPreferences = App.getAppContext().getSharedPreferences(QUAKE_PREFS, Context.MODE_PRIVATE);
+        this.sharedPreferences = App.Companion.getAppContext().getSharedPreferences(QUAKE_PREFS, Context.MODE_PRIVATE);
     }
 
     public void setRefreshLimiter() {

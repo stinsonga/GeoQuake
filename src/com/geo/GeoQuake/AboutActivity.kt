@@ -24,28 +24,24 @@ import butterknife.ButterKnife
  */
 class AboutActivity : AppCompatActivity(), View.OnClickListener {
 
-    @Bind(R.id.github_link)
-    internal var mGithubTextView: TextView? = null
-
-    @Bind(R.id.github_source_image)
-    internal var mGitHubImage: ImageButton? = null
-
-    @Bind(R.id.canada_license_text)
-    internal var canadaLicense: TextView? = null
+    lateinit var mGithubTextView: TextView
+    lateinit var mGitHubImage: ImageButton
+    lateinit var canadaLicense: TextView
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.about_activity_layout)
-        ButterKnife.bind(this)
 
         val bar = supportActionBar
         bar?.setHomeButtonEnabled(true)
 
-        //TODO: fix null exception
-//        mGithubTextView!!.text = Html.fromHtml(this.getString(R.string.github_source_link))
-//        mGithubTextView!!.movementMethod = LinkMovementMethod.getInstance()
-//        canadaLicense!!.text = Html.fromHtml(this.getString(R.string.canada_quake_license_link))
-//        canadaLicense!!.movementMethod = LinkMovementMethod.getInstance()
+        mGithubTextView = findViewById(R.id.github_link) as TextView
+        canadaLicense = findViewById(R.id.canada_license_text) as TextView
+
+        mGithubTextView!!.text = Html.fromHtml(this.getString(R.string.github_source_link))
+        mGithubTextView!!.movementMethod = LinkMovementMethod.getInstance()
+        canadaLicense!!.text = Html.fromHtml(this.getString(R.string.canada_quake_license_link))
+        canadaLicense!!.movementMethod = LinkMovementMethod.getInstance()
     }
 
     /**
