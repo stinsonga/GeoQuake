@@ -16,7 +16,7 @@ import android.widget.TextView
 
 import org.w3c.dom.Text
 
-import butterknife.Bind
+import butterknife.BindView
 import butterknife.ButterKnife
 
 /**
@@ -38,10 +38,10 @@ class AboutActivity : AppCompatActivity(), View.OnClickListener {
         mGithubTextView = findViewById(R.id.github_link) as TextView
         canadaLicense = findViewById(R.id.canada_license_text) as TextView
 
-        mGithubTextView!!.text = Html.fromHtml(this.getString(R.string.github_source_link))
-        mGithubTextView!!.movementMethod = LinkMovementMethod.getInstance()
-        canadaLicense!!.text = Html.fromHtml(this.getString(R.string.canada_quake_license_link))
-        canadaLicense!!.movementMethod = LinkMovementMethod.getInstance()
+        mGithubTextView.text = Html.fromHtml(this.getString(R.string.github_source_link))
+        mGithubTextView.movementMethod = LinkMovementMethod.getInstance()
+        canadaLicense.text = Html.fromHtml(this.getString(R.string.canada_quake_license_link))
+        canadaLicense.movementMethod = LinkMovementMethod.getInstance()
     }
 
     /**

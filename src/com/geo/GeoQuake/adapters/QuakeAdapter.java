@@ -15,7 +15,7 @@ import com.geo.GeoQuake.models.Earthquake;
 import java.text.DateFormat;
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -57,11 +57,11 @@ public class QuakeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public class QuakeViewHolder extends RecyclerView.ViewHolder {
-        @Bind(R.id.list_magnitude_text)
+        @BindView(R.id.list_magnitude_text)
         TextView magnitudeTextView;
-        @Bind(R.id.list_location_text)
+        @BindView(R.id.list_location_text)
         TextView locationTextView;
-        @Bind(R.id.list_time_text)
+        @BindView(R.id.list_time_text)
         TextView timeTextViewHolder;
         OnQuakeItemClickedListener listener;
 

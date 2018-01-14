@@ -39,7 +39,7 @@ import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements IDataCallback,
@@ -47,34 +47,34 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     private static final String TAG = MainActivity.class.getSimpleName();
     Bundle mBundle;
 
-    @Bind(R.id.drawer_layout)
+    @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
 
-    @Bind(R.id.options_root)
+    @BindView(R.id.options_root)
     RelativeLayout mDrawerLinearLayout;
 
-    @Bind(R.id.source_type_spinner)
+    @BindView(R.id.source_type_spinner)
     Spinner mSourceTypeSpinner;
 
-    @Bind(R.id.quake_type_spinner)
+    @BindView(R.id.quake_type_spinner)
     Spinner mQuakeTypeSpinner;
 
-    @Bind(R.id.duration_type_spinner)
+    @BindView(R.id.duration_type_spinner)
     Spinner mDurationTypeSpinner;
 
-    @Bind(R.id.cache_spinner)
+    @BindView(R.id.cache_spinner)
     Spinner mCacheTimeSpinner;
 
 //    @Bind(R.id.wifi_checkbox)
 //    CheckBox mWifiCheckbox;
 
-    @Bind(R.id.loading_overlay)
+    @BindView(R.id.loading_overlay)
     RelativeLayout mLoadingOverlay;
 
-    @Bind(R.id.tab_layout)
+    @BindView(R.id.tab_layout)
     TabLayout mTabLayout;
 
-    @Bind(R.id.view_pager)
+    @BindView(R.id.view_pager)
     ViewPager mViewPager;
 
     boolean mAsyncUnderway = false;

@@ -32,7 +32,7 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -41,7 +41,7 @@ import butterknife.ButterKnife;
 public class ListFragment extends Fragment implements IDataCallback {
     private static final String TAG = ListFragment.class.getSimpleName();
 
-    @Bind(R.id.quakeListView)
+    @BindView(R.id.quakeListView)
     RecyclerView mQuakeListView;
 
     QuakeAdapter mQuakeListAdapter;
@@ -49,13 +49,13 @@ public class ListFragment extends Fragment implements IDataCallback {
 
     ArrayList<Earthquake> mEarthquakes = new ArrayList<Earthquake>();
 
-    @Bind(R.id.search_bar)
+    @BindView(R.id.search_bar)
     LinearLayout mSearchBar;
 
-    @Bind(R.id.search_view)
+    @BindView(R.id.search_view)
     SearchView mSearchView;
 
-    @Bind(R.id.count_textview)
+    @BindView(R.id.count_textview)
     TextView mQuakeCountTextView;
 
     Context mContext;
