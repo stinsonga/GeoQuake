@@ -32,31 +32,22 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * Created by gstinson on 2014-08-25.
  */
 public class ListFragment extends Fragment implements IDataCallback {
     private static final String TAG = ListFragment.class.getSimpleName();
 
-    @BindView(R.id.quakeListView)
     RecyclerView mQuakeListView;
+    LinearLayout mSearchBar;
+    SearchView mSearchView;
+    TextView mQuakeCountTextView;
 
+    MainActivity mActivity;
     QuakeAdapter mQuakeListAdapter;
     Bundle mBundle;
 
     ArrayList<Earthquake> mEarthquakes = new ArrayList<Earthquake>();
-
-    @BindView(R.id.search_bar)
-    LinearLayout mSearchBar;
-
-    @BindView(R.id.search_view)
-    SearchView mSearchView;
-
-    @BindView(R.id.count_textview)
-    TextView mQuakeCountTextView;
 
     Context mContext;
 
@@ -122,9 +113,13 @@ public class ListFragment extends Fragment implements IDataCallback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.list_fragment, container, false);
-        ButterKnife.bind(this, view);
 
-        mQuakeListView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mQuakeListView = view.findViewById(R.id.quakeListView);
+        mSearchBar = view.findViewById(R.id.search_bar);
+        mSearchView = view.findViewById(R.id.search_view);
+        mQuakeCountTextView = view.findViewById(R.id.count_textview);
+
+        mQuakeListView.setLayoutManager(new LinearLayoutManager(mActivity));
         mQuakeListAdapter = new QuakeAdapter(onQuakeItemClickedListener);
         mQuakeListView.setAdapter(mQuakeListAdapter);
         mSearchView.setOnQueryTextListener(queryTextListener);
@@ -159,7 +154,7 @@ public class ListFragment extends Fragment implements IDataCallback {
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-
+        mActivity = (MainActivity)getActivity();
     }
 
     /**

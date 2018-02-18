@@ -15,9 +15,6 @@ import com.geo.GeoQuake.models.Earthquake;
 import java.text.DateFormat;
 import java.util.ArrayList;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * Created by George Stinson on 2017-03-15.
  */
@@ -57,18 +54,18 @@ public class QuakeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public class QuakeViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.list_magnitude_text)
+
         TextView magnitudeTextView;
-        @BindView(R.id.list_location_text)
         TextView locationTextView;
-        @BindView(R.id.list_time_text)
         TextView timeTextViewHolder;
         OnQuakeItemClickedListener listener;
 
         public QuakeViewHolder(View itemView, OnQuakeItemClickedListener listener) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
             this.listener = listener;
+            this.magnitudeTextView = itemView.findViewById(R.id.list_magnitude_text);
+            this.locationTextView = itemView.findViewById(R.id.list_location_text);
+            this.timeTextViewHolder = itemView.findViewById(R.id.list_time_text);
         }
 
         public void bind(final Earthquake earthquake) {

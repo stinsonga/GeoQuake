@@ -30,8 +30,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import butterknife.ButterKnife;
-
 
 public class QuakeMapFragment extends Fragment implements IDataCallback {
     private static final String TAG = QuakeMapFragment.class.getSimpleName();
@@ -63,11 +61,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.map_fragment, container, false);
-        ButterKnife.bind(this, view);
-
-
-        return view;
+        return inflater.inflate(R.layout.map_fragment, container, false);
 
     }
 
