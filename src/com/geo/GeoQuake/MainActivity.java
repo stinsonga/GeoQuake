@@ -39,54 +39,34 @@ import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
 public class MainActivity extends AppCompatActivity implements IDataCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+
     private static final String TAG = MainActivity.class.getSimpleName();
-    Bundle mBundle;
+    protected  Bundle mBundle;
 
-    @Bind(R.id.drawer_layout)
-    DrawerLayout mDrawerLayout;
+    protected DrawerLayout mDrawerLayout;
+    protected RelativeLayout mDrawerLinearLayout;
+    protected Spinner mSourceTypeSpinner;
+    protected Spinner mQuakeTypeSpinner;
+    protected Spinner mDurationTypeSpinner;
+    protected Spinner mCacheTimeSpinner;
+    protected RelativeLayout mLoadingOverlay;
+    protected TabLayout mTabLayout;
+    protected ViewPager mViewPager;
 
-    @Bind(R.id.options_root)
-    RelativeLayout mDrawerLinearLayout;
+    //    CheckBox mWifiCheckbox;
 
-    @Bind(R.id.source_type_spinner)
-    Spinner mSourceTypeSpinner;
+    protected boolean mAsyncUnderway = false;
 
-    @Bind(R.id.quake_type_spinner)
-    Spinner mQuakeTypeSpinner;
+    protected ArrayList<Earthquake> mEarthquakes = new ArrayList<Earthquake>();
+    protected GeoQuakeDB mGeoQuakeDB;
+    protected QuakeData mQuakeData;
+    protected Toolbar mToolbar;
 
-    @Bind(R.id.duration_type_spinner)
-    Spinner mDurationTypeSpinner;
-
-    @Bind(R.id.cache_spinner)
-    Spinner mCacheTimeSpinner;
-
-//    @Bind(R.id.wifi_checkbox)
-//    CheckBox mWifiCheckbox;
-
-    @Bind(R.id.loading_overlay)
-    RelativeLayout mLoadingOverlay;
-
-    @Bind(R.id.tab_layout)
-    TabLayout mTabLayout;
-
-    @Bind(R.id.view_pager)
-    ViewPager mViewPager;
-
-    boolean mAsyncUnderway = false;
-
-    ArrayList<Earthquake> mEarthquakes = new ArrayList<Earthquake>();
-    GeoQuakeDB mGeoQuakeDB;
-    QuakeData mQuakeData;
-    Toolbar mToolbar;
-
-    int mSourceSelection = 0;
-    int mStrengthSelection = 4;
-    int mDurationSelection = 0;
+    protected int mSourceSelection = 0;
+    protected int mStrengthSelection = 4;
+    protected int mDurationSelection = 0;
 
     double mUserLatitude = 0.0;
     double mUserLongitude = 0.0;
@@ -102,7 +82,17 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+
+        //set UI elements
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        mDrawerLinearLayout = findViewById(R.id.options_root);
+        mSourceTypeSpinner = findViewById(R.id.source_type_spinner);
+        mQuakeTypeSpinner = findViewById(R.id.quake_type_spinner);
+        mDurationTypeSpinner = findViewById(R.id.duration_type_spinner);
+        mCacheTimeSpinner = findViewById(R.id.cache_spinner);
+        mLoadingOverlay = findViewById(R.id.loading_overlay);
+        mTabLayout = findViewById(R.id.tab_layout);
+        mViewPager = findViewById(R.id.view_pager);
 
         buildGoogleApiClient();
 
