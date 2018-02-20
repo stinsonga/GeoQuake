@@ -54,7 +54,7 @@ android {
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 25
+        targetSdkVersion 26
         // Enabling multidex support.
         multiDexEnabled true
     }
