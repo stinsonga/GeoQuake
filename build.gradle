@@ -1,6 +1,6 @@
 buildscript {
 
-    ext.kotlin_version = "1.2.30"
+    ext.kotlin_version = "1.2.41"
 
     repositories {
         jcenter()
@@ -40,12 +40,12 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     buildToolsVersion '27.0.3'
     flavorDimensions "default" //added to fix "Error:All flavors must now belong to a named flavor dimension. "
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 26
+        targetSdkVersion 27
         // Enabling multidex support.
         multiDexEnabled true
     }
@@ -56,7 +56,7 @@ android {
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 26
+        targetSdkVersion 27
         // Enabling multidex support.
         multiDexEnabled true
     }
