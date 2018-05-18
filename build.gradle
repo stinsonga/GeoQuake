@@ -8,7 +8,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.1'
+        classpath 'com.android.tools.build:gradle:3.1.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -27,16 +27,16 @@ apply plugin: 'kotlin-android-extensions'
 
 dependencies {
     final def ASL_VERSION = '27.1.1'
-    compile fileTree(dir: 'libs', include: '*.jar')
-    compile 'com.google.android.gms:play-services-location:12.0.1'
-    compile 'com.google.android.gms:play-services-maps:12.0.1'
-    compile  'org.apache.commons:commons-lang3:3.4'
-    compile 'io.reactivex.rxjava2:rxjava:2.1.1'
-    compile "com.android.support:appcompat-v7:$ASL_VERSION"
-    compile "com.android.support:design:$ASL_VERSION"
-    compile 'android.arch.persistence.room:runtime:1.0.0'
-    annotationProcessor 'android.arch.persistence.room:compiler:1.0.0'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation fileTree(dir: 'libs', include: '*.jar')
+    implementation 'com.google.android.gms:play-services-location:15.0.1'
+    implementation 'com.google.android.gms:play-services-maps:15.0.1'
+    implementation  'org.apache.commons:commons-lang3:3.4'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.1'
+    implementation "com.android.support:appcompat-v7:$ASL_VERSION"
+    implementation "com.android.support:design:$ASL_VERSION"
+    implementation 'android.arch.persistence.room:runtime:1.1.0'
+    annotationProcessor 'android.arch.persistence.room:compiler:1.1.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 android {
