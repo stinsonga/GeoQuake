@@ -29,11 +29,12 @@ public class Utils {
     public static boolean checkNetwork(Context context) {
         try {
             ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo network = cm.getActiveNetworkInfo();
-
-            return (network.getType() == ConnectivityManager.TYPE_WIFI
-                    || network.getType() == ConnectivityManager.TYPE_MOBILE) && network.isConnected();
-
+            NetworkInfo network = cm != null ? cm.getActiveNetworkInfo() : null;
+            if(network != null) {
+                return (network.getType() == ConnectivityManager.TYPE_WIFI
+                        || network.getType() == ConnectivityManager.TYPE_MOBILE) && network.isConnected();
+            }
+            return false;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -134,12 +135,16 @@ public class Utils {
      * Generates the appropriate toast, depending on the anticipated time of the request.
      */
     public static void fireToast(int duration, int quake, Context context) {
-        Toast toast;
+        String toastText;
+        int toastDuration;
         if (duration == 2 && quake == 4) {
-            toast = Toast.makeText(context, context.getString(R.string.loading_data_long), Toast.LENGTH_LONG);
+            toastText = context.getString(R.string.loading_data_long);
+            toastDuration = Toast.LENGTH_LONG;
         } else {
-            toast = Toast.makeText(context, context.getString(R.string.loading_data), Toast.LENGTH_SHORT);
+            toastText = context.getString(R.string.loading_data);
+            toastDuration = Toast.LENGTH_SHORT;
         }
+        Toast toast = Toast.makeText(context, toastText, toastDuration);
         toast.show();
     }
 
@@ -157,10 +162,9 @@ public class Utils {
      * or not to overwrite
      *
      * @param timeStamp current timestamp
-     * @param context   from the activity that calls this method
      * @return boolean representing whether or not our DB row is expired
      */
-    public static boolean isExpired(long timeStamp, Context context) {
+    public static boolean isExpired(long timeStamp) {
         //default cache time set at 5 minutes (300000 ms)
         return (GeoQuakeDB.getTime() - timeStamp > Long.parseLong(Prefs.getInstance().getCacheTime()));
     }
@@ -169,6 +173,7 @@ public class Utils {
         if(view == null) return;
         InputMethodManager imm = (InputMethodManager) view.getContext()
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
+        if(imm == null) return;
         imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
@@ -176,11 +181,12 @@ public class Utils {
         if(view == null) return;
         InputMethodManager imm = (InputMethodManager) view.getContext()
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
+        if(imm == null) return;
         imm.showSoftInput(view, InputMethodManager.SHOW_FORCED);
     }
 
     public static ArrayList<Earthquake> convertModelBySource(int source, String json) {
-        ArrayList<Earthquake> quakes = new ArrayList<Earthquake>();
+        ArrayList<Earthquake> quakes = new ArrayList<>();
         if(source == 0) {
             FeatureCollection featureCollection = new FeatureCollection(json);
             for(Feature f : featureCollection.getFeatures()) {
