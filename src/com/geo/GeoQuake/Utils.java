@@ -30,11 +30,10 @@ public class Utils {
         try {
             ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo network = cm != null ? cm.getActiveNetworkInfo() : null;
-            if(network != null) {
-                return (network.getType() == ConnectivityManager.TYPE_WIFI
-                        || network.getType() == ConnectivityManager.TYPE_MOBILE) && network.isConnected();
-            }
-            return false;
+
+            return network != null && (network.getType() == ConnectivityManager.TYPE_WIFI
+                    || network.getType() == ConnectivityManager.TYPE_MOBILE) && network.isConnected();
+
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -66,66 +65,75 @@ public class Utils {
      */
     public static String getURLFrag(int quakeSource, int quakeSelection, int durationSelection, Context context) {
         if(quakeSource == 0) {
-            if (durationSelection == 0) {
-                if (quakeSelection == 0) {
-                    return context.getString(R.string.significant_hour);
-                } else if (quakeSelection == 1) {
-                    return context.getString(R.string._4_5_hour);
-                } else if (quakeSelection == 2) {
-                    return context.getString(R.string._2_5_hour);
-                } else if (quakeSelection == 3) {
-                    return context.getString(R.string._1_0_hour);
-                } else if (quakeSelection == 4) {
-                    return context.getString(R.string.all_hour);
-                }
-            } else if (durationSelection == 1) {
-                if (quakeSelection == 0) {
-                    return context.getString(R.string.significant_day);
-                } else if (quakeSelection == 1) {
-                    return context.getString(R.string._4_5_day);
-                } else if (quakeSelection == 2) {
-                    return context.getString(R.string._2_5_day);
-                } else if (quakeSelection == 3) {
-                    return context.getString(R.string._1_0_day);
-                } else if (quakeSelection == 4) {
-                    return context.getString(R.string.all_day);
-                }
-            } else if (durationSelection == 2) {
-                if (quakeSelection == 0) {
-                    return context.getString(R.string.significant_week);
-                } else if (quakeSelection == 1) {
-                    return context.getString(R.string._4_5_week);
-                } else if (quakeSelection == 2) {
-                    return context.getString(R.string._2_5_week);
-                } else if (quakeSelection == 3) {
-                    return context.getString(R.string._1_0_week);
-                } else if (quakeSelection == 4) {
-                    return context.getString(R.string.all_week);
-                }
-            }
-            //Unreachable with current UI options... may return soon
-            else if (durationSelection == 3) {
-                if (quakeSelection == 0) {
-                    return context.getString(R.string.significant_month);
-                } else if (quakeSelection == 1) {
-                    return context.getString(R.string._4_5_month);
-                } else if (quakeSelection == 2) {
-                    return context.getString(R.string._2_5_month);
-                } else if (quakeSelection == 3) {
-                    return context.getString(R.string._1_0_month);
-                } else if (quakeSelection == 4) {
-                    return context.getString(R.string.all_month);
-                }
+            switch(durationSelection) {
+                case 0:
+                    switch(quakeSelection) {
+                        case 0:
+                        default:
+                            return context.getString(R.string.significant_hour);
+                        case 1:
+                            return context.getString(R.string._4_5_hour);
+                        case 2:
+                            return context.getString(R.string._2_5_hour);
+                        case 3:
+                            return context.getString(R.string._1_0_hour);
+                        case 4:
+                            return context.getString(R.string.all_hour);
+                    }
+                case 1:
+                    switch(quakeSelection) {
+                        case 0:
+                        default:
+                            return context.getString(R.string.significant_day);
+                        case 1:
+                            return context.getString(R.string._4_5_day);
+                        case 2:
+                            return context.getString(R.string._2_5_day);
+                        case 3:
+                            return context.getString(R.string._1_0_day);
+                        case 4:
+                            return context.getString(R.string.all_day);
+                    }
+                case 2:
+                    switch(quakeSelection) {
+                        case 0:
+                        default:
+                            return context.getString(R.string.significant_week);
+                        case 1:
+                            return context.getString(R.string._4_5_week);
+                        case 2:
+                            return context.getString(R.string._2_5_week);
+                        case 3:
+                            return context.getString(R.string._1_0_week);
+                        case 4:
+                            return context.getString(R.string.all_week);
+                    }
+                case 3:
+                    switch(quakeSelection) {
+                        case 0:
+                        default:
+                            return context.getString(R.string.significant_month);
+                        case 1:
+                            return context.getString(R.string._4_5_month);
+                        case 2:
+                            return context.getString(R.string._2_5_month);
+                        case 3:
+                            return context.getString(R.string._1_0_month);
+                        case 4:
+                            return context.getString(R.string.all_month);
+                    }
             }
             return context.getString(R.string.significant_week);
         } else if(quakeSource == 1) {
             //Canada won't filter by magnitude, just date
-            if(durationSelection == 0) {
-                return context.getString(R.string.canada_7_days);
-            } else if(durationSelection == 1) {
-                return context.getString(R.string.canada_30_days);
-            } else if(durationSelection == 2) {
-                return context.getString(R.string.canada_365_days);
+            switch(durationSelection) {
+                case 0:
+                default:
+                    return context.getString(R.string.canada_7_days);
+                case 1:
+                    return context.getString(R.string.canada_30_days);
+                case 2:
+                    return context.getString(R.string.canada_365_days);
             }
         }
         return "";
@@ -194,7 +202,6 @@ public class Utils {
             }
             return quakes;
         } else if(source == 1) {
-            //TODO Canada quake model....
             CanadaQuakes canadaQuakes = new CanadaQuakes(json);
             return canadaQuakes.getEarthquakes();
         }
