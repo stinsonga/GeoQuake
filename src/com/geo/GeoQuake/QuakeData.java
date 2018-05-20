@@ -135,7 +135,8 @@ public class QuakeData {
         //first check to see if results are empty
         if (!mGeoQuakeDB.getData("" + mQuakeSource, "" + mQuakeType, "" + mQuakeDuration).isEmpty()) {
             //is the data too old?
-            if (Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mQuakeSource, "" + mQuakeType, "" + mQuakeDuration)), mContext)) {
+            if (Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mQuakeSource,
+                    "" + mQuakeType, "" + mQuakeDuration)))) {
                 return true;
             } else {
                 //use existing data set, and return false
