@@ -46,11 +46,6 @@ public class GeoQuakeDB extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME); //we'll just drop the table for now
-        if(oldVersion == 18 && newVersion == 19) {
-//            Log.d("DB", "Execute DB upgrade.");
-//            String upgrade = "ALTER TABLE "+TABLE_NAME+" ADD COLUMN "+QUAKE_SOURCE+" TEXT";
-//            db.execSQL(upgrade);
-        }
         onCreate(db);
     }
 

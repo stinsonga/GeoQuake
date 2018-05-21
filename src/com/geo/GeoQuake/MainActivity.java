@@ -340,7 +340,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
         if (!mGeoQuakeDB.getData("" + mSourceSelection, "" + mStrengthSelection, "" + mDurationSelection).isEmpty() &&
                 !Utils.isExpired(Long.parseLong(mGeoQuakeDB.getDateColumn("" + mSourceSelection, "" + mStrengthSelection, ""
-                        + mDurationSelection)), this)) {
+                        + mDurationSelection)))) {
             mEarthquakes = Utils.convertModelBySource(mSourceSelection, mGeoQuakeDB.getData("" + mSourceSelection, "" + mStrengthSelection, "" + mDurationSelection));
             Log.i(TAG, "no need for new data, setup fragment");
             refreshCurrentFragment(mEarthquakes);
