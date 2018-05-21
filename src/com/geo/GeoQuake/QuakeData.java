@@ -22,15 +22,15 @@ import java.util.ArrayList;
 public class QuakeData {
 
     protected static final String TAG = QuakeData.class.getSimpleName();
-    protected String usgsUrl;
+    private String usgsUrl;
     protected FeatureCollection mFeatureCollection = new FeatureCollection();
-    protected ArrayList<Earthquake> mEarthquakes;
-    protected IDataCallback mDataCallback;
-    protected int mQuakeSource;
-    protected int mQuakeType;
-    protected int mQuakeDuration;
-    protected Context mContext;
-    GeoQuakeDB mGeoQuakeDB;
+    private ArrayList<Earthquake> mEarthquakes;
+    private IDataCallback mDataCallback;
+    private int mQuakeSource;
+    private int mQuakeType;
+    private int mQuakeDuration;
+    private Context mContext;
+    private GeoQuakeDB mGeoQuakeDB;
 
     /**
      * Constructor... takes only the url for USGS, which should be a resource
@@ -52,14 +52,19 @@ public class QuakeData {
      * @return
      */
     public void fetchData(Context context) {
-        processData(context);
+        if(needToRefreshData()) {
+            processData(context);
+        } else {
+            //no need to refresh, so we send them back the persisted data
+            mEarthquakes = Utils.convertModelBySource(mQuakeSource, mGeoQuakeDB.getData("" + mQuakeSource, "" + mQuakeType, "" + mQuakeDuration));
+            mDataCallback.dataCallBack(mEarthquakes);
+        }
     }
 
     /**
      * @param context passing in context here, needed for calls within method
      */
     private void processData(final Context context) {
-        if (needToRefreshData()) {
             try {
                 new AsyncTask<URL, Void, ArrayList<Earthquake>>() {
                     @Override
@@ -90,13 +95,7 @@ public class QuakeData {
                         mQuakeDuration, context)));
             } catch (MalformedURLException me) {
                 Log.e(me.getMessage(), "URL Problem...");
-
             }
-        } else {
-            //no need to refresh, so we send them back the persisted data
-            mEarthquakes = Utils.convertModelBySource(mQuakeSource, mGeoQuakeDB.getData("" + mQuakeSource, "" + mQuakeType, "" + mQuakeDuration));
-            mDataCallback.dataCallBack(mEarthquakes);
-        }
     }
 
     /**

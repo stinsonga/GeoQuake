@@ -1,5 +1,6 @@
 package com.geo.GeoQuake;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -42,6 +43,8 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
 
     ArrayList<Earthquake> mEarthquakes = new ArrayList<Earthquake>();
 
+    MainActivity mActivity;
+
     public static QuakeMapFragment newInstance() {
         return new QuakeMapFragment();
     }
@@ -82,7 +85,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     public void onResume() {
         super.onResume();
         Log.i(TAG, "onResume");
-        if (Utils.checkNetwork(getActivity())) {
+        if (Utils.checkNetwork(mActivity)) {
             if (mMap == null) {
                 setUpMap();
             } else {
@@ -91,7 +94,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
                 }
             }
         } else {
-            Utils.connectToast(getActivity());
+            Utils.connectToast(mActivity);
         }
 
     }
@@ -101,11 +104,17 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
         super.onDestroy();
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivity = (MainActivity)getActivity();
+    }
+
     /**
      * Contains the basics for setting up the map.
      */
     private void setUpMap() {
-        if (Utils.checkNetwork(getActivity())) {
+        if (Utils.checkNetwork(mActivity)) {
             if (mMap == null) {
                 mMapFragment.getMapAsync(new OnMapReadyCallback() {
                     @Override
@@ -118,7 +127,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
             }
 
         } else {
-            Utils.connectToast(getActivity());
+            Utils.connectToast(mActivity);
         }
     }
 
@@ -130,9 +139,9 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
             mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 
             //check location permission
-            PackageManager pm = getActivity().getPackageManager();
+            PackageManager pm = mActivity.getPackageManager();
             int result = pm.checkPermission(android.Manifest.permission.ACCESS_FINE_LOCATION,
-                    getActivity().getPackageName());
+                    mActivity.getPackageName());
 
             if (PackageManager.PERMISSION_GRANTED == result) {
                 mMap.setMyLocationEnabled(true);
@@ -143,11 +152,11 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
             settings.setMyLocationButtonEnabled(false);
 
 
-            if (((MainActivity) getActivity()).getEarthquakes() != null && ((MainActivity) getActivity()).getEarthquakes().size() > 0) {
+            if (mActivity.getEarthquakes() != null && ((MainActivity) getActivity()).getEarthquakes().size() > 0) {
                 mEarthquakes = ((MainActivity) getActivity()).getEarthquakes();
                 placeMarkers();
             } else {
-                ((MainActivity) getActivity()).checkNetworkFetchData();
+                mActivity.checkNetworkFetchData();
             }
         }
     }
@@ -158,7 +167,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
             return;
         }
         try {
-            MapsInitializer.initialize(getActivity());
+            MapsInitializer.initialize(mActivity);
         } catch (Exception e) {
             Log.i(TAG, "Problem initializing map");
             return;
@@ -166,13 +175,13 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 4);
         mMap.animateCamera(cameraUpdate);
         mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))
-                .title(getActivity().getString(R.string.menu_my_location)));
+                .title(mActivity.getString(R.string.menu_my_location)));
     }
 
     public void userLocationMarker(double latitude, double longitude) {
         if (mMap != null) {
             mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))
-                    .title(getActivity().getString(R.string.menu_my_location)));
+                    .title(mActivity.getString(R.string.menu_my_location)));
         }
 
     }
@@ -183,8 +192,8 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
      */
     private void placeMarkers() {
         if (mEarthquakes != null && mEarthquakes.size() == 0) {
-            if (getActivity() != null) {
-                Toast.makeText(getActivity(), getActivity().getString(R.string.empty_list)
+            if (mActivity != null) {
+                Toast.makeText(mActivity, mActivity.getString(R.string.empty_list)
                         , Toast.LENGTH_SHORT).show();
             }
         } else {
@@ -213,7 +222,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
                         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                             @Override
                             public void onInfoWindowClick(Marker marker) {
-                                Intent intent = new Intent(getActivity(), WebInfoActivity.class);
+                                Intent intent = new Intent(mActivity, WebInfoActivity.class);
                                 intent.putExtra("url", getURLFromMarker(marker.getId()));
                                 startActivity(intent);
 

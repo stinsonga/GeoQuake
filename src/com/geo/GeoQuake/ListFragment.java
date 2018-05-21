@@ -123,8 +123,8 @@ public class ListFragment extends Fragment implements IDataCallback {
         mQuakeListAdapter = new QuakeAdapter(onQuakeItemClickedListener);
         mQuakeListView.setAdapter(mQuakeListAdapter);
         mSearchView.setOnQueryTextListener(queryTextListener);
-        mSearchView.setQueryHint(getActivity().getString(R.string.search_hint));
-        mSearchView.setQuery(getActivity().getString(R.string.search_hint), false);
+        mSearchView.setQueryHint(mActivity.getString(R.string.search_hint));
+        mSearchView.setQuery(mActivity.getString(R.string.search_hint), false);
         return view;
     }
 
@@ -132,15 +132,15 @@ public class ListFragment extends Fragment implements IDataCallback {
     public void onResume() {
         super.onResume();
         Log.i(TAG, "onResume");
-        if (Utils.checkNetwork(getActivity())) {
-            if (((MainActivity) getActivity()).getEarthquakes() != null && ((MainActivity) getActivity()).getEarthquakes().size() > 0) {
-                mEarthquakes = ((MainActivity) getActivity()).getEarthquakes();
+        if (Utils.checkNetwork(mActivity)) {
+            if (mActivity.getEarthquakes() != null && mActivity.getEarthquakes().size() > 0) {
+                mEarthquakes = mActivity.getEarthquakes();
                 setupList(mEarthquakes);
             } else {
-                ((MainActivity) getActivity()).checkNetworkFetchData();
+                mActivity.checkNetworkFetchData();
             }
         } else {
-            Utils.connectToast(getActivity());
+            Utils.connectToast(mActivity);
         }
 
     }
@@ -266,14 +266,16 @@ public class ListFragment extends Fragment implements IDataCallback {
         }
 
         if (searchEarhquakes.size() == 0) {
-            Toast.makeText(getActivity(), getActivity().getString(R.string.empty_search_list)
+            Toast.makeText(mActivity, mActivity.getString(R.string.empty_search_list)
                     , Toast.LENGTH_LONG).show();
         } else {
-            mQuakeCountTextView.setText(String.format(getActivity().getString(R.string.quake_count), mEarthquakes.size()));
+            mQuakeCountTextView.setText(String.format(mActivity.getString(R.string.quake_count), mEarthquakes.size()));
             mSearchView.setQuery("", false);
             //close keyboard
-            InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+            InputMethodManager inputMethodManager = (InputMethodManager) mActivity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+            if(inputMethodManager != null) {
+                inputMethodManager.hideSoftInputFromWindow(mActivity.getCurrentFocus().getWindowToken(), 0);
+            }
             setupList(searchEarhquakes);
         }
 
