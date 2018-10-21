@@ -1,6 +1,6 @@
 buildscript {
 
-    ext.kotlin_version = "1.2.41"
+    ext.kotlin_version = "1.2.71"
 
     repositories {
         jcenter()
@@ -8,7 +8,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.3'
+        classpath 'com.android.tools.build:gradle:3.2.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -41,7 +41,7 @@ dependencies {
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.3'
     flavorDimensions "default" //added to fix "Error:All flavors must now belong to a named flavor dimension. "
     defaultConfig {
         minSdkVersion 19
