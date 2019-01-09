@@ -462,12 +462,16 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                     }
                     break;
                 case (R.id.quake_type_spinner):
-                    mStrengthSelection = mQuakeTypeSpinner.getSelectedItemPosition();
-                    mParametersAreChanged = true;
+                    if(mStrengthSelection != mQuakeTypeSpinner.getSelectedItemPosition()) {
+                        mParametersAreChanged = true;
+                        mStrengthSelection = mQuakeTypeSpinner.getSelectedItemPosition();
+                    }
                     break;
                 case (R.id.duration_type_spinner):
-                    mDurationSelection = mDurationTypeSpinner.getSelectedItemPosition();
-                    mParametersAreChanged = true;
+                    if(mDurationSelection != mDurationTypeSpinner.getSelectedItemPosition()) {
+                        mDurationSelection = mDurationTypeSpinner.getSelectedItemPosition();
+                        mParametersAreChanged = true;
+                    }
                     break;
                 case (R.id.cache_spinner):
                     Utils.changeCache(mCacheTimeSpinner.getSelectedItemPosition(),

@@ -27,11 +27,10 @@ apply plugin: 'kotlin-android-extensions'
 
 dependencies {
     final def ASL_VERSION = '27.1.1'
-    implementation fileTree(dir: 'libs', include: '*.jar')
-    implementation 'com.google.android.gms:play-services-location:15.0.1'
-    implementation 'com.google.android.gms:play-services-maps:15.0.1'
-    implementation  'org.apache.commons:commons-lang3:3.4'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.1'
+    implementation fileTree(include: '*.jar', dir: 'libs')
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
+    implementation 'org.apache.commons:commons-lang3:3.4'
     implementation "com.android.support:appcompat-v7:$ASL_VERSION"
     implementation "com.android.support:design:$ASL_VERSION"
     implementation 'android.arch.persistence.room:runtime:1.1.1'
@@ -40,25 +39,18 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     buildToolsVersion '28.0.3'
     flavorDimensions "default" //added to fix "Error:All flavors must now belong to a named flavor dimension. "
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 27
+        targetSdkVersion 28
         // Enabling multidex support.
         multiDexEnabled true
     }
 
     dexOptions {
         javaMaxHeapSize "4g"
-    }
-
-    defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 27
-        // Enabling multidex support.
-        multiDexEnabled true
     }
 
     dexOptions {
@@ -68,11 +60,14 @@ android {
     productFlavors {
         production {
             resValue "string", "app_name", "GeoQuake"
+            minSdkVersion 19
+            targetSdkVersion 28
         }
-
         development {
             applicationIdSuffix = '.dev'
             resValue "string", "app_name", "GeoQuake Dev"
+            minSdkVersion 19
+            targetSdkVersion 28
         }
     }
 
