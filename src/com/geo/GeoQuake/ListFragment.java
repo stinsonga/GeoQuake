@@ -124,7 +124,6 @@ public class ListFragment extends Fragment implements IDataCallback {
         mQuakeListView.setAdapter(mQuakeListAdapter);
         mSearchView.setOnQueryTextListener(queryTextListener);
         mSearchView.setQueryHint(mActivity.getString(R.string.search_hint));
-        mSearchView.setQuery(mActivity.getString(R.string.search_hint), false);
         return view;
     }
 
