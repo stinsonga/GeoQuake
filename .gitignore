@@ -3,6 +3,7 @@
 bin/
 gen/
 build/
+production/release
 .gradletasknamecache
 .gradle/
 
@@ -13,9 +14,6 @@ build/
 *.iws
 
 *.apk
-*.ap_
-*.class
-*.dex
 local.properties
 
 # OSX files that love to clog your folders
