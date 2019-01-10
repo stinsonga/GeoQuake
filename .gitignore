@@ -6,6 +6,7 @@ build/
 production/release
 .gradletasknamecache
 .gradle/
+release/
 
 # IDE-specific stuff
 .idea/
