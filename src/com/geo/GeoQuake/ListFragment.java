@@ -8,6 +8,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -120,6 +121,7 @@ public class ListFragment extends Fragment implements IDataCallback {
         mQuakeCountTextView = view.findViewById(R.id.count_textview);
 
         mQuakeListView.setLayoutManager(new LinearLayoutManager(mActivity));
+        mQuakeListView.addItemDecoration(new DividerItemDecoration(mQuakeListView.getContext(), DividerItemDecoration.VERTICAL));
         mQuakeListAdapter = new QuakeAdapter(onQuakeItemClickedListener);
         mQuakeListView.setAdapter(mQuakeListAdapter);
         mSearchView.setOnQueryTextListener(queryTextListener);
