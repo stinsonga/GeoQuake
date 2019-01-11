@@ -10,7 +10,7 @@
         android:id="@+id/list_magnitude_text"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginRight="@dimen/quake_list_margin"
+        android:layout_marginEnd="@dimen/quake_list_margin"
         android:gravity="center"
         android:textColor="@color/material_gray"
         android:textSize="@dimen/quake_list_mag_font_size"
@@ -19,7 +19,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginLeft="@dimen/quake_list_margin"
+        android:layout_marginEnd="@dimen/quake_list_margin"
         android:orientation="vertical">
 
         <TextView
@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="January 1, 2016 23:45"
+            android:text=""
             android:textColor="@color/gray_700"
             android:textSize="@dimen/quake_list_font_size" />
 
