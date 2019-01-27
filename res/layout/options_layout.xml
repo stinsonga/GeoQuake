@@ -30,6 +30,7 @@
             android:id="@+id/source_type_spinner"
             android:layout_width="match_parent"
             android:layout_height="35dp"
+            android:background="@color/gray_200"
             android:entries="@array/source_types" />
 
         <Spinner
@@ -37,6 +38,7 @@
             android:layout_width="match_parent"
             android:layout_marginTop="8dp"
             android:layout_height="35dp"
+            android:background="@color/gray_200"
             android:entries="@array/quake_types" />
 
         <Spinner
@@ -44,6 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="35dp"
             android:layout_marginTop="8dp"
+            android:background="@color/gray_200"
             android:entries="@array/duration_types" />
 
     </LinearLayout>
@@ -72,11 +75,12 @@
 
         <Spinner
             android:id="@+id/cache_spinner"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:layout_width="match_parent"
             android:entries="@array/cache_options"
             android:gravity="end"
             android:prompt="@string/cache_prompt"
+            android:background="@color/gray_200"
             android:spinnerMode="dropdown" />
     </LinearLayout>
 

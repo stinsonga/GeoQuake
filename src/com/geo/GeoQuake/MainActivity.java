@@ -449,6 +449,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                             ArrayAdapter<String> usaAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, MainActivity.this.getResources().getStringArray(R.array.duration_types));
                             usaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             mDurationTypeSpinner.setAdapter(usaAdapter);
+                            mParametersAreChanged = true;
                             break;
                         //Canada
                         case 1:
@@ -458,6 +459,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                             ArrayAdapter<String> canAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, MainActivity.this.getResources().getStringArray(R.array.canada_duration_types));
                             canAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             mDurationTypeSpinner.setAdapter(canAdapter);
+                            mParametersAreChanged = true;
                             break;
                     }
                     break;
