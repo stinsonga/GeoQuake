@@ -1,9 +1,9 @@
 package com.geo.GeoQuake.adapters
 
 import android.content.Context
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 
 import com.geo.GeoQuake.models.Earthquake
 import com.geo.GeoQuake.models.FeatureCollection
@@ -17,7 +17,7 @@ import java.util.ArrayList
  * Created by George Stinson on 2016-09-27.
  */
 
-class TabPagerAdapter(fm: FragmentManager, internal var context: Context) : FragmentPagerAdapter(fm) {
+class TabPagerAdapter(fm: androidx.fragment.app.FragmentManager, internal var context: Context) : androidx.fragment.app.FragmentPagerAdapter(fm) {
     internal var mMapFragment: QuakeMapFragment
     internal var mListFragment: ListFragment
 
@@ -26,7 +26,7 @@ class TabPagerAdapter(fm: FragmentManager, internal var context: Context) : Frag
         this.mListFragment = ListFragment.newInstance()
     }
 
-    override fun getItem(position: Int): Fragment {
+    override fun getItem(position: Int): androidx.fragment.app.Fragment {
         when (position) {
             0 -> return mMapFragment
             1 -> return mListFragment

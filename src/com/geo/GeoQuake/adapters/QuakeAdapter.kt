@@ -1,13 +1,12 @@
 package com.geo.GeoQuake.adapters
 
-import android.content.Context
 import android.graphics.Color
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
+import androidx.core.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 
 import com.geo.GeoQuake.R
 import com.geo.GeoQuake.models.Earthquake
@@ -64,7 +63,7 @@ class QuakeAdapter(internal var listener: OnQuakeItemClickedListener) : Recycler
                 if (earthquake.mag < 0.0) {
                     magnitude += 0.0
                 } else {
-                    magnitude += earthquake.mag //String var to get AS to quit complaining about concatenation
+                    magnitude += earthquake.mag
                 }
                 val context = itemView.context
                 magnitudeTextView.text = magnitude
