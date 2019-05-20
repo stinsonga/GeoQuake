@@ -6,12 +6,12 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,8 +50,6 @@ public class ListFragment extends Fragment implements IDataCallback {
 
     ArrayList<Earthquake> mEarthquakes = new ArrayList<Earthquake>();
 
-    Context mContext;
-
     public static ListFragment newInstance() {
         return new ListFragment();
     }
@@ -84,7 +82,7 @@ public class ListFragment extends Fragment implements IDataCallback {
     final QuakeAdapter.OnQuakeItemClickedListener onQuakeItemClickedListener = new QuakeAdapter.OnQuakeItemClickedListener() {
         @Override
         public void onQuakeClicked(Earthquake earthquake) {
-            Intent intent = new Intent(mContext, WebInfoActivity.class);
+            Intent intent = new Intent(mActivity, WebInfoActivity.class);
             intent.putExtra("url", earthquake.getUrl());
             startActivity(intent);
 
@@ -92,7 +90,7 @@ public class ListFragment extends Fragment implements IDataCallback {
 
         @Override
         public void onQuakeLongClick(Earthquake earthquake) {
-            Intent intent = new Intent(mContext, WebInfoActivity.class);
+            Intent intent = new Intent(mActivity, WebInfoActivity.class);
             intent.putExtra("url", earthquake.getUrl());
             startActivity(intent);
 
@@ -102,7 +100,7 @@ public class ListFragment extends Fragment implements IDataCallback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i(TAG, "onCreate");
+        //Log.i(TAG, "onCreate");
         setHasOptionsMenu(true);
 
         mBundle = new Bundle();
@@ -132,7 +130,7 @@ public class ListFragment extends Fragment implements IDataCallback {
     @Override
     public void onResume() {
         super.onResume();
-        Log.i(TAG, "onResume");
+        //Log.i(TAG, "onResume");
         if (Utils.checkNetwork(mActivity)) {
             if (mActivity.getEarthquakes() != null && mActivity.getEarthquakes().size() > 0) {
                 mEarthquakes = mActivity.getEarthquakes();
@@ -154,8 +152,7 @@ public class ListFragment extends Fragment implements IDataCallback {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mContext = context;
-        mActivity = (MainActivity)getActivity();
+        mActivity = (MainActivity)context;
     }
 
     /**
@@ -204,16 +201,16 @@ public class ListFragment extends Fragment implements IDataCallback {
      * This sorts the list and sets the adapter
      */
     public void setupList(final ArrayList<Earthquake> earthquakes) {
-        if (earthquakes != null && mContext != null) {
+        if (earthquakes != null && mActivity != null) {
             //Log.i(TAG, "setupList, with size: " + earthquakes.size());
-            mQuakeCountTextView.setText(String.format(mContext.getString(R.string.quake_count), mEarthquakes.size()));
+            mQuakeCountTextView.setText(String.format(mActivity.getString(R.string.quake_count), mEarthquakes.size()));
             mQuakeListAdapter.setQuakeList(earthquakes);
             if (earthquakes.size() == 0) {
-                Toast.makeText(mContext, mContext.getString(R.string.empty_list)
+                Toast.makeText(mActivity, mActivity.getString(R.string.empty_list)
                         , Toast.LENGTH_LONG).show();
             }
         } else {
-           // Log.i(TAG, "Null context " + (mContext == null));
+           // Log.i(TAG, "Null context " + (mActivity == null));
         }
     }
 

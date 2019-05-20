@@ -33,14 +33,14 @@
 
             <TextView
                 android:id="@+id/count_textview"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:textColor="@color/gray_700"
                 android:layout_weight="1" />
 
         </LinearLayout>
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/quakeListView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
