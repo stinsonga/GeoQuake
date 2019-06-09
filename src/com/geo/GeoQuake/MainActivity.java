@@ -350,15 +350,15 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
             String apiURL = "";
             switch(mSourceSelection) {
                 case 0:
+                default:
                     apiURL = this.getString(R.string.usgs_url);
                     break;
-                case 1:
-                    apiURL = this.getString(R.string.canada_url);
-                    break;
+//                case 1:
+//                    apiURL = this.getString(R.string.canada_url);
+//                    break;
             }
             mQuakeData = new QuakeData(apiURL, mSourceSelection,
                     mDurationSelection, mStrengthSelection, this, this);
-            Log.i(TAG, "fetching data... await callback");
             mQuakeData.fetchData(this);
         }
     }
@@ -375,7 +375,6 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     @Override
     public void dataCallBack(ArrayList<Earthquake> earthquakes) {
-        Log.i(TAG, "got callback, set data " + earthquakes.size());
         //update map with data
         mEarthquakes = earthquakes;
         mAsyncUnderway = false;
