@@ -68,7 +68,7 @@
     <string name="_1.0_month">1.0_month.geojson</string>
     <string name="all_month">all_month.geojson</string>
 
-    <string name="canada_url">http://www.earthquakescanada.nrcan.gc.ca/api/v2/locations/latest/</string>
+    <string name="canada_url">https://www.earthquakescanada.nrcan.gc.ca/api/v2/locations/latest/</string>
     <string name="canada_7_days">7d.json</string>
     <string name="canada_30_days">30d.json</string>
     <string name="canada_365_days">365d.json</string>
@@ -78,7 +78,7 @@
 
     <string-array name="source_types">
         <item>USGS</item>
-        <item>Earthquakes Canada</item>
+        <!--<item>Earthquakes Canada</item>-->
     </string-array>
 
     <string-array name="quake_types">
