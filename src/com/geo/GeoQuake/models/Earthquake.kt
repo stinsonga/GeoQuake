@@ -35,8 +35,9 @@ class Earthquake {
         this.mag = feature.getProperties().getMag()
         this.place = feature.getProperties().getPlace()
         this.time = feature.getProperties().getTime()
-        //FIXME: can't assume this will not be null
-        this.url = feature.getProperties().getUrl()
+        feature.getProperties().getUrl()?.let {
+            this.url = feature.getProperties().getUrl()
+        }
         this.source = Earthquake.USA
     }
 
