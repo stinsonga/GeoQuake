@@ -38,12 +38,12 @@ class Earthquake {
         feature.getProperties().getUrl()?.let {
             this.url = feature.getProperties().getUrl()
         }
-        this.source = Earthquake.USA
+        this.source = USA
     }
 
     companion object {
 
-        val USA = 0
-        val CANADA = 1
+        const val USA = 0
+        const val CANADA = 1
     }
 }
