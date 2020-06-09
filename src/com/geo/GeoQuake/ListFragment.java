@@ -6,12 +6,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +16,12 @@ import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.geo.GeoQuake.adapters.QuakeAdapter;
 import com.geo.GeoQuake.models.Earthquake;
@@ -82,18 +83,20 @@ public class ListFragment extends Fragment implements IDataCallback {
     final QuakeAdapter.OnQuakeItemClickedListener onQuakeItemClickedListener = new QuakeAdapter.OnQuakeItemClickedListener() {
         @Override
         public void onQuakeClicked(Earthquake earthquake) {
-            Intent intent = new Intent(mActivity, WebInfoActivity.class);
-            intent.putExtra("url", earthquake.getUrl());
-            startActivity(intent);
-
+            if (!TextUtils.isEmpty(earthquake.getUrl())) {
+                Intent intent = new Intent(mActivity, WebInfoActivity.class);
+                intent.putExtra("url", earthquake.getUrl());
+                startActivity(intent);
+            }
         }
 
         @Override
         public void onQuakeLongClick(Earthquake earthquake) {
-            Intent intent = new Intent(mActivity, WebInfoActivity.class);
-            intent.putExtra("url", earthquake.getUrl());
-            startActivity(intent);
-
+            if (!TextUtils.isEmpty(earthquake.getUrl())) {
+                Intent intent = new Intent(mActivity, WebInfoActivity.class);
+                intent.putExtra("url", earthquake.getUrl());
+                startActivity(intent);
+            }
         }
     };
 
@@ -152,7 +155,7 @@ public class ListFragment extends Fragment implements IDataCallback {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mActivity = (MainActivity)context;
+        mActivity = (MainActivity) context;
     }
 
     /**
@@ -210,7 +213,7 @@ public class ListFragment extends Fragment implements IDataCallback {
                         , Toast.LENGTH_LONG).show();
             }
         } else {
-           // Log.i(TAG, "Null context " + (mActivity == null));
+            // Log.i(TAG, "Null context " + (mActivity == null));
         }
     }
 
@@ -271,7 +274,7 @@ public class ListFragment extends Fragment implements IDataCallback {
             mSearchView.setQuery("", false);
             //close keyboard
             InputMethodManager inputMethodManager = (InputMethodManager) mActivity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-            if(inputMethodManager != null) {
+            if (inputMethodManager != null) {
                 inputMethodManager.hideSoftInputFromWindow(mActivity.getCurrentFocus().getWindowToken(), 0);
             }
             setupList(searchEarhquakes);
