@@ -10,6 +10,8 @@ import org.json.JSONObject;
  */
 public class Feature {
 
+    private static final String TAG = Feature.class.getSimpleName();
+
     protected String type;
     protected String id;
     //base object for properties, but we'll break it up in here
@@ -196,6 +198,7 @@ public class Feature {
         }
 
         public Properties(JSONObject jsonObject) {
+            setDefaults();
             try {
                 this.mag = jsonObject.getDouble("mag");
                 this.place = jsonObject.getString("place");
@@ -225,32 +228,36 @@ public class Feature {
 
             } catch (JSONException je) {
                 //set defaults in this case
-                this.mag = 0.0;
-                this.place = "";
-                this.time = 0L;
-                this.updated = 0L;
-                this.tz = 0;
-                this.url = "";
-                this.detail = "";
-                this.felt = 0;
-                this.cdi = 0.0;
-                this.mmi = 0.0;
-                this.alert = "";
-                this.status = "";
-                this.tsunami = 0;
-                this.sig = 0;
-                this.net = "";
-                this.code = "";
-                this.ids = "";
-                this.sources = "";
-                this.types = "";
-                this.nst = 0;
-                this.dmin = 0.0;
-                this.rms = 0.0;
-                this.gap = 0.0;
-                this.magType = "";
-                this.type = "";
+                Log.e(TAG, "Error parsing json: "+je.getMessage());
             }
+        }
+
+        private void setDefaults() {
+            this.mag = 0.0;
+            this.place = "";
+            this.time = 0L;
+            this.updated = 0L;
+            this.tz = 0;
+            this.url = "";
+            this.detail = "";
+            this.felt = 0;
+            this.cdi = 0.0;
+            this.mmi = 0.0;
+            this.alert = "";
+            this.status = "";
+            this.tsunami = 0;
+            this.sig = 0;
+            this.net = "";
+            this.code = "";
+            this.ids = "";
+            this.sources = "";
+            this.types = "";
+            this.nst = 0;
+            this.dmin = 0.0;
+            this.rms = 0.0;
+            this.gap = 0.0;
+            this.magType = "";
+            this.type = "";
         }
     }
 
