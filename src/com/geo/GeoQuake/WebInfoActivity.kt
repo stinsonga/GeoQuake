@@ -1,5 +1,6 @@
 package com.geo.GeoQuake
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -10,8 +11,9 @@ import android.webkit.WebView
 class WebInfoActivity : Activity() {
 
     lateinit var mWebView: WebView
-    lateinit var mInfoUrl: String
+    var mInfoUrl: String? = ""
 
+    @SuppressLint("SetJavaScriptEnabled")
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.web_info_activity_layout)
@@ -20,18 +22,10 @@ class WebInfoActivity : Activity() {
         mWebView.settings.javaScriptEnabled = true
         mWebView.settings.builtInZoomControls = true
         val intent = intent
-        mInfoUrl = intent.getStringExtra("url")
-
-        mWebView.loadUrl(mInfoUrl)
-
-    }
-
-    override fun onResume() {
-        super.onResume()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
+        intent.getStringExtra("url")?.let {
+            mInfoUrl = intent.getStringExtra("url")
+            mWebView.loadUrl(mInfoUrl)
+        }
     }
 
 }

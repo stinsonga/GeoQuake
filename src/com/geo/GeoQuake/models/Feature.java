@@ -7,9 +7,10 @@ import org.json.JSONObject;
 
 /**
  * Contained within a FeatureCollection
- *
  */
 public class Feature {
+
+    private static final String TAG = Feature.class.getSimpleName();
 
     protected String type;
     protected String id;
@@ -22,8 +23,8 @@ public class Feature {
     protected double depth;
     protected Properties properties;
 
-    public Feature(JSONObject jsonObject){
-        try{
+    public Feature(JSONObject jsonObject) {
+        try {
             this.type = jsonObject.getString("type");
             this.id = jsonObject.getString("id");
             this.propertiesJson = jsonObject.getJSONObject("properties");
@@ -32,12 +33,12 @@ public class Feature {
             this.latitude = geometry.getJSONArray("coordinates").getDouble(1);
             this.depth = geometry.getJSONArray("coordinates").getDouble(2);
             this.properties = new Properties(propertiesJson);
-        } catch(JSONException je){
+        } catch (JSONException je) {
             Log.e("Feature object except", je.getMessage());
         }
     }
 
-    public Properties getProperties(){
+    public Properties getProperties() {
         return properties;
     }
 
@@ -196,11 +197,12 @@ public class Feature {
             return type;
         }
 
-        public Properties(JSONObject jsonObject){
-            try{
+        public Properties(JSONObject jsonObject) {
+            setDefaults();
+            try {
                 this.mag = jsonObject.getDouble("mag");
                 this.place = jsonObject.getString("place");
-                this.time  = jsonObject.getLong("time");
+                this.time = jsonObject.getLong("time");
                 this.updated = jsonObject.getLong("updated");
                 this.tz = jsonObject.getInt("tz");
                 this.url = jsonObject.getString("url");
@@ -224,9 +226,38 @@ public class Feature {
                 this.magType = jsonObject.getString("magType");
                 this.type = jsonObject.getString("type");
 
-            }catch (JSONException je){
-                //TODO handle it
+            } catch (JSONException je) {
+                //set defaults in this case
+                Log.e(TAG, "Error parsing json: "+je.getMessage());
             }
+        }
+
+        private void setDefaults() {
+            this.mag = 0.0;
+            this.place = "";
+            this.time = 0L;
+            this.updated = 0L;
+            this.tz = 0;
+            this.url = "";
+            this.detail = "";
+            this.felt = 0;
+            this.cdi = 0.0;
+            this.mmi = 0.0;
+            this.alert = "";
+            this.status = "";
+            this.tsunami = 0;
+            this.sig = 0;
+            this.net = "";
+            this.code = "";
+            this.ids = "";
+            this.sources = "";
+            this.types = "";
+            this.nst = 0;
+            this.dmin = 0.0;
+            this.rms = 0.0;
+            this.gap = 0.0;
+            this.magType = "";
+            this.type = "";
         }
     }
 

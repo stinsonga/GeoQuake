@@ -8,7 +8,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.1'
+        classpath 'com.android.tools.build:gradle:4.0.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -40,7 +40,7 @@ dependencies {
 
 android {
     compileSdkVersion 29
-    buildToolsVersion '28.0.3'
+    buildToolsVersion '29.0.2'
     flavorDimensions "default" //added to fix "Error:All flavors must now belong to a named flavor dimension. "
     defaultConfig {
         minSdkVersion 19
@@ -57,13 +57,13 @@ android {
         production {
             resValue "string", "app_name", "GeoQuake"
             minSdkVersion 19
-            targetSdkVersion 28
+            targetSdkVersion 29
         }
         development {
             applicationIdSuffix = '.dev'
             resValue "string", "app_name", "GeoQuake Dev"
             minSdkVersion 19
-            targetSdkVersion 28
+            targetSdkVersion 29
         }
     }
 

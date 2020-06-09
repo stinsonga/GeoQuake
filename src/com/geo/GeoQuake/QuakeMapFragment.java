@@ -8,6 +8,8 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
+
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -222,10 +224,11 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
                         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                             @Override
                             public void onInfoWindowClick(Marker marker) {
-                                Intent intent = new Intent(mActivity, WebInfoActivity.class);
-                                intent.putExtra("url", getURLFromMarker(marker.getId()));
-                                startActivity(intent);
-
+                                if(!TextUtils.isEmpty(getURLFromMarker(marker.getId()))) {
+                                    Intent intent = new Intent(mActivity, WebInfoActivity.class);
+                                    intent.putExtra("url", getURLFromMarker(marker.getId()));
+                                    startActivity(intent);
+                                }
                             }
                         });
                     }
