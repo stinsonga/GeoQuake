@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,6 +39,7 @@ import java.util.TreeMap;
  * Created by gstinson on 2014-08-25.
  */
 public class ListFragment extends Fragment implements IDataCallback {
+
     private static final String TAG = ListFragment.class.getSimpleName();
 
     RecyclerView mQuakeListView;
@@ -49,7 +51,7 @@ public class ListFragment extends Fragment implements IDataCallback {
     QuakeAdapter mQuakeListAdapter;
     Bundle mBundle;
 
-    ArrayList<Earthquake> mEarthquakes = new ArrayList<Earthquake>();
+    ArrayList<Earthquake> mEarthquakes = new ArrayList<>();
 
     public static ListFragment newInstance() {
         return new ListFragment();
@@ -213,7 +215,7 @@ public class ListFragment extends Fragment implements IDataCallback {
                         , Toast.LENGTH_LONG).show();
             }
         } else {
-            // Log.i(TAG, "Null context " + (mActivity == null));
+             Log.e(TAG, "Error in setting up list");
         }
     }
 

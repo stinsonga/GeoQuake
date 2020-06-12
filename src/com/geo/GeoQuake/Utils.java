@@ -1,7 +1,6 @@
 package com.geo.GeoQuake;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.view.View;
@@ -43,6 +42,7 @@ public class Utils {
     public static void changeCache(int position, String[] cacheArray) {
         switch (position) {
             case 0:
+            default:
                 break;
             case 1:
             case 2:
@@ -51,8 +51,6 @@ public class Utils {
             case 5:
             case 6:
                 Prefs.getInstance().setCacheTime(cacheArray[position]);
-                break;
-            default:
                 break;
         }
     }
