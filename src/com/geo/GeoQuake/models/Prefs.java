@@ -12,7 +12,6 @@ import com.geo.GeoQuake.GeoQuakeDB;
 
 public class Prefs {
 
-    private static final String TAG = Prefs.class.getSimpleName();
     public static final String QUAKE_PREFS = "quake_prefs";
 
     private static Prefs prefs;

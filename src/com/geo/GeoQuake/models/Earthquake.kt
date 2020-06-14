@@ -15,10 +15,7 @@ class Earthquake {
     var timeString = ""
     var source: Int = 0
 
-    constructor() {
-
-
-    }
+    constructor() {}
 
     constructor(latitude: Double, longitude: Double, mag: Double, place: String, time: Long, url: String) {
         this.latitude = latitude

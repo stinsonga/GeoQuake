@@ -13,6 +13,8 @@ import java.util.ArrayList;
  */
 public class FeatureCollection {
 
+    final String TAG = FeatureCollection.class.getSimpleName();
+
     //metadata
     protected JSONObject metadata;
     protected long generated;
@@ -69,7 +71,7 @@ public class FeatureCollection {
             }
 
         } catch (JSONException je){
-            Log.e("FeatureCollection derp", je.getMessage());
+            Log.e(TAG, "FeatureCollection derp: " + (je.getMessage() == null ? "Unknown error" : je.getMessage()));
         }
 
     }
