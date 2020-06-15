@@ -17,14 +17,10 @@ import java.util.ArrayList
  * Created by George Stinson on 2016-09-27.
  */
 
-class TabPagerAdapter(fm: FragmentManager, internal var context: Context) : androidx.fragment.app.FragmentPagerAdapter(fm) {
-    internal var mMapFragment: QuakeMapFragment
-    internal var mListFragment: ListFragment
-
-    init {
-        this.mMapFragment = QuakeMapFragment.newInstance()
-        this.mListFragment = ListFragment.newInstance()
-    }
+class TabPagerAdapter(fm: FragmentManager, internal var context: Context)
+    : androidx.fragment.app.FragmentPagerAdapter(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    internal var mMapFragment: QuakeMapFragment = QuakeMapFragment.newInstance()
+    internal var mListFragment: ListFragment = ListFragment.newInstance()
 
     override fun getItem(position: Int): Fragment {
         when (position) {

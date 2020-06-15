@@ -161,15 +161,6 @@ public class ListFragment extends Fragment implements IDataCallback {
     }
 
     /**
-     * @param config Configuration passed in from superclass
-     */
-    @Override
-    public void onConfigurationChanged(Configuration config) {
-        super.onConfigurationChanged(config);
-        //TODO: Possible actions for orientation change
-    }
-
-    /**
      * @param outState Bundle state to be saved onSaveInstanceState
      */
     @Override
