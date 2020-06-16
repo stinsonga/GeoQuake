@@ -22,7 +22,7 @@ public class CanadaQuakes {
         earthquakes = new ArrayList<>();
        try {
            JSONObject jsonObject = new JSONObject(json);
-           Iterator keysIterator = jsonObject.keys();
+           Iterator<String> keysIterator = jsonObject.keys();
            List<String> keysList = new ArrayList<>();
            while(keysIterator.hasNext()) {
                String key = (String) keysIterator.next();

@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import com.geo.GeoQuake.App;
 import com.geo.GeoQuake.GeoQuakeDB;
 
+import java.util.Objects;
+
 /**
  * Created by George Stinson on 2017-03-28.
  */
@@ -25,7 +27,8 @@ public class Prefs {
     }
 
     private Prefs() {
-        this.sharedPreferences = App.Companion.getAppContext().getSharedPreferences(QUAKE_PREFS, Context.MODE_PRIVATE);
+        this.sharedPreferences = Objects.requireNonNull(App.Companion.getAppContext())
+                .getSharedPreferences(QUAKE_PREFS, Context.MODE_PRIVATE);
     }
 
     public void setRefreshLimiter() {
