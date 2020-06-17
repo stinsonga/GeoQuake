@@ -34,7 +34,7 @@ public class Feature {
             this.depth = geometry.getJSONArray("coordinates").getDouble(2);
             this.properties = new Properties(propertiesJson);
         } catch (JSONException je) {
-            Log.e("Feature object except", je.getMessage());
+            Log.e("Feature object except", je.getMessage() == null ? "undefined" : je.getMessage());
         }
     }
 
@@ -70,7 +70,7 @@ public class Feature {
         return depth;
     }
 
-    public class Properties {
+    public static class Properties {
         protected double mag;
         protected String place;
         protected long time;

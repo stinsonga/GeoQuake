@@ -19,11 +19,11 @@ public class CanadaQuakes {
     ArrayList<Earthquake> earthquakes;
 
     public CanadaQuakes(String json) {
-        earthquakes = new ArrayList<Earthquake>();
+        earthquakes = new ArrayList<>();
        try {
            JSONObject jsonObject = new JSONObject(json);
-           Iterator keysIterator = jsonObject.keys();
-           List<String> keysList = new ArrayList<String>();
+           Iterator<String> keysIterator = jsonObject.keys();
+           List<String> keysList = new ArrayList<>();
            while(keysIterator.hasNext()) {
                String key = (String) keysIterator.next();
                keysList.add(key);

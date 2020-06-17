@@ -79,7 +79,7 @@ class QuakeAdapter(internal var listener: OnQuakeItemClickedListener) : Recycler
                     magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_red))
                 }
                 if (earthquake.time != 0L) {
-                    val df = java.text.DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM)
+                    val df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM)
                     timeTextViewHolder.text = df.format(earthquake.time)
                 } else {
                     timeTextViewHolder.text = earthquake.timeString

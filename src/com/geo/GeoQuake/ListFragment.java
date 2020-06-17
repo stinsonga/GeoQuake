@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -32,12 +34,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 /**
  * Created by gstinson on 2014-08-25.
  */
 public class ListFragment extends Fragment implements IDataCallback {
+
     private static final String TAG = ListFragment.class.getSimpleName();
 
     RecyclerView mQuakeListView;
@@ -49,7 +53,7 @@ public class ListFragment extends Fragment implements IDataCallback {
     QuakeAdapter mQuakeListAdapter;
     Bundle mBundle;
 
-    ArrayList<Earthquake> mEarthquakes = new ArrayList<Earthquake>();
+    ArrayList<Earthquake> mEarthquakes = new ArrayList<>();
 
     public static ListFragment newInstance() {
         return new ListFragment();
@@ -112,7 +116,7 @@ public class ListFragment extends Fragment implements IDataCallback {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.list_fragment, container, false);
 
@@ -153,35 +157,25 @@ public class ListFragment extends Fragment implements IDataCallback {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mActivity = (MainActivity) context;
-    }
-
-    /**
-     * @param config Configuration passed in from superclass
-     */
-    @Override
-    public void onConfigurationChanged(Configuration config) {
-        super.onConfigurationChanged(config);
-        //TODO: Possible actions for orientation change
     }
 
     /**
      * @param outState Bundle state to be saved onSaveInstanceState
      */
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBundle("mBundle", mBundle);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_search:
-                handleSearchBar();
-                return true;
+        if (item.getItemId() == R.id.action_search) {
+            handleSearchBar();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -213,7 +207,7 @@ public class ListFragment extends Fragment implements IDataCallback {
                         , Toast.LENGTH_LONG).show();
             }
         } else {
-            // Log.i(TAG, "Null context " + (mActivity == null));
+             Log.e(TAG, "Error in setting up list");
         }
     }
 
@@ -260,8 +254,8 @@ public class ListFragment extends Fragment implements IDataCallback {
         String searchTerm = mSearchView.getQuery().toString();
         for (Earthquake earthquake : mEarthquakes) {
             //For "expected" input, this should handle cases
-            if (earthquake.getPlace() != null
-                    && earthquake.getPlace().toLowerCase().contains(searchTerm)) {
+            earthquake.getPlace();
+            if (earthquake.getPlace().toLowerCase().contains(searchTerm)) {
                 searchEarhquakes.add(earthquake);
             }
         }
@@ -275,7 +269,7 @@ public class ListFragment extends Fragment implements IDataCallback {
             //close keyboard
             InputMethodManager inputMethodManager = (InputMethodManager) mActivity.getSystemService(Activity.INPUT_METHOD_SERVICE);
             if (inputMethodManager != null) {
-                inputMethodManager.hideSoftInputFromWindow(mActivity.getCurrentFocus().getWindowToken(), 0);
+                inputMethodManager.hideSoftInputFromWindow(Objects.requireNonNull(mActivity.getCurrentFocus()).getWindowToken(), 0);
             }
             setupList(searchEarhquakes);
         }
@@ -288,7 +282,7 @@ public class ListFragment extends Fragment implements IDataCallback {
     }
 
     @Override
-    public void dataCallBack(ArrayList<Earthquake> earthquakes) {
+    public void dataCallBack(@NonNull ArrayList<Earthquake> earthquakes) {
         mEarthquakes = earthquakes;
         basicSort(mEarthquakes);
         setupList(mEarthquakes);
