@@ -4,14 +4,11 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-
-import com.geo.GeoQuake.models.Earthquake
-import com.geo.GeoQuake.models.FeatureCollection
 import com.geo.GeoQuake.ListFragment
 import com.geo.GeoQuake.QuakeMapFragment
 import com.geo.GeoQuake.R
-
-import java.util.ArrayList
+import com.geo.GeoQuake.models.Earthquake
+import java.util.*
 
 /**
  * Created by George Stinson on 2016-09-27.

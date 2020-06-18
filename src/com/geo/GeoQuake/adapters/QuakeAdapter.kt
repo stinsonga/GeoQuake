@@ -1,18 +1,16 @@
 package com.geo.GeoQuake.adapters
 
 import android.graphics.Color
-import androidx.core.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-
 import com.geo.GeoQuake.R
 import com.geo.GeoQuake.models.Earthquake
-
 import java.text.DateFormat
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Created by George Stinson on 2017-03-15.
