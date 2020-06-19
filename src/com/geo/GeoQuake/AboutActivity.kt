@@ -16,9 +16,8 @@ import androidx.appcompat.app.AppCompatActivity
  */
 class AboutActivity : AppCompatActivity(), View.OnClickListener {
 
-    lateinit var mGithubTextView: TextView
-    lateinit var mGitHubImage: ImageButton
-    lateinit var canadaLicense: TextView
+    private lateinit var mGithubTextView: TextView
+    private lateinit var canadaLicense: TextView
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,8 +26,8 @@ class AboutActivity : AppCompatActivity(), View.OnClickListener {
         val bar = supportActionBar
         bar?.setHomeButtonEnabled(true)
 
-        mGithubTextView = findViewById(R.id.github_link) as TextView
-        canadaLicense = findViewById(R.id.canada_license_text) as TextView
+        mGithubTextView = findViewById<TextView>(R.id.github_link)
+        canadaLicense = findViewById<TextView>(R.id.canada_license_text)
 
         mGithubTextView.text = Html.fromHtml(this.getString(R.string.github_source_link))
         mGithubTextView.movementMethod = LinkMovementMethod.getInstance()
@@ -46,8 +45,6 @@ class AboutActivity : AppCompatActivity(), View.OnClickListener {
             R.id.github_source_image -> {
                 intent.data = Uri.parse(this.getString(R.string.github_source_image_link))
                 startActivity(intent)
-            }
-            else -> {
             }
         }
     }

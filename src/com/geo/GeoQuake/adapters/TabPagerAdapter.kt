@@ -8,6 +8,7 @@ import com.geo.GeoQuake.ListFragment
 import com.geo.GeoQuake.QuakeMapFragment
 import com.geo.GeoQuake.R
 import com.geo.GeoQuake.models.Earthquake
+
 import java.util.*
 
 /**
@@ -15,7 +16,7 @@ import java.util.*
  */
 
 class TabPagerAdapter(fm: FragmentManager, internal var context: Context)
-    : androidx.fragment.app.FragmentPagerAdapter(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    : androidx.fragment.app.FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     internal var mMapFragment: QuakeMapFragment = QuakeMapFragment.newInstance()
     internal var mListFragment: ListFragment = ListFragment.newInstance()
 
@@ -32,10 +33,10 @@ class TabPagerAdapter(fm: FragmentManager, internal var context: Context)
     }
 
     override fun getPageTitle(position: Int): CharSequence? {
-        when (position) {
-            0 -> return context.getString(R.string.map_tab)
-            1 -> return context.getString(R.string.list_tab)
-            else -> return context.getString(R.string.list_tab)
+        return when (position) {
+            0 -> context.getString(R.string.map_tab)
+            1 -> context.getString(R.string.list_tab)
+            else -> context.getString(R.string.list_tab)
         }
     }
 

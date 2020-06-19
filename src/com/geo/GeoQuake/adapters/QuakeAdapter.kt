@@ -58,23 +58,28 @@ class QuakeAdapter(internal var listener: OnQuakeItemClickedListener) : Recycler
             var magnitude = ""
             //deal with weird, negative magnitudes
             if (magnitude == "") {
-                if (earthquake.mag < 0.0) {
-                    magnitude += 0.0
+                magnitude += if (earthquake.mag < 0.0) {
+                    0.0
                 } else {
-                    magnitude += earthquake.mag
+                    earthquake.mag
                 }
                 val context = itemView.context
                 magnitudeTextView.text = magnitude
                 magnitudeTextView.setTextColor(Color.WHITE)
                 locationTextView.text = earthquake.place
-                if (earthquake.mag <= 1.00) {
-                    magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_green))
-                } else if (earthquake.mag <= 2.50) {
-                    magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_orange))
-                } else if (earthquake.mag <= 4.50) {
-                    magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_deeporange))
-                } else {
-                    magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_red))
+                when {
+                    earthquake.mag <= 1.00 -> {
+                        magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_green))
+                    }
+                    earthquake.mag <= 2.50 -> {
+                        magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_orange))
+                    }
+                    earthquake.mag <= 4.50 -> {
+                        magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_deeporange))
+                    }
+                    else -> {
+                        magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_red))
+                    }
                 }
                 if (earthquake.time != 0L) {
                     val df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM)
