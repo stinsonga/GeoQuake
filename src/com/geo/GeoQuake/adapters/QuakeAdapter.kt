@@ -63,24 +63,13 @@ class QuakeAdapter(internal var listener: OnQuakeItemClickedListener) : Recycler
                 } else {
                     earthquake.mag
                 }
-                val context = itemView.context
+
                 magnitudeTextView.text = magnitude
                 magnitudeTextView.setTextColor(Color.WHITE)
                 locationTextView.text = earthquake.place
-                when {
-                    earthquake.mag <= 1.00 -> {
-                        magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_green))
-                    }
-                    earthquake.mag <= 2.50 -> {
-                        magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_orange))
-                    }
-                    earthquake.mag <= 4.50 -> {
-                        magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_deeporange))
-                    }
-                    else -> {
-                        magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_red))
-                    }
-                }
+
+                setMagnitudeColor(earthquake.mag)
+
                 if (earthquake.time != 0L) {
                     val df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM)
                     timeTextViewHolder.text = df.format(earthquake.time)
@@ -91,6 +80,26 @@ class QuakeAdapter(internal var listener: OnQuakeItemClickedListener) : Recycler
                 itemView.setOnLongClickListener {
                     listener.onQuakeLongClick(earthquake)
                     true
+                }
+            }
+        }
+
+        /**
+         * Set text color based on magnitude
+         */
+        private fun setMagnitudeColor(mag: Double) {
+            when {
+                mag <= 1.00 -> {
+                    magnitudeTextView.setTextColor(ContextCompat.getColor(itemView.context, R.color.material_green))
+                }
+                mag <= 2.50 -> {
+                    magnitudeTextView.setTextColor(ContextCompat.getColor(itemView.context, R.color.material_orange))
+                }
+                mag <= 4.50 -> {
+                    magnitudeTextView.setTextColor(ContextCompat.getColor(itemView.context, R.color.material_deeporange))
+                }
+                else -> {
+                    magnitudeTextView.setTextColor(ContextCompat.getColor(itemView.context, R.color.material_red))
                 }
             }
         }
