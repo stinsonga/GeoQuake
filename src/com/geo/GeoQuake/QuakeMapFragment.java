@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -32,6 +33,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 
 public class QuakeMapFragment extends Fragment implements IDataCallback {
@@ -107,7 +109,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mActivity = (MainActivity)getActivity();
     }
@@ -154,7 +156,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
             settings.setMyLocationButtonEnabled(false);
 
 
-            if (mActivity.getEarthquakes() != null && ((MainActivity) getActivity()).getEarthquakes().size() > 0) {
+            if (((MainActivity) Objects.requireNonNull(getActivity())).getEarthquakes().size() > 0) {
                 mEarthquakes = ((MainActivity) getActivity()).getEarthquakes();
                 placeMarkers();
             } else {
@@ -248,31 +250,13 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
         return markerInfo.get(id);
     }
 
-    /**
-     * @param config value of Configuration object passed in by the system (as this is an overridden method)
-     */
-    @Override
-    public void onConfigurationChanged(Configuration config) {
-        super.onConfigurationChanged(config);
-        //TODO: Possible actions for orientation change
-    }
-
-    /**
-     * @param outState Bundle to be saved
-     */
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBundle("mBundle", mBundle);
-    }
-
     @Override
     public void asyncUnderway() {
         //unused
     }
 
     @Override
-    public void dataCallBack(ArrayList<Earthquake> earthquakes) {
+    public void dataCallBack(@NonNull ArrayList<Earthquake> earthquakes) {
         //Log.i(TAG, "got callback in fragment, set data");
         mEarthquakes = earthquakes;
         placeMarkers();
