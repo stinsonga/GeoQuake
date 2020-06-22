@@ -32,12 +32,20 @@ import androidx.viewpager.widget.ViewPager;
 import com.geo.GeoQuake.adapters.TabPagerAdapter;
 import com.geo.GeoQuake.models.Earthquake;
 import com.geo.GeoQuake.models.Prefs;
+import com.geo.GeoQuake.network.QuakeAPI;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.tabs.TabLayout;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements IDataCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -357,10 +365,37 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 //                    apiURL = this.getString(R.string.canada_url);
 //                    break;
             }
-            mQuakeData = new QuakeData(apiURL, mSourceSelection,
-                    mDurationSelection, mStrengthSelection, this, this);
-            mQuakeData.fetchData(this);
+
+            getNewData();
+
         }
+    }
+
+    private void getNewData() {
+        QuakeAPI quakeAPI = new QuakeAPI(this);
+        quakeAPI.getUSGSQuakes(Utils.getURLFrag(mSourceSelection, mStrengthSelection, mDurationSelection, this))
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        String jsonResponse = "";
+                        if(response.isSuccessful()) {
+                            try {
+                                assert response.body() != null;
+                                jsonResponse = response.body().string();
+                                dataCallBack(Utils.convertModelBySource(mSourceSelection, jsonResponse));
+                            } catch (IOException e) {
+                                Log.e(TAG, "Failure in parsing response body: " + e.getMessage());
+                            }
+                        } else {
+                            Log.e(TAG, "Issue in data response");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.e(TAG, "Failure "+t.getMessage());
+                    }
+                });
     }
 
     /**

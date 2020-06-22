@@ -20,6 +20,7 @@ import java.util.ArrayList;
  */
 public class Utils {
 
+    private static final String TAG = Utils.class.getSimpleName();
     public static final long REFRESH_LIMITER_TIME = 10000;
 
     /**
