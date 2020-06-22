@@ -10,9 +10,11 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class QuakeAPI {
 
@@ -24,14 +26,14 @@ public class QuakeAPI {
     public QuakeAPI(Context context) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(context.getString(R.string.usgs_url))
+                .addConverterFactory(GsonConverterFactory.create())
                 .client(getOkHttpClient())
                 .build();
 
-        retrofit.create(QuakeService.class);
+        quakeService = retrofit.create(QuakeService.class);
     }
 
     public OkHttpClient getOkHttpClient() {
-
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS);
         builder.readTimeout(READ_WRITE_TIMEOUT, TimeUnit.SECONDS);
@@ -49,6 +51,6 @@ public class QuakeAPI {
      * @param config String to concatenate to the base url, contains intensity/timeline for quake list
      * @return
      */
-    public Call<List<Earthquake>> getUSGSQuakes(String config) { return quakeService.getUSGSQuakes(config); }
+    public Call<ResponseBody> getUSGSQuakes(String config) { return quakeService.getUSGSQuakes(config); }
 
 }
