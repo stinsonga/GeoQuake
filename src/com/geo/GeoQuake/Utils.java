@@ -14,6 +14,7 @@ import com.geo.GeoQuake.models.FeatureCollection;
 import com.geo.GeoQuake.models.Prefs;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by gaius on 15-03-05.
@@ -205,6 +206,29 @@ public class Utils {
             return canadaQuakes.getEarthquakes();
         }
         return quakes;
+    }
+
+    /**
+     * Checking to see if there is already data stored, and if it should be used
+     *
+     * @return true if we need to refresh data
+     */
+    private boolean needToRefreshData(GeoQuakeDB geoQuakeDB, int quakeSource, int quakeType, int quakeDuration, List<Earthquake> mEarthquakes) {
+        //first check to see if results are empty
+        if (!geoQuakeDB.getData("" + quakeSource, "" + quakeType, "" + quakeDuration).isEmpty()) {
+            //is the data too old?
+            if (Utils.isExpired(Long.parseLong(geoQuakeDB.getDateColumn("" + quakeSource,
+                    "" + quakeType, "" + quakeDuration)))) {
+                return true;
+            } else {
+                //use existing data set, and return false
+                mEarthquakes = Utils.convertModelBySource(quakeSource, geoQuakeDB.getData("" + quakeSource, "" + quakeType, "" + quakeDuration));
+                return false;
+            }
+        } else {
+            //data is empty...need to fetch it
+            return true;
+        }
     }
 
 
