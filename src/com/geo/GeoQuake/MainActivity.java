@@ -40,6 +40,7 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     //    CheckBox mWifiCheckbox;
 
-    protected ArrayList<Earthquake> mEarthquakes = new ArrayList<Earthquake>();
+    protected ArrayList<Earthquake> mEarthquakes = new ArrayList<>();
     protected GeoQuakeDB mGeoQuakeDB;
     protected Toolbar mToolbar;
 
@@ -181,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
      * @param outState Bundle whose out state needs to be saved
      */
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBundle("mBundle", mBundle);
     }
@@ -190,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
      * @param savedInstanceState Bundle to be restored from saved state
      */
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         savedInstanceState.getBundle("mBundle");
     }
@@ -219,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                 break;
             case R.id.action_location:
                 if (mHasUserLocation) {
-                    ((TabPagerAdapter) mViewPager.getAdapter()).moveCamera(mUserLatitude, mUserLongitude);
+                    ((TabPagerAdapter) Objects.requireNonNull(mViewPager.getAdapter())).moveCamera(mUserLatitude, mUserLongitude);
                 }
                 if (mHasUserLocation) {
                     ((TabPagerAdapter) mViewPager.getAdapter()).sortByProximity(mUserLatitude, mUserLongitude);
@@ -277,22 +278,18 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case 99: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted
-                    getAndHandleLocation();
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        //TODO: more permission handling?
-                        return;
-                    }
-
-                } else {
-                    Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show();
+                                           @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 99) {// If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // permission was granted
+                getAndHandleLocation();
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    //TODO: more permission handling?
                 }
+
+            } else {
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show();
             }
             //case 1111:
             //other
@@ -310,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                 mHasUserLocation = true;
                 invalidateOptionsMenu();
                 if (mHasUserLocation) {
-                    ((TabPagerAdapter) mViewPager.getAdapter()).moveCamera(mUserLatitude, mUserLongitude);
+                    ((TabPagerAdapter) Objects.requireNonNull(mViewPager.getAdapter())).moveCamera(mUserLatitude, mUserLongitude);
                 }
             } else {
                 Log.i(TAG, "No location.");
@@ -347,21 +344,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
             Log.i(TAG, "no need for new data, setup fragment");
             refreshCurrentFragment(mEarthquakes);
         } else {
-            Utils.fireToast(mDurationSelection, mStrengthSelection, this);
-            //TODO: change url string depending on source in Prefs
-            String apiURL = "";
-            switch (mSourceSelection) {
-                case 0:
-                default:
-                    apiURL = this.getString(R.string.usgs_url);
-                    break;
-//                case 1:
-//                    apiURL = this.getString(R.string.canada_url);
-//                    break;
-            }
-
             getNewData();
-
         }
     }
 
@@ -371,8 +354,8 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
             quakeAPI.getUSGSQuakes(Utils.getURLFrag(mSourceSelection, mStrengthSelection, mDurationSelection, this))
                     .enqueue(new Callback<ResponseBody>() {
                         @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            String jsonResponse = "";
+                        public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                            String jsonResponse;
                             if (response.isSuccessful()) {
                                 try {
                                     assert response.body() != null;
@@ -395,7 +378,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                         }
 
                         @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                             Log.e(TAG, "Failure " + t.getMessage());
                         }
                     });
@@ -411,13 +394,13 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
      * Refresh the current fragment with new data
      */
     public void refreshCurrentFragment(ArrayList<Earthquake> mEarthquakes) {
-        ((TabPagerAdapter) mViewPager.getAdapter()).updateFragments(mEarthquakes,
+        ((TabPagerAdapter) Objects.requireNonNull(mViewPager.getAdapter())).updateFragments(mEarthquakes,
                 mHasUserLocation, mUserLatitude, mUserLongitude);
         mViewPager.getAdapter().notifyDataSetChanged();
     }
 
     @Override
-    public void dataCallBack(ArrayList<Earthquake> earthquakes) {
+    public void dataCallBack(@NonNull ArrayList<Earthquake> earthquakes) {
         //update map with data
         mEarthquakes = earthquakes;
         setLoadingFinishedView();
@@ -433,23 +416,19 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     }
 
     public void setLoadingView() {
-        runOnUiThread(new Runnable() {
-            public void run() {
-                mLoadingOverlay.setVisibility(View.VISIBLE);
-                if (getSupportActionBar() != null) {
-                    getSupportActionBar().hide();
-                }
+        runOnUiThread(() -> {
+            mLoadingOverlay.setVisibility(View.VISIBLE);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().hide();
             }
         });
     }
 
     public void setLoadingFinishedView() {
-        runOnUiThread(new Runnable() {
-            public void run() {
-                mLoadingOverlay.setVisibility(View.GONE);
-                if (getSupportActionBar() != null) {
-                    getSupportActionBar().show();
-                }
+        runOnUiThread(() -> {
+            mLoadingOverlay.setVisibility(View.GONE);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().show();
             }
         });
     }
@@ -457,19 +436,13 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     public void getAlertDiagloBuilder(Context context) {
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
         alertBuilder.setMessage(context.getResources().getString(R.string.parameters_changed))
-                .setPositiveButton(context.getString(R.string.menu_refresh), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        doRefresh();
-                        mParametersAreChanged = false;
-                    }
+                .setPositiveButton(context.getString(R.string.menu_refresh), (dialog, which) -> {
+                    doRefresh();
+                    mParametersAreChanged = false;
                 })
-                .setNegativeButton(context.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //nuthin'
-                        mParametersAreChanged = false;
-                    }
+                .setNegativeButton(context.getString(R.string.cancel), (dialog, which) -> {
+                    //nuthin'
+                    mParametersAreChanged = false;
                 });
         alertBuilder.create();
         alertBuilder.show();
@@ -486,7 +459,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                             Prefs.getInstance().setSource(0);
                             mSourceSelection = 0;
                             mQuakeTypeSpinner.setVisibility(View.VISIBLE);
-                            ArrayAdapter<String> usaAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, MainActivity.this.getResources().getStringArray(R.array.duration_types));
+                            ArrayAdapter<String> usaAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_spinner_item, MainActivity.this.getResources().getStringArray(R.array.duration_types));
                             usaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             mDurationTypeSpinner.setAdapter(usaAdapter);
                             mParametersAreChanged = true;
@@ -496,7 +469,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                             Prefs.getInstance().setSource(1);
                             mSourceSelection = 1;
                             mQuakeTypeSpinner.setVisibility(View.GONE);
-                            ArrayAdapter<String> canAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, MainActivity.this.getResources().getStringArray(R.array.canada_duration_types));
+                            ArrayAdapter<String> canAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_spinner_item, MainActivity.this.getResources().getStringArray(R.array.canada_duration_types));
                             canAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             mDurationTypeSpinner.setAdapter(canAdapter);
                             mParametersAreChanged = true;
@@ -533,18 +506,18 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     DrawerLayout.DrawerListener drawerListener = new DrawerLayout.DrawerListener() {
         @Override
-        public void onDrawerSlide(View drawerView, float slideOffset) {
+        public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
 
         }
 
         @Override
-        public void onDrawerOpened(View drawerView) {
+        public void onDrawerOpened(@NonNull View drawerView) {
             mDrawerIsOpen = true;
             Utils.hideKeyboard(drawerView);
         }
 
         @Override
-        public void onDrawerClosed(View drawerView) {
+        public void onDrawerClosed(@NonNull View drawerView) {
             mDrawerIsOpen = false;
             if (mParametersAreChanged) {
                 getAlertDiagloBuilder(MainActivity.this);
