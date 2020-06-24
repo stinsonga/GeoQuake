@@ -213,7 +213,7 @@ public class Utils {
      *
      * @return true if we need to refresh data
      */
-    private boolean needToRefreshData(GeoQuakeDB geoQuakeDB, int quakeSource, int quakeType, int quakeDuration, List<Earthquake> mEarthquakes) {
+    public static boolean needToRefreshData(GeoQuakeDB geoQuakeDB, int quakeSource, int quakeType, int quakeDuration) {
         //first check to see if results are empty
         if (!geoQuakeDB.getData("" + quakeSource, "" + quakeType, "" + quakeDuration).isEmpty()) {
             //is the data too old?
@@ -221,8 +221,7 @@ public class Utils {
                     "" + quakeType, "" + quakeDuration)))) {
                 return true;
             } else {
-                //use existing data set, and return false
-                mEarthquakes = Utils.convertModelBySource(quakeSource, geoQuakeDB.getData("" + quakeSource, "" + quakeType, "" + quakeDuration));
+                //return false, we'll use existing data
                 return false;
             }
         } else {

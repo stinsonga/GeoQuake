@@ -276,9 +276,7 @@ public class ListFragment extends Fragment implements IDataCallback {
     }
 
     @Override
-    public void asyncUnderway() {
-        //unused
-    }
+    public void asyncUnderway() {}
 
     @Override
     public void dataCallBack(@NonNull ArrayList<Earthquake> earthquakes) {

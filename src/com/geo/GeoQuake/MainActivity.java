@@ -40,7 +40,6 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -51,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    protected  Bundle mBundle;
+    protected Bundle mBundle;
 
     protected DrawerLayout mDrawerLayout;
     protected RelativeLayout mDrawerLinearLayout;
@@ -65,11 +64,8 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     //    CheckBox mWifiCheckbox;
 
-    protected boolean mAsyncUnderway = false;
-
     protected ArrayList<Earthquake> mEarthquakes = new ArrayList<Earthquake>();
     protected GeoQuakeDB mGeoQuakeDB;
-    protected QuakeData mQuakeData;
     protected Toolbar mToolbar;
 
     protected int mSourceSelection = 0;
@@ -145,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     @Override
     public void onBackPressed() {
-        if(mDrawerIsOpen) {
+        if (mDrawerIsOpen) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
             finish();
@@ -222,15 +218,15 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                 doRefresh();
                 break;
             case R.id.action_location:
-                    if(mHasUserLocation) {
-                        ((TabPagerAdapter) mViewPager.getAdapter()).moveCamera(mUserLatitude, mUserLongitude);
-                    }
-                    if (mHasUserLocation) {
-                        ((TabPagerAdapter) mViewPager.getAdapter()).sortByProximity(mUserLatitude, mUserLongitude);
-                    }
-                if(mCurrentTabPosition == 1) {
-                  Toast.makeText(this, this.getResources().getString(R.string.sorting_by_proximity)
-                , Toast.LENGTH_SHORT).show();
+                if (mHasUserLocation) {
+                    ((TabPagerAdapter) mViewPager.getAdapter()).moveCamera(mUserLatitude, mUserLongitude);
+                }
+                if (mHasUserLocation) {
+                    ((TabPagerAdapter) mViewPager.getAdapter()).sortByProximity(mUserLatitude, mUserLongitude);
+                }
+                if (mCurrentTabPosition == 1) {
+                    Toast.makeText(this, this.getResources().getString(R.string.sorting_by_proximity)
+                            , Toast.LENGTH_SHORT).show();
                 }
 
                 break;
@@ -259,16 +255,12 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     }
 
     public void doRefresh() {
-        if (!mAsyncUnderway) {
-            if (GeoQuakeDB.checkRefreshLimit(GeoQuakeDB.getTime(),
-                    Prefs.getInstance().getRefreshLimiter())) {
-                Prefs.getInstance().setRefreshLimiter();
-                checkNetworkFetchData();
-            } else {
-                Toast.makeText(this, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
-            }
+        if (GeoQuakeDB.checkRefreshLimit(GeoQuakeDB.getTime(),
+                Prefs.getInstance().getRefreshLimiter())) {
+            Prefs.getInstance().setRefreshLimiter();
+            checkNetworkFetchData();
         } else {
-            Toast.makeText(this, getResources().getString(R.string.wait_for_loading), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -303,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                 }
             }
             //case 1111:
-                //other
+            //other
         }
     }
 
@@ -317,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                 mUserLongitude = location.getLongitude();
                 mHasUserLocation = true;
                 invalidateOptionsMenu();
-                if(mHasUserLocation) {
+                if (mHasUserLocation) {
                     ((TabPagerAdapter) mViewPager.getAdapter()).moveCamera(mUserLatitude, mUserLongitude);
                 }
             } else {
@@ -339,7 +331,9 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     }
 
-    public ArrayList<Earthquake> getEarthquakes() { return mEarthquakes; }
+    public ArrayList<Earthquake> getEarthquakes() {
+        return mEarthquakes;
+    }
 
     /**
      * Send the request to the QuakeData class to grab new data
@@ -356,7 +350,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
             Utils.fireToast(mDurationSelection, mStrengthSelection, this);
             //TODO: change url string depending on source in Prefs
             String apiURL = "";
-            switch(mSourceSelection) {
+            switch (mSourceSelection) {
                 case 0:
                 default:
                     apiURL = this.getString(R.string.usgs_url);
@@ -372,35 +366,49 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     }
 
     private void getNewData() {
-        QuakeAPI quakeAPI = new QuakeAPI(this);
-        quakeAPI.getUSGSQuakes(Utils.getURLFrag(mSourceSelection, mStrengthSelection, mDurationSelection, this))
-                .enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        String jsonResponse = "";
-                        if(response.isSuccessful()) {
-                            try {
-                                assert response.body() != null;
-                                jsonResponse = response.body().string();
-                                dataCallBack(Utils.convertModelBySource(mSourceSelection, jsonResponse));
-                            } catch (IOException e) {
-                                Log.e(TAG, "Failure in parsing response body: " + e.getMessage());
-                            }
-                        } else {
-                            Log.e(TAG, "Issue in data response");
-                        }
-                    }
+        if (Utils.needToRefreshData(mGeoQuakeDB, mSourceSelection, mStrengthSelection, mDurationSelection)) {
+            QuakeAPI quakeAPI = new QuakeAPI(this);
+            quakeAPI.getUSGSQuakes(Utils.getURLFrag(mSourceSelection, mStrengthSelection, mDurationSelection, this))
+                    .enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            String jsonResponse = "";
+                            if (response.isSuccessful()) {
+                                try {
+                                    assert response.body() != null;
+                                    jsonResponse = response.body().string();
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.e(TAG, "Failure "+t.getMessage());
-                    }
-                });
+                                    //set or update DB, as needed
+                                    if (mGeoQuakeDB.getData("" + mSourceSelection, "" + mStrengthSelection, "" + mDurationSelection).isEmpty()) {
+                                        mGeoQuakeDB.setData("" + mSourceSelection, "" + mStrengthSelection, "" + mDurationSelection, jsonResponse);
+                                    } else {
+                                        mGeoQuakeDB.updateData("" + mSourceSelection, "" + mStrengthSelection, "" + mDurationSelection, jsonResponse);
+                                    }
+
+                                    dataCallBack(Utils.convertModelBySource(mSourceSelection, jsonResponse));
+                                } catch (IOException e) {
+                                    Log.e(TAG, "Failure in parsing response body: " + e.getMessage());
+                                }
+                            } else {
+                                Log.e(TAG, "Issue in data response");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Log.e(TAG, "Failure " + t.getMessage());
+                        }
+                    });
+        } else {
+            //use existing data
+            mEarthquakes = Utils.convertModelBySource(mSourceSelection,
+                    mGeoQuakeDB.getData("" + mSourceSelection, ""
+                            + mStrengthSelection, "" + mDurationSelection));
+        }
     }
 
     /**
      * Refresh the current fragment with new data
-     *
      */
     public void refreshCurrentFragment(ArrayList<Earthquake> mEarthquakes) {
         ((TabPagerAdapter) mViewPager.getAdapter()).updateFragments(mEarthquakes,
@@ -412,7 +420,6 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     public void dataCallBack(ArrayList<Earthquake> earthquakes) {
         //update map with data
         mEarthquakes = earthquakes;
-        mAsyncUnderway = false;
         setLoadingFinishedView();
         refreshCurrentFragment(mEarthquakes);
     }
@@ -422,7 +429,6 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
      */
     @Override
     public void asyncUnderway() {
-        mAsyncUnderway = true;
         setLoadingView();
     }
 
@@ -498,13 +504,13 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                     }
                     break;
                 case (R.id.quake_type_spinner):
-                    if(mStrengthSelection != mQuakeTypeSpinner.getSelectedItemPosition()) {
+                    if (mStrengthSelection != mQuakeTypeSpinner.getSelectedItemPosition()) {
                         mParametersAreChanged = true;
                         mStrengthSelection = mQuakeTypeSpinner.getSelectedItemPosition();
                     }
                     break;
                 case (R.id.duration_type_spinner):
-                    if(mDurationSelection != mDurationTypeSpinner.getSelectedItemPosition()) {
+                    if (mDurationSelection != mDurationTypeSpinner.getSelectedItemPosition()) {
                         mDurationSelection = mDurationTypeSpinner.getSelectedItemPosition();
                         mParametersAreChanged = true;
                     }
@@ -540,7 +546,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
         @Override
         public void onDrawerClosed(View drawerView) {
             mDrawerIsOpen = false;
-            if(mParametersAreChanged) {
+            if (mParametersAreChanged) {
                 getAlertDiagloBuilder(MainActivity.this);
             }
         }
