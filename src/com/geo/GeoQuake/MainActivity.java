@@ -36,6 +36,7 @@ import com.geo.GeoQuake.network.QuakeAPI;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.tabs.TabLayout;
 
 import java.io.IOException;
@@ -106,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
         mTabLayout.setupWithViewPager(mViewPager);
         mTabLayout.addOnTabSelectedListener(onTabSelectedListener);
 
-        mToolbar = (Toolbar) findViewById(R.id.action_bar);
+        mToolbar = findViewById(R.id.action_bar);
         setSupportActionBar(mToolbar);
 
         //set toolbar options
@@ -298,20 +299,20 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     public void getAndHandleLocation() {
         try {
-            Location location = LocationServices.FusedLocationApi.getLastLocation(
-                    mGoogleApiClient);
-            if (location != null) {
-                Log.i(TAG, "Location found " + location.getLatitude() + " " + location.getLongitude());
-                mUserLatitude = location.getLatitude();
-                mUserLongitude = location.getLongitude();
-                mHasUserLocation = true;
-                invalidateOptionsMenu();
-                if (mHasUserLocation) {
-                    ((TabPagerAdapter) Objects.requireNonNull(mViewPager.getAdapter())).moveCamera(mUserLatitude, mUserLongitude);
+            LocationServices.getFusedLocationProviderClient(this).getLastLocation().addOnSuccessListener(location -> {
+                if (location != null) {
+                    Log.i(TAG, "Location found " + location.getLatitude() + " " + location.getLongitude());
+                    mUserLatitude = location.getLatitude();
+                    mUserLongitude = location.getLongitude();
+                    mHasUserLocation = true;
+                    invalidateOptionsMenu();
+                    if (mHasUserLocation) {
+                        ((TabPagerAdapter) Objects.requireNonNull(mViewPager.getAdapter())).moveCamera(mUserLatitude, mUserLongitude);
+                    }
+                } else {
+                    Log.i(TAG, "No location.");
                 }
-            } else {
-                Log.i(TAG, "No location.");
-            }
+            });
         } catch (SecurityException se) {
             Log.i(TAG, "SecurityException when fetching location");
             mHasUserLocation = false;
