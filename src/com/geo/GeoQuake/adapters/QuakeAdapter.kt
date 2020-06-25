@@ -64,7 +64,7 @@ class QuakeAdapter(internal var listener: OnQuakeItemClickedListener) : Recycler
                     earthquake.mag
                 }
 
-                magnitudeTextView.text = magnitude
+                magnitudeTextView.text = String.format("%.2f", magnitude.toDouble())
                 magnitudeTextView.setTextColor(Color.WHITE)
                 locationTextView.text = earthquake.place
 
