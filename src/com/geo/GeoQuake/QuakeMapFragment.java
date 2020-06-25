@@ -3,7 +3,6 @@ package com.geo.GeoQuake;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -22,7 +21,6 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -39,13 +37,13 @@ import java.util.Objects;
 public class QuakeMapFragment extends Fragment implements IDataCallback {
     private static final String TAG = QuakeMapFragment.class.getSimpleName();
     Bundle mBundle;
-    HashMap<String, String> markerInfo = new HashMap<String, String>();
+    HashMap<String, String> markerInfo = new HashMap<>();
 
     private GoogleMap mMap;
 
     SupportMapFragment mMapFragment;
 
-    ArrayList<Earthquake> mEarthquakes = new ArrayList<Earthquake>();
+    ArrayList<Earthquake> mEarthquakes = new ArrayList<>();
 
     MainActivity mActivity;
 
@@ -120,13 +118,9 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     private void setUpMap() {
         if (Utils.checkNetwork(mActivity)) {
             if (mMap == null) {
-                mMapFragment.getMapAsync(new OnMapReadyCallback() {
-                    @Override
-                    public void onMapReady(GoogleMap googleMap) {
-                        Log.i(TAG, "onMapReady");
-                        mMap = googleMap;
-                        postSyncMapSetup();
-                    }
+                mMapFragment.getMapAsync(googleMap -> {
+                    mMap = googleMap;
+                    postSyncMapSetup();
                 });
             }
 
@@ -223,14 +217,11 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
                                 .position(coords).title(earthquake.getPlace()).snippet(getString(R.string.magnitude) + earthquake.getMag()));
                         markerInfo.put(m.getId(), earthquake.getUrl());
 
-                        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-                            @Override
-                            public void onInfoWindowClick(Marker marker) {
-                                if(!TextUtils.isEmpty(getURLFromMarker(marker.getId()))) {
-                                    Intent intent = new Intent(mActivity, WebInfoActivity.class);
-                                    intent.putExtra("url", getURLFromMarker(marker.getId()));
-                                    startActivity(intent);
-                                }
+                        mMap.setOnInfoWindowClickListener(marker -> {
+                            if(!TextUtils.isEmpty(getURLFromMarker(marker.getId()))) {
+                                Intent intent = new Intent(mActivity, WebInfoActivity.class);
+                                intent.putExtra("url", getURLFromMarker(marker.getId()));
+                                startActivity(intent);
                             }
                         });
                     }

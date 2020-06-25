@@ -31,7 +31,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -216,12 +215,9 @@ public class ListFragment extends Fragment implements IDataCallback {
      * @param earthquakes ArrayList of earthquakes
      */
     public void basicSort(ArrayList<Earthquake> earthquakes) {
-        Collections.sort(earthquakes, new Comparator<Earthquake>() {
-            @Override
-            public int compare(Earthquake lhs, Earthquake rhs) {
-                //Using Double's compare method makes this pretty straightforward.
-                return Double.compare(rhs.getMag(), lhs.getMag());
-            }
+        Collections.sort(earthquakes, (lhs, rhs) -> {
+            //Using Double's compare method makes this pretty straightforward.
+            return Double.compare(rhs.getMag(), lhs.getMag());
         });
     }
 

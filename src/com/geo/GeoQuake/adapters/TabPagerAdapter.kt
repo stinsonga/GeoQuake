@@ -3,7 +3,6 @@ package com.geo.GeoQuake.adapters
 import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
 import com.geo.GeoQuake.ListFragment
 import com.geo.GeoQuake.QuakeMapFragment
 import com.geo.GeoQuake.R
