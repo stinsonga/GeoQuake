@@ -57,9 +57,7 @@ public class Utils {
     }
 
     /**
-     * This towering method could use some honing. Might want to switch to just using static class vars for this, instead
-     * of accessing Resources all the time.
-     *
+     * This towering method could use some honing.
      * @return a string representing the proper fragment to pass to the URL string
      */
     public static String getURLFrag(int quakeSource, int quakeSelection, int durationSelection, Context context) {
@@ -136,23 +134,6 @@ public class Utils {
             }
         }
         return "";
-    }
-
-    /**
-     * Generates the appropriate toast, depending on the anticipated time of the request.
-     */
-    public static void fireToast(int duration, int quake, Context context) {
-        String toastText;
-        int toastDuration;
-        if (duration == 2 && quake == 4) {
-            toastText = context.getString(R.string.loading_data_long);
-            toastDuration = Toast.LENGTH_LONG;
-        } else {
-            toastText = context.getString(R.string.loading_data);
-            toastDuration = Toast.LENGTH_SHORT;
-        }
-        Toast toast = Toast.makeText(context, toastText, toastDuration);
-        toast.show();
     }
 
     /**

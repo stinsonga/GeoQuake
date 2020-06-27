@@ -104,4 +104,5 @@ class QuakeAdapter(internal var listener: OnQuakeItemClickedListener) : Recycler
             }
         }
     }
+
 }
