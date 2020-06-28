@@ -130,7 +130,6 @@
     <!-- About -->
     <string name="other_social_label">Other Social Media</string>
     <string name="github_source_link"><![CDATA[<a href="https://github.com/stinsonga/GeoQuake">View the source code on GitHub</a>]]></string>
-    <string name="canada_quake_license_link">Earthquakes Canada data used as per the <![CDATA[<a href="http://data.gc.ca/eng/open-government-licence-canada">Open Government License</a>]]></string>
     <string name="github_source_image_link">https://github.com/stinsonga/GeoQuake</string>
     <string name="icon_disclaimer">GitHub Octoman icon used as per the policies of the company.</string>
 </resources>

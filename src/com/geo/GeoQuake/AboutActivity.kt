@@ -17,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity
 class AboutActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var mGithubTextView: TextView
-    private lateinit var canadaLicense: TextView
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,13 +25,10 @@ class AboutActivity : AppCompatActivity(), View.OnClickListener {
         val bar = supportActionBar
         bar?.setHomeButtonEnabled(true)
 
-        mGithubTextView = findViewById<TextView>(R.id.github_link)
-        canadaLicense = findViewById<TextView>(R.id.canada_license_text)
-
+        mGithubTextView = findViewById(R.id.github_link)
+        //FIXME: update app to be able to use newer, non-deprecated method
         mGithubTextView.text = Html.fromHtml(this.getString(R.string.github_source_link))
         mGithubTextView.movementMethod = LinkMovementMethod.getInstance()
-        canadaLicense.text = Html.fromHtml(this.getString(R.string.canada_quake_license_link))
-        canadaLicense.movementMethod = LinkMovementMethod.getInstance()
     }
 
     /**
