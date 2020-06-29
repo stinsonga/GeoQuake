@@ -3,12 +3,11 @@ package com.geo.GeoQuake
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.Html
 import android.text.method.LinkMovementMethod
 import android.view.View
-import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.HtmlCompat
 
 
 /**
@@ -26,8 +25,8 @@ class AboutActivity : AppCompatActivity(), View.OnClickListener {
         bar?.setHomeButtonEnabled(true)
 
         mGithubTextView = findViewById(R.id.github_link)
-        //FIXME: update app to be able to use newer, non-deprecated method
-        mGithubTextView.text = Html.fromHtml(this.getString(R.string.github_source_link))
+        mGithubTextView.text = HtmlCompat.fromHtml(this.getString(R.string.github_source_link),
+                HtmlCompat.FROM_HTML_MODE_LEGACY)
         mGithubTextView.movementMethod = LinkMovementMethod.getInstance()
     }
 
