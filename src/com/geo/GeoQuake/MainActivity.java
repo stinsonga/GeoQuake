@@ -7,17 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import com.google.android.material.tabs.TabLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.viewpager.widget.ViewPager;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,21 +18,41 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.viewpager.widget.ViewPager;
 
 import com.geo.GeoQuake.adapters.TabPagerAdapter;
 import com.geo.GeoQuake.models.Earthquake;
 import com.geo.GeoQuake.models.Prefs;
+import com.geo.GeoQuake.network.QuakeAPI;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.tabs.TabLayout;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements IDataCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    protected  Bundle mBundle;
+    protected Bundle mBundle;
 
     protected DrawerLayout mDrawerLayout;
     protected RelativeLayout mDrawerLinearLayout;
@@ -57,11 +66,8 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     //    CheckBox mWifiCheckbox;
 
-    protected boolean mAsyncUnderway = false;
-
-    protected ArrayList<Earthquake> mEarthquakes = new ArrayList<Earthquake>();
+    protected ArrayList<Earthquake> mEarthquakes = new ArrayList<>();
     protected GeoQuakeDB mGeoQuakeDB;
-    protected QuakeData mQuakeData;
     protected Toolbar mToolbar;
 
     protected int mSourceSelection = 0;
@@ -101,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
         mTabLayout.setupWithViewPager(mViewPager);
         mTabLayout.addOnTabSelectedListener(onTabSelectedListener);
 
-        mToolbar = (Toolbar) findViewById(R.id.action_bar);
+        mToolbar = findViewById(R.id.action_bar);
         setSupportActionBar(mToolbar);
 
         //set toolbar options
@@ -137,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     @Override
     public void onBackPressed() {
-        if(mDrawerIsOpen) {
+        if (mDrawerIsOpen) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
             finish();
@@ -177,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
      * @param outState Bundle whose out state needs to be saved
      */
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBundle("mBundle", mBundle);
     }
@@ -186,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
      * @param savedInstanceState Bundle to be restored from saved state
      */
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         savedInstanceState.getBundle("mBundle");
     }
@@ -214,15 +220,15 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                 doRefresh();
                 break;
             case R.id.action_location:
-                    if(mHasUserLocation) {
-                        ((TabPagerAdapter) mViewPager.getAdapter()).moveCamera(mUserLatitude, mUserLongitude);
-                    }
-                    if (mHasUserLocation) {
-                        ((TabPagerAdapter) mViewPager.getAdapter()).sortByProximity(mUserLatitude, mUserLongitude);
-                    }
-                if(mCurrentTabPosition == 1) {
-                  Toast.makeText(this, this.getResources().getString(R.string.sorting_by_proximity)
-                , Toast.LENGTH_SHORT).show();
+                if (mHasUserLocation) {
+                    ((TabPagerAdapter) Objects.requireNonNull(mViewPager.getAdapter())).moveCamera(mUserLatitude, mUserLongitude);
+                }
+                if (mHasUserLocation) {
+                    ((TabPagerAdapter) mViewPager.getAdapter()).sortByProximity(mUserLatitude, mUserLongitude);
+                }
+                if (mCurrentTabPosition == 1) {
+                    Toast.makeText(this, this.getResources().getString(R.string.sorting_by_proximity)
+                            , Toast.LENGTH_SHORT).show();
                 }
 
                 break;
@@ -251,16 +257,12 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     }
 
     public void doRefresh() {
-        if (!mAsyncUnderway) {
-            if (GeoQuakeDB.checkRefreshLimit(GeoQuakeDB.getTime(),
-                    Prefs.getInstance().getRefreshLimiter())) {
-                Prefs.getInstance().setRefreshLimiter();
-                checkNetworkFetchData();
-            } else {
-                Toast.makeText(this, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
-            }
+        if (GeoQuakeDB.checkRefreshLimit(GeoQuakeDB.getTime(),
+                Prefs.getInstance().getRefreshLimiter())) {
+            Prefs.getInstance().setRefreshLimiter();
+            checkNetworkFetchData();
         } else {
-            Toast.makeText(this, getResources().getString(R.string.wait_for_loading), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.refresh_warning), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -277,44 +279,40 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case 99: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted
-                    getAndHandleLocation();
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        //TODO: more permission handling?
-                        return;
-                    }
-
-                } else {
-                    Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show();
+                                           @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 99) {// If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // permission was granted
+                getAndHandleLocation();
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    //TODO: more permission handling?
                 }
+
+            } else {
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show();
             }
             //case 1111:
-                //other
+            //other
         }
     }
 
     public void getAndHandleLocation() {
         try {
-            Location location = LocationServices.FusedLocationApi.getLastLocation(
-                    mGoogleApiClient);
-            if (location != null) {
-                Log.i(TAG, "Location found " + location.getLatitude() + " " + location.getLongitude());
-                mUserLatitude = location.getLatitude();
-                mUserLongitude = location.getLongitude();
-                mHasUserLocation = true;
-                invalidateOptionsMenu();
-                if(mHasUserLocation) {
-                    ((TabPagerAdapter) mViewPager.getAdapter()).moveCamera(mUserLatitude, mUserLongitude);
+            LocationServices.getFusedLocationProviderClient(this).getLastLocation().addOnSuccessListener(location -> {
+                if (location != null) {
+                    Log.i(TAG, "Location found " + location.getLatitude() + " " + location.getLongitude());
+                    mUserLatitude = location.getLatitude();
+                    mUserLongitude = location.getLongitude();
+                    mHasUserLocation = true;
+                    invalidateOptionsMenu();
+                    if (mHasUserLocation) {
+                        ((TabPagerAdapter) Objects.requireNonNull(mViewPager.getAdapter())).moveCamera(mUserLatitude, mUserLongitude);
+                    }
+                } else {
+                    Log.i(TAG, "No location.");
                 }
-            } else {
-                Log.i(TAG, "No location.");
-            }
+            });
         } catch (SecurityException se) {
             Log.i(TAG, "SecurityException when fetching location");
             mHasUserLocation = false;
@@ -331,7 +329,9 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     }
 
-    public ArrayList<Earthquake> getEarthquakes() { return mEarthquakes; }
+    public ArrayList<Earthquake> getEarthquakes() {
+        return mEarthquakes;
+    }
 
     /**
      * Send the request to the QuakeData class to grab new data
@@ -345,39 +345,65 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
             Log.i(TAG, "no need for new data, setup fragment");
             refreshCurrentFragment(mEarthquakes);
         } else {
-            Utils.fireToast(mDurationSelection, mStrengthSelection, this);
-            //TODO: change url string depending on source in Prefs
-            String apiURL = "";
-            switch(mSourceSelection) {
-                case 0:
-                default:
-                    apiURL = this.getString(R.string.usgs_url);
-                    break;
-//                case 1:
-//                    apiURL = this.getString(R.string.canada_url);
-//                    break;
-            }
-            mQuakeData = new QuakeData(apiURL, mSourceSelection,
-                    mDurationSelection, mStrengthSelection, this, this);
-            mQuakeData.fetchData(this);
+            getNewData();
+        }
+    }
+
+    private void getNewData() {
+        if (Utils.needToRefreshData(mGeoQuakeDB, mSourceSelection, mStrengthSelection, mDurationSelection)) {
+            QuakeAPI quakeAPI = new QuakeAPI(this);
+            quakeAPI.getUSGSQuakes(Utils.getURLFrag(mSourceSelection, mStrengthSelection, mDurationSelection, this))
+                    .enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                            String jsonResponse;
+                            if (response.isSuccessful()) {
+                                try {
+                                    assert response.body() != null;
+                                    jsonResponse = response.body().string();
+
+                                    //set or update DB, as needed
+                                    if (mGeoQuakeDB.getData("" + mSourceSelection, "" + mStrengthSelection, "" + mDurationSelection).isEmpty()) {
+                                        mGeoQuakeDB.setData("" + mSourceSelection, "" + mStrengthSelection, "" + mDurationSelection, jsonResponse);
+                                    } else {
+                                        mGeoQuakeDB.updateData("" + mSourceSelection, "" + mStrengthSelection, "" + mDurationSelection, jsonResponse);
+                                    }
+
+                                    dataCallBack(Utils.convertModelBySource(mSourceSelection, jsonResponse));
+                                } catch (IOException e) {
+                                    Log.e(TAG, "Failure in parsing response body: " + e.getMessage());
+                                }
+                            } else {
+                                Log.e(TAG, "Issue in data response");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                            Log.e(TAG, "Failure " + t.getMessage());
+                        }
+                    });
+        } else {
+            //use existing data
+            mEarthquakes = Utils.convertModelBySource(mSourceSelection,
+                    mGeoQuakeDB.getData("" + mSourceSelection, ""
+                            + mStrengthSelection, "" + mDurationSelection));
         }
     }
 
     /**
      * Refresh the current fragment with new data
-     *
      */
     public void refreshCurrentFragment(ArrayList<Earthquake> mEarthquakes) {
-        ((TabPagerAdapter) mViewPager.getAdapter()).updateFragments(mEarthquakes,
+        ((TabPagerAdapter) Objects.requireNonNull(mViewPager.getAdapter())).updateFragments(mEarthquakes,
                 mHasUserLocation, mUserLatitude, mUserLongitude);
         mViewPager.getAdapter().notifyDataSetChanged();
     }
 
     @Override
-    public void dataCallBack(ArrayList<Earthquake> earthquakes) {
+    public void dataCallBack(@NonNull ArrayList<Earthquake> earthquakes) {
         //update map with data
         mEarthquakes = earthquakes;
-        mAsyncUnderway = false;
         setLoadingFinishedView();
         refreshCurrentFragment(mEarthquakes);
     }
@@ -387,28 +413,23 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
      */
     @Override
     public void asyncUnderway() {
-        mAsyncUnderway = true;
         setLoadingView();
     }
 
     public void setLoadingView() {
-        runOnUiThread(new Runnable() {
-            public void run() {
-                mLoadingOverlay.setVisibility(View.VISIBLE);
-                if (getSupportActionBar() != null) {
-                    getSupportActionBar().hide();
-                }
+        runOnUiThread(() -> {
+            mLoadingOverlay.setVisibility(View.VISIBLE);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().hide();
             }
         });
     }
 
     public void setLoadingFinishedView() {
-        runOnUiThread(new Runnable() {
-            public void run() {
-                mLoadingOverlay.setVisibility(View.GONE);
-                if (getSupportActionBar() != null) {
-                    getSupportActionBar().show();
-                }
+        runOnUiThread(() -> {
+            mLoadingOverlay.setVisibility(View.GONE);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().show();
             }
         });
     }
@@ -416,19 +437,13 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
     public void getAlertDiagloBuilder(Context context) {
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
         alertBuilder.setMessage(context.getResources().getString(R.string.parameters_changed))
-                .setPositiveButton(context.getString(R.string.menu_refresh), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        doRefresh();
-                        mParametersAreChanged = false;
-                    }
+                .setPositiveButton(context.getString(R.string.menu_refresh), (dialog, which) -> {
+                    doRefresh();
+                    mParametersAreChanged = false;
                 })
-                .setNegativeButton(context.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //nuthin'
-                        mParametersAreChanged = false;
-                    }
+                .setNegativeButton(context.getString(R.string.cancel), (dialog, which) -> {
+                    //nuthin'
+                    mParametersAreChanged = false;
                 });
         alertBuilder.create();
         alertBuilder.show();
@@ -445,7 +460,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                             Prefs.getInstance().setSource(0);
                             mSourceSelection = 0;
                             mQuakeTypeSpinner.setVisibility(View.VISIBLE);
-                            ArrayAdapter<String> usaAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, MainActivity.this.getResources().getStringArray(R.array.duration_types));
+                            ArrayAdapter<String> usaAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_spinner_item, MainActivity.this.getResources().getStringArray(R.array.duration_types));
                             usaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             mDurationTypeSpinner.setAdapter(usaAdapter);
                             mParametersAreChanged = true;
@@ -455,7 +470,7 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                             Prefs.getInstance().setSource(1);
                             mSourceSelection = 1;
                             mQuakeTypeSpinner.setVisibility(View.GONE);
-                            ArrayAdapter<String> canAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, MainActivity.this.getResources().getStringArray(R.array.canada_duration_types));
+                            ArrayAdapter<String> canAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_spinner_item, MainActivity.this.getResources().getStringArray(R.array.canada_duration_types));
                             canAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             mDurationTypeSpinner.setAdapter(canAdapter);
                             mParametersAreChanged = true;
@@ -463,13 +478,13 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
                     }
                     break;
                 case (R.id.quake_type_spinner):
-                    if(mStrengthSelection != mQuakeTypeSpinner.getSelectedItemPosition()) {
+                    if (mStrengthSelection != mQuakeTypeSpinner.getSelectedItemPosition()) {
                         mParametersAreChanged = true;
                         mStrengthSelection = mQuakeTypeSpinner.getSelectedItemPosition();
                     }
                     break;
                 case (R.id.duration_type_spinner):
-                    if(mDurationSelection != mDurationTypeSpinner.getSelectedItemPosition()) {
+                    if (mDurationSelection != mDurationTypeSpinner.getSelectedItemPosition()) {
                         mDurationSelection = mDurationTypeSpinner.getSelectedItemPosition();
                         mParametersAreChanged = true;
                     }
@@ -492,20 +507,20 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
 
     DrawerLayout.DrawerListener drawerListener = new DrawerLayout.DrawerListener() {
         @Override
-        public void onDrawerSlide(View drawerView, float slideOffset) {
+        public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
 
         }
 
         @Override
-        public void onDrawerOpened(View drawerView) {
+        public void onDrawerOpened(@NonNull View drawerView) {
             mDrawerIsOpen = true;
             Utils.hideKeyboard(drawerView);
         }
 
         @Override
-        public void onDrawerClosed(View drawerView) {
+        public void onDrawerClosed(@NonNull View drawerView) {
             mDrawerIsOpen = false;
-            if(mParametersAreChanged) {
+            if (mParametersAreChanged) {
                 getAlertDiagloBuilder(MainActivity.this);
             }
         }

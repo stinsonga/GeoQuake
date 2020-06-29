@@ -1,18 +1,16 @@
 package com.geo.GeoQuake.adapters
 
 import android.graphics.Color
-import androidx.core.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-
 import com.geo.GeoQuake.R
 import com.geo.GeoQuake.models.Earthquake
-
 import java.text.DateFormat
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Created by George Stinson on 2017-03-15.
@@ -60,24 +58,18 @@ class QuakeAdapter(internal var listener: OnQuakeItemClickedListener) : Recycler
             var magnitude = ""
             //deal with weird, negative magnitudes
             if (magnitude == "") {
-                if (earthquake.mag < 0.0) {
-                    magnitude += 0.0
+                magnitude += if (earthquake.mag < 0.0) {
+                    0.0
                 } else {
-                    magnitude += earthquake.mag
+                    earthquake.mag
                 }
-                val context = itemView.context
-                magnitudeTextView.text = magnitude
+
+                magnitudeTextView.text = String.format("%.2f", magnitude.toDouble())
                 magnitudeTextView.setTextColor(Color.WHITE)
                 locationTextView.text = earthquake.place
-                if (earthquake.mag <= 1.00) {
-                    magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_green))
-                } else if (earthquake.mag <= 2.50) {
-                    magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_orange))
-                } else if (earthquake.mag <= 4.50) {
-                    magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_deeporange))
-                } else {
-                    magnitudeTextView.setTextColor(ContextCompat.getColor(context, R.color.material_red))
-                }
+
+                setMagnitudeColor(earthquake.mag)
+
                 if (earthquake.time != 0L) {
                     val df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM)
                     timeTextViewHolder.text = df.format(earthquake.time)
@@ -91,5 +83,26 @@ class QuakeAdapter(internal var listener: OnQuakeItemClickedListener) : Recycler
                 }
             }
         }
+
+        /**
+         * Set text color based on magnitude
+         */
+        private fun setMagnitudeColor(mag: Double) {
+            when {
+                mag <= 1.00 -> {
+                    magnitudeTextView.setTextColor(ContextCompat.getColor(itemView.context, R.color.material_green))
+                }
+                mag <= 2.50 -> {
+                    magnitudeTextView.setTextColor(ContextCompat.getColor(itemView.context, R.color.material_orange))
+                }
+                mag <= 4.50 -> {
+                    magnitudeTextView.setTextColor(ContextCompat.getColor(itemView.context, R.color.material_deeporange))
+                }
+                else -> {
+                    magnitudeTextView.setTextColor(ContextCompat.getColor(itemView.context, R.color.material_red))
+                }
+            }
+        }
     }
+
 }

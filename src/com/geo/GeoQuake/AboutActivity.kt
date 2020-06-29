@@ -3,12 +3,11 @@ package com.geo.GeoQuake
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import android.text.Html
 import android.text.method.LinkMovementMethod
 import android.view.View
-import android.widget.ImageButton
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.HtmlCompat
 
 
 /**
@@ -16,9 +15,7 @@ import android.widget.TextView
  */
 class AboutActivity : AppCompatActivity(), View.OnClickListener {
 
-    lateinit var mGithubTextView: TextView
-    lateinit var mGitHubImage: ImageButton
-    lateinit var canadaLicense: TextView
+    private lateinit var mGithubTextView: TextView
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,13 +24,10 @@ class AboutActivity : AppCompatActivity(), View.OnClickListener {
         val bar = supportActionBar
         bar?.setHomeButtonEnabled(true)
 
-        mGithubTextView = findViewById(R.id.github_link) as TextView
-        canadaLicense = findViewById(R.id.canada_license_text) as TextView
-
-        mGithubTextView.text = Html.fromHtml(this.getString(R.string.github_source_link))
+        mGithubTextView = findViewById(R.id.github_link)
+        mGithubTextView.text = HtmlCompat.fromHtml(this.getString(R.string.github_source_link),
+                HtmlCompat.FROM_HTML_MODE_LEGACY)
         mGithubTextView.movementMethod = LinkMovementMethod.getInstance()
-        canadaLicense.text = Html.fromHtml(this.getString(R.string.canada_quake_license_link))
-        canadaLicense.movementMethod = LinkMovementMethod.getInstance()
     }
 
     /**
@@ -46,8 +40,6 @@ class AboutActivity : AppCompatActivity(), View.OnClickListener {
             R.id.github_source_image -> {
                 intent.data = Uri.parse(this.getString(R.string.github_source_image_link))
                 startActivity(intent)
-            }
-            else -> {
             }
         }
     }

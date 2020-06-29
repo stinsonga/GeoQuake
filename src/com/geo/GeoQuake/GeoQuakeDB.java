@@ -1,13 +1,12 @@
 package com.geo.GeoQuake;
 
-import java.util.Date;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+
+import java.util.Date;
 
 public class GeoQuakeDB extends SQLiteOpenHelper {
     private static final int DB_VERSION = 19;

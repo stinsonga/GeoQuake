@@ -73,12 +73,6 @@
         android:layout_marginTop="@dimen/bar_margin"
         android:background="@android:color/darker_gray" />
 
-    <TextView
-        android:id="@+id/canada_license_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
-
     <!-- The View below is meant to push the TextView beneath it to the bottom of the screen.-->
     <View
         android:layout_width="wrap_content"

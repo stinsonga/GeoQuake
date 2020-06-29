@@ -1,14 +1,9 @@
 package com.geo.GeoQuake;
 
 import android.content.Context;
-import androidx.fragment.app.Fragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentManager;
-
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,12 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
 import com.geo.GeoQuake.models.Earthquake;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -32,18 +31,19 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 
 public class QuakeMapFragment extends Fragment implements IDataCallback {
     private static final String TAG = QuakeMapFragment.class.getSimpleName();
     Bundle mBundle;
-    HashMap<String, String> markerInfo = new HashMap<String, String>();
+    HashMap<String, String> markerInfo = new HashMap<>();
 
     private GoogleMap mMap;
 
     SupportMapFragment mMapFragment;
 
-    ArrayList<Earthquake> mEarthquakes = new ArrayList<Earthquake>();
+    ArrayList<Earthquake> mEarthquakes = new ArrayList<>();
 
     MainActivity mActivity;
 
@@ -107,7 +107,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mActivity = (MainActivity)getActivity();
     }
@@ -118,13 +118,9 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     private void setUpMap() {
         if (Utils.checkNetwork(mActivity)) {
             if (mMap == null) {
-                mMapFragment.getMapAsync(new OnMapReadyCallback() {
-                    @Override
-                    public void onMapReady(GoogleMap googleMap) {
-                        Log.i(TAG, "onMapReady");
-                        mMap = googleMap;
-                        postSyncMapSetup();
-                    }
+                mMapFragment.getMapAsync(googleMap -> {
+                    mMap = googleMap;
+                    postSyncMapSetup();
                 });
             }
 
@@ -154,7 +150,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
             settings.setMyLocationButtonEnabled(false);
 
 
-            if (mActivity.getEarthquakes() != null && ((MainActivity) getActivity()).getEarthquakes().size() > 0) {
+            if (((MainActivity) Objects.requireNonNull(getActivity())).getEarthquakes().size() > 0) {
                 mEarthquakes = ((MainActivity) getActivity()).getEarthquakes();
                 placeMarkers();
             } else {
@@ -221,14 +217,11 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
                                 .position(coords).title(earthquake.getPlace()).snippet(getString(R.string.magnitude) + earthquake.getMag()));
                         markerInfo.put(m.getId(), earthquake.getUrl());
 
-                        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-                            @Override
-                            public void onInfoWindowClick(Marker marker) {
-                                if(!TextUtils.isEmpty(getURLFromMarker(marker.getId()))) {
-                                    Intent intent = new Intent(mActivity, WebInfoActivity.class);
-                                    intent.putExtra("url", getURLFromMarker(marker.getId()));
-                                    startActivity(intent);
-                                }
+                        mMap.setOnInfoWindowClickListener(marker -> {
+                            if(!TextUtils.isEmpty(getURLFromMarker(marker.getId()))) {
+                                Intent intent = new Intent(mActivity, WebInfoActivity.class);
+                                intent.putExtra("url", getURLFromMarker(marker.getId()));
+                                startActivity(intent);
                             }
                         });
                     }
@@ -248,32 +241,11 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
         return markerInfo.get(id);
     }
 
-    /**
-     * @param config value of Configuration object passed in by the system (as this is an overridden method)
-     */
     @Override
-    public void onConfigurationChanged(Configuration config) {
-        super.onConfigurationChanged(config);
-        //TODO: Possible actions for orientation change
-    }
-
-    /**
-     * @param outState Bundle to be saved
-     */
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBundle("mBundle", mBundle);
-    }
+    public void asyncUnderway() {}
 
     @Override
-    public void asyncUnderway() {
-        //unused
-    }
-
-    @Override
-    public void dataCallBack(ArrayList<Earthquake> earthquakes) {
-        //Log.i(TAG, "got callback in fragment, set data");
+    public void dataCallBack(@NonNull ArrayList<Earthquake> earthquakes) {
         mEarthquakes = earthquakes;
         placeMarkers();
     }

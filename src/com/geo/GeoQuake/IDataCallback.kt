@@ -1,9 +1,7 @@
 package com.geo.GeoQuake
 
 import com.geo.GeoQuake.models.Earthquake
-import com.geo.GeoQuake.models.FeatureCollection
-
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Created by gstinson on 15-06-29.

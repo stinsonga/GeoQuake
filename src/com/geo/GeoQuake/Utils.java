@@ -20,6 +20,7 @@ import java.util.ArrayList;
  */
 public class Utils {
 
+    private static final String TAG = Utils.class.getSimpleName();
     public static final long REFRESH_LIMITER_TIME = 10000;
 
     /**
@@ -56,9 +57,7 @@ public class Utils {
     }
 
     /**
-     * This towering method could use some honing. Might want to switch to just using static class vars for this, instead
-     * of accessing Resources all the time.
-     *
+     * This towering method could use some honing.
      * @return a string representing the proper fragment to pass to the URL string
      */
     public static String getURLFrag(int quakeSource, int quakeSelection, int durationSelection, Context context) {
@@ -138,23 +137,6 @@ public class Utils {
     }
 
     /**
-     * Generates the appropriate toast, depending on the anticipated time of the request.
-     */
-    public static void fireToast(int duration, int quake, Context context) {
-        String toastText;
-        int toastDuration;
-        if (duration == 2 && quake == 4) {
-            toastText = context.getString(R.string.loading_data_long);
-            toastDuration = Toast.LENGTH_LONG;
-        } else {
-            toastText = context.getString(R.string.loading_data);
-            toastDuration = Toast.LENGTH_SHORT;
-        }
-        Toast toast = Toast.makeText(context, toastText, toastDuration);
-        toast.show();
-    }
-
-    /**
      * Generates the long toast message
      */
     public static void connectToast(Context context) {
@@ -204,6 +186,24 @@ public class Utils {
             return canadaQuakes.getEarthquakes();
         }
         return quakes;
+    }
+
+    /**
+     * Checking to see if there is already data stored, and if it should be used
+     *
+     * @return true if we need to refresh data
+     */
+    public static boolean needToRefreshData(GeoQuakeDB geoQuakeDB, int quakeSource, int quakeType, int quakeDuration) {
+        //first check to see if results are empty
+        if (!geoQuakeDB.getData("" + quakeSource, "" + quakeType, "" + quakeDuration).isEmpty()) {
+            //is the data too old?
+            //return false, we'll use existing data
+            return Utils.isExpired(Long.parseLong(geoQuakeDB.getDateColumn("" + quakeSource,
+                    "" + quakeType, "" + quakeDuration)));
+        } else {
+            //data is empty...need to fetch it
+            return true;
+        }
     }
 
 
