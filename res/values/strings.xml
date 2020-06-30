@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_subname"> </string>
-    <string name="version_number">1.8.5</string>
+    <string name="version_number">1.9.5</string>
     <string name="version">Version: </string>
 
     <string name="loading_data">Loading data.</string>
