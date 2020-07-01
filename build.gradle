@@ -13,112 +13,17 @@ buildscript {
     }
 }
 
-repositories {
-    mavenCentral()
-    jcenter()
-    maven { url "https://jitpack.io" }
-    maven { url 'https://maven.google.com' }
-    google()
-}
-
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-
-dependencies {
-    implementation fileTree(include: '*.jar', dir: 'libs')
-    implementation 'com.google.android.gms:play-services-location:17.0.0'
-    implementation 'com.google.android.gms:play-services-maps:17.0.0'
-    implementation 'org.apache.commons:commons-lang3:3.4'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'com.google.android.material:material:1.1.0'
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.room:room-runtime:2.2.5'
-    annotationProcessor 'androidx.room:room-compiler:2.2.5'
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.1'
-    implementation 'com.squareup.okhttp3:okhttp:4.2.1'
-    implementation 'com.google.code.gson:gson:2.8.6'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-}
-
-android {
-    compileSdkVersion 29
-    buildToolsVersion '29.0.2'
-    flavorDimensions "default" //added to fix "Error:All flavors must now belong to a named flavor dimension. "
-    defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 29
-        // Enabling multidex support.
-        multiDexEnabled true
-    }
-
-    dexOptions {
-        javaMaxHeapSize "4g"
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-
-    productFlavors {
-        production {
-            resValue "string", "app_name", "GeoQuake"
-            minSdkVersion 19
-            targetSdkVersion 29
-        }
-        development {
-            applicationIdSuffix = '.dev'
-            resValue "string", "app_name", "GeoQuake Dev"
-            minSdkVersion 19
-            targetSdkVersion 29
-        }
-    }
-
-    buildTypes {
-        release {
-
-        }
-
-        beta {
-
-        }
-    }
-
-    sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
-            resources.srcDirs = ['src']
-            aidl.srcDirs = ['src']
-            renderscript.srcDirs = ['src']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
-        }
-
-        // Move the tests to tests/java, tests/res, etc...
-        //instrumentTest.setRoot('tests')
-
-        // Move the build types to build-types/<type>
-        // For instance, build-types/debug/java, build-types/debug/AndroidManifest.xml, ...
-        // This moves them out of them default location under src/<type>/... which would
-        // conflict with src/ being used by the main source set.
-        // Adding new build types or product flavors should be accompanied
-        // by a similar customization.
-        debug.setRoot('build-types/debug')
-        release.setRoot('build-types/release')
-    }
-
-    lintOptions {
-        disable 'InvalidPackage'
+allprojects {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven { url "https://jitpack.io" }
+        maven { url 'https://maven.google.com' }
+        google()
     }
 }
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
