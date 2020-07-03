@@ -14,11 +14,4 @@ import static org.junit.Assert.assertTrue;
 @RunWith(AndroidJUnit4.class)
 public class MainActivityTest {
 
-    @Test
-    public void getUrlFragTest() {
-        Context context = InstrumentationRegistry
-                .getInstrumentation().getTargetContext();
-        assertEquals(Utils.getURLFrag(0, 0, 1, context), "significant_day.geojson");
-    }
-
 }

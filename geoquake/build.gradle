@@ -10,6 +10,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         multiDexEnabled true
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     dexOptions {
