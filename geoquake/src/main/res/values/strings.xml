@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_subname"> </string>
+    <string name="version_number">1.9.5</string>
+    <string name="version">Version: </string>
+
+    <string name="loading_data">Loading data.</string>
+    <string name="loading_data_long">Loading data. *NOTE*: this may take a while!</string>
+    <string name="wait_for_loading">Please wait before continuing.</string>
+    <string name="using_saved">No WiFi or Mobile Connection Found. Using previously-saved data.</string>
+    <string name="close">Close</string>
+    <string name="no_network">No WiFi or Mobile Connection Found. Try again later.</string>
+    <string name="magnitude">Magnitude: </string>
+
+    <string name="quake_list">Quake List</string>
+    <string name="map_view">Map View</string>
+    <string name="map_tab">Map</string>
+    <string name="list_tab">List</string>
+
+    <string name="map_tab_label">Map</string>
+    <string name="list_tab_label">Quake List</string>
+    <string name="quake_count">Earthquake Count: %1$d</string>
+
+    <!-- Menu Items -->
+    <string name="menu_refresh">Refresh</string>
+    <string name="menu_search">Search</string>
+    <string name="app_settings">Settings</string>
+    <string name="cancel">Cancel</string>
+    <string name="menu_my_location">My Location</string>
+    <string name="menu_list_view">List View</string>
+    <string name="menu_map_view">Map View</string>
+    <string name="about_geoquake">About GeoQuake</string>
+    <string name="filter_data_by">Filter Data By:</string>
+
+    <string name="refresh_warning">Please wait a few seconds before manually refreshing again.</string>
+    <string name="empty_list">No Data for Selected Parameters</string>
+    <string name="search_hint">Enter a search term</string>
+    <string name="empty_search_list">No Data for Search Parameter. Try another.</string>
+    <string name="sorting_by_proximity">Now Listing Based on Nearest Earthquakes</string>
+    <string name="parameters_changed">Parameters have changed. Refresh data?</string>
+
+    <string name="usgs_url">https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/</string>
+    <!-- Past Hour, Updated Every Minute -->
+    <string name="significant_hour">significant_hour.geojson</string>
+    <string name="_4.5_hour">4.5_hour.geojson</string>
+    <string name="_2.5_hour">2.5_hour.geojson</string>
+    <string name="_1.0_hour">1.0_hour.geojson</string>
+    <string name="all_hour">all_hour.geojson</string>
+
+    <!-- Past Day, Updated Every Minute -->
+    <string name="significant_day">significant_day.geojson</string>
+    <string name="_4.5_day">4.5_day.geojson</string>
+    <string name="_2.5_day">2.5_day.geojson</string>
+    <string name="_1.0_day">1.0_day.geojson</string>
+    <string name="all_day">all_day.geojson</string>
+
+    <!-- Past 7 Days, Updated Every Minute -->
+    <string name="significant_week">significant_week.geojson</string>
+    <string name="_4.5_week">4.5_week.geojson</string>
+    <string name="_2.5_week">2.5_week.geojson</string>
+    <string name="_1.0_week">1.0_week.geojson</string>
+    <string name="all_week">all_week.geojson</string>
+
+    <!-- Past 30 Days, Updated Every Minute -->
+    <string name="significant_month">significant_month.geojson</string>
+    <string name="_4.5_month">4.5_month.geojson</string>
+    <string name="_2.5_month">2.5_month.geojson</string>
+    <string name="_1.0_month">1.0_month.geojson</string>
+    <string name="all_month">all_month.geojson</string>
+
+    <string name="canada_url">https://www.earthquakescanada.nrcan.gc.ca/api/v2/locations/latest/</string>
+    <string name="canada_7_days">7d.json</string>
+    <string name="canada_30_days">30d.json</string>
+    <string name="canada_365_days">365d.json</string>
+
+    <!-- Settings -->
+    <string name="hide_action_bar">Hide Action Bar?</string>
+
+    <string-array name="source_types">
+        <item>USGS</item>
+        <!--<item>Earthquakes Canada</item>-->
+    </string-array>
+
+    <string-array name="quake_types">
+        <item>Significant Earthquakes</item>
+        <item>M4.5+ Earthquakes</item>
+        <item>M2.5+ Earthquakes</item>
+        <item>M1.0+ Earthquakes</item>
+        <item>All Earthquakes</item>
+    </string-array>
+
+    <string-array name="duration_types">
+        <item>Past Hour</item>
+        <item>Past Day</item>
+        <item>Past 7 Days</item>
+        <!-- <item>Past 30 Days</item>  -->
+    </string-array>
+
+    <string-array name="canada_duration_types">
+        <item>Past Week</item>
+        <item>Past Month</item>
+        <item>Past Year</item>
+    </string-array>
+
+    <string name="cache_label">Data Refresh</string>
+    <string name="cache_prompt">Select a Time</string>
+    <string-array name="cache_options">
+        <item>Select a Time</item>
+        <item>5 Minutes</item>
+        <item>10 Minutes</item>
+        <item>15 Minutes</item>
+        <item>30 Minutes</item>
+        <item>1 Hour</item>
+        <item>1 Day</item>
+    </string-array>
+    <string name="cache_changed">Cache Changed to </string>
+
+    <string-array name="cache_values">
+        <item>300000</item>
+        <item>300000</item>
+        <item>600000</item>
+        <item>900000</item>
+        <item>1800000</item>
+        <item>3600000</item>
+        <item>86400000</item>
+    </string-array>
+
+    <string name="wifi_refresh_only_label">WiFi Refresh Only</string>
+
+    <!-- About -->
+    <string name="other_social_label">Other Social Media</string>
+    <string name="github_source_link"><![CDATA[<a href="https://github.com/stinsonga/GeoQuake">View the source code on GitHub</a>]]></string>
+    <string name="github_source_image_link">https://github.com/stinsonga/GeoQuake</string>
+    <string name="icon_disclaimer">GitHub Octoman icon used as per the policies of the company.</string>
+</resources>

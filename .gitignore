@@ -21,6 +21,6 @@ local.properties
 .DS_Store
 
 # API key value... bring your own ;)
-res/values/api-key.xml
+geoquake/src/main/res/values/api_key.xml
 
 proguard_logs/
