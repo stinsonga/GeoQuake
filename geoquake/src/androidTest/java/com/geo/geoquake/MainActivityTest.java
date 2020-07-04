@@ -14,4 +14,9 @@ import static org.junit.Assert.assertTrue;
 @RunWith(AndroidJUnit4.class)
 public class MainActivityTest {
 
+    @Test
+    public void exampleTest() {
+        //TODO: test getNewData method
+    }
+
 }
