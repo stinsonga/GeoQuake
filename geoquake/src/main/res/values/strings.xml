@@ -132,4 +132,7 @@
     <string name="github_source_link"><![CDATA[<a href="https://github.com/stinsonga/GeoQuake">View the source code on GitHub</a>]]></string>
     <string name="github_source_image_link">https://github.com/stinsonga/GeoQuake</string>
     <string name="icon_disclaimer">GitHub Octoman icon used as per the policies of the company.</string>
+
+    <!-- Replace this with your own key -->
+    <string name="google_maps_api_key">REPLACEME</string>
 </resources>
