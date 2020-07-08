@@ -5,9 +5,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.geo.geoquake.ListFragment
 import com.geo.geoquake.QuakeMapFragment
-import com.geo.geoquake.models.Earthquake
 import com.geo.geoquake.R
-
+import com.geo.geoquake.models.Earthquake
 import java.util.*
 
 /**

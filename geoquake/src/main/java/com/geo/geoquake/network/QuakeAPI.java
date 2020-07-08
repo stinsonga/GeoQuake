@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.geo.geoquake.BuildConfig;
 import com.geo.geoquake.R;
+
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
