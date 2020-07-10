@@ -19,10 +19,10 @@ class TabPagerAdapter(fm: FragmentManager, internal var context: Context)
     internal var mListFragment: ListFragment = ListFragment.newInstance()
 
     override fun getItem(position: Int): Fragment {
-        when (position) {
-            0 -> return mMapFragment
-            1 -> return mListFragment
-            else -> return mListFragment
+        return when (position) {
+            0 -> mMapFragment
+            1 -> mListFragment
+            else -> mListFragment
         }
     }
 
