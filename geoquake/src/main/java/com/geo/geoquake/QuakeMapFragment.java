@@ -109,7 +109,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        mActivity = (MainActivity)getActivity();
+        mActivity = (MainActivity) getActivity();
     }
 
     /**
@@ -218,7 +218,7 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
                         markerInfo.put(m.getId(), earthquake.getUrl());
 
                         mMap.setOnInfoWindowClickListener(marker -> {
-                            if(!TextUtils.isEmpty(getURLFromMarker(marker.getId()))) {
+                            if (!TextUtils.isEmpty(getURLFromMarker(marker.getId()))) {
                                 Intent intent = new Intent(mActivity, WebInfoActivity.class);
                                 intent.putExtra("url", getURLFromMarker(marker.getId()));
                                 startActivity(intent);
@@ -242,7 +242,8 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
     }
 
     @Override
-    public void asyncUnderway() {}
+    public void asyncUnderway() {
+    }
 
     @Override
     public void dataCallBack(@NonNull ArrayList<Earthquake> earthquakes) {
@@ -259,4 +260,5 @@ public class QuakeMapFragment extends Fragment implements IDataCallback {
             placeMarkers();
         }
     }
+
 }

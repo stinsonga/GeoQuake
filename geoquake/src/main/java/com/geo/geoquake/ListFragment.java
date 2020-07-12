@@ -205,7 +205,7 @@ public class ListFragment extends Fragment implements IDataCallback {
                         , Toast.LENGTH_LONG).show();
             }
         } else {
-             Log.e(TAG, "Error in setting up list");
+            Log.e(TAG, "Error in setting up list");
         }
     }
 
@@ -272,7 +272,8 @@ public class ListFragment extends Fragment implements IDataCallback {
     }
 
     @Override
-    public void asyncUnderway() {}
+    public void asyncUnderway() {
+    }
 
     @Override
     public void dataCallBack(@NonNull ArrayList<Earthquake> earthquakes) {
