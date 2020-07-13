@@ -57,83 +57,103 @@ public class Utils {
     }
 
     /**
-     * This towering method could use some honing.
      * @return a string representing the proper fragment to pass to the URL string
      */
     public static String getURLFrag(int quakeSource, int quakeSelection, int durationSelection, Context context) {
         if(quakeSource == 0) {
-            switch(durationSelection) {
-                case 0:
-                    switch(quakeSelection) {
-                        case 0:
-                        default:
-                            return context.getString(R.string.significant_hour);
-                        case 1:
-                            return context.getString(R.string._4_5_hour);
-                        case 2:
-                            return context.getString(R.string._2_5_hour);
-                        case 3:
-                            return context.getString(R.string._1_0_hour);
-                        case 4:
-                            return context.getString(R.string.all_hour);
-                    }
-                case 1:
-                    switch(quakeSelection) {
-                        case 0:
-                        default:
-                            return context.getString(R.string.significant_day);
-                        case 1:
-                            return context.getString(R.string._4_5_day);
-                        case 2:
-                            return context.getString(R.string._2_5_day);
-                        case 3:
-                            return context.getString(R.string._1_0_day);
-                        case 4:
-                            return context.getString(R.string.all_day);
-                    }
-                case 2:
-                    switch(quakeSelection) {
-                        case 0:
-                        default:
-                            return context.getString(R.string.significant_week);
-                        case 1:
-                            return context.getString(R.string._4_5_week);
-                        case 2:
-                            return context.getString(R.string._2_5_week);
-                        case 3:
-                            return context.getString(R.string._1_0_week);
-                        case 4:
-                            return context.getString(R.string.all_week);
-                    }
-                case 3:
-                    switch(quakeSelection) {
-                        case 0:
-                        default:
-                            return context.getString(R.string.significant_month);
-                        case 1:
-                            return context.getString(R.string._4_5_month);
-                        case 2:
-                            return context.getString(R.string._2_5_month);
-                        case 3:
-                            return context.getString(R.string._1_0_month);
-                        case 4:
-                            return context.getString(R.string.all_month);
-                    }
-            }
-            return context.getString(R.string.significant_week);
+            return getUSGSString(context, durationSelection, quakeSelection);
         } else if(quakeSource == 1) {
             //Canada won't filter by magnitude, just date
-            switch(durationSelection) {
-                case 0:
-                default:
-                    return context.getString(R.string.canada_7_days);
-                case 1:
-                    return context.getString(R.string.canada_30_days);
-                case 2:
-                    return context.getString(R.string.canada_365_days);
-            }
+            return getCanadaQuakeString(context, durationSelection);
         }
         return "";
+    }
+
+    /**
+     * Get USGS string for use in requests
+     * @param context
+     * @param durationSelection
+     * @param quakeSelection
+     * @return
+     */
+    private static String getUSGSString(Context context, int durationSelection, int quakeSelection) {
+        switch(durationSelection) {
+            case 0:
+                switch(quakeSelection) {
+                    case 0:
+                    default:
+                        return context.getString(R.string.significant_hour);
+                    case 1:
+                        return context.getString(R.string._4_5_hour);
+                    case 2:
+                        return context.getString(R.string._2_5_hour);
+                    case 3:
+                        return context.getString(R.string._1_0_hour);
+                    case 4:
+                        return context.getString(R.string.all_hour);
+                }
+            case 1:
+                switch(quakeSelection) {
+                    case 0:
+                    default:
+                        return context.getString(R.string.significant_day);
+                    case 1:
+                        return context.getString(R.string._4_5_day);
+                    case 2:
+                        return context.getString(R.string._2_5_day);
+                    case 3:
+                        return context.getString(R.string._1_0_day);
+                    case 4:
+                        return context.getString(R.string.all_day);
+                }
+            case 2:
+                switch(quakeSelection) {
+                    case 0:
+                    default:
+                        return context.getString(R.string.significant_week);
+                    case 1:
+                        return context.getString(R.string._4_5_week);
+                    case 2:
+                        return context.getString(R.string._2_5_week);
+                    case 3:
+                        return context.getString(R.string._1_0_week);
+                    case 4:
+                        return context.getString(R.string.all_week);
+                }
+            case 3:
+                switch(quakeSelection) {
+                    case 0:
+                    default:
+                        return context.getString(R.string.significant_month);
+                    case 1:
+                        return context.getString(R.string._4_5_month);
+                    case 2:
+                        return context.getString(R.string._2_5_month);
+                    case 3:
+                        return context.getString(R.string._1_0_month);
+                    case 4:
+                        return context.getString(R.string.all_month);
+                }
+        }
+        return context.getString(R.string.significant_week);
+    }
+
+    /**
+     *
+     * @param context
+     * @param durationSelection
+     * @return
+     */
+    private static String getCanadaQuakeString(Context context, int durationSelection) {
+        switch(durationSelection) {
+            case 0:
+            default:
+                return context.getString(R.string.canada_7_days);
+            case 1:
+                return context.getString(R.string.canada_30_days);
+            case 2:
+                return context.getString(R.string.canada_365_days);
+        }
     }
 
     /**

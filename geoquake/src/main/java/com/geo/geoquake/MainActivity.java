@@ -289,8 +289,6 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
             } else {
                 Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show();
             }
-            //case 1111:
-            //other
         }
     }
 
