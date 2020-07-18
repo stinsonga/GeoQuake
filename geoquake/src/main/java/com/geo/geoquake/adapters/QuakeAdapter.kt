@@ -44,15 +44,9 @@ class QuakeAdapter(internal var listener: OnQuakeItemClickedListener) : Recycler
 
     inner class QuakeViewHolder(itemView: View, internal var listener: OnQuakeItemClickedListener) : RecyclerView.ViewHolder(itemView) {
 
-        internal var magnitudeTextView: TextView
-        internal var locationTextView: TextView
-        internal var timeTextViewHolder: TextView
-
-        init {
-            this.magnitudeTextView = itemView.findViewById(R.id.list_magnitude_text)
-            this.locationTextView = itemView.findViewById(R.id.list_location_text)
-            this.timeTextViewHolder = itemView.findViewById(R.id.list_time_text)
-        }
+        internal var magnitudeTextView: TextView = itemView.findViewById(R.id.list_magnitude_text)
+        internal var locationTextView: TextView = itemView.findViewById(R.id.list_location_text)
+        internal var timeTextViewHolder: TextView = itemView.findViewById(R.id.list_time_text)
 
         fun bind(earthquake: Earthquake) {
             var magnitude = ""
