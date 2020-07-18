@@ -2,10 +2,8 @@ package com.geo.geoquake;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -36,7 +34,6 @@ import com.geo.geoquake.network.QuakeAPI;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.tabs.TabLayout;
 
 import java.io.IOException;
@@ -292,8 +289,6 @@ public class MainActivity extends AppCompatActivity implements IDataCallback,
             } else {
                 Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show();
             }
-            //case 1111:
-            //other
         }
     }
 
