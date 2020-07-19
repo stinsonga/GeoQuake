@@ -71,10 +71,10 @@ public class Utils {
 
     /**
      * Get USGS string for use in requests
-     * @param context
-     * @param durationSelection
-     * @param quakeSelection
-     * @return
+     * @param context A Context
+     * @param durationSelection Duration param selected from dropdown
+     * @param quakeSelection Earthquake intensity selected from dropdown
+     * @return the appropriate string to return for the given duration/intensity
      */
     private static String getUSGSString(Context context, int durationSelection, int quakeSelection) {
         switch(durationSelection) {
@@ -140,9 +140,9 @@ public class Utils {
 
     /**
      *
-     * @param context
-     * @param durationSelection
-     * @return
+     * @param context Context
+     * @param durationSelection Duration param selected from dropdown
+     * @return The apropriate string for the chosen duration.
      */
     private static String getCanadaQuakeString(Context context, int durationSelection) {
         switch(durationSelection) {
