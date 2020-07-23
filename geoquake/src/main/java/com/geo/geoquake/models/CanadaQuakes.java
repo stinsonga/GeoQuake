@@ -16,6 +16,12 @@ import java.util.List;
 
 public class CanadaQuakes {
 
+    private final String MAG = "magnitude";
+    private final String LOCATION = "location";
+    private final String GEOJSON = "geoJSON";
+    private final String COORDINATES = "coordinates";
+    private final String ORIGIN_TIME = "origin_time";
+    private final String METADATA = "metadata";
     ArrayList<Earthquake> earthquakes;
 
     public CanadaQuakes(String json) {
@@ -25,26 +31,26 @@ public class CanadaQuakes {
            Iterator<String> keysIterator = jsonObject.keys();
            List<String> keysList = new ArrayList<>();
            while(keysIterator.hasNext()) {
-               String key = (String) keysIterator.next();
+               String key = keysIterator.next();
                keysList.add(key);
            }
            for (String s: keysList) {
-               if(!s.equals("metadata")) {
+               if(!s.equals(METADATA)) {
                    Earthquake earthquake = new Earthquake();
                    JSONObject quakeItem = jsonObject.getJSONObject(s);
-                   if(quakeItem.has("origin_time")) {
-                       earthquake.setTimeString(processTimeString(quakeItem.getString("origin_time")));
+                   if(quakeItem.has(ORIGIN_TIME)) {
+                       earthquake.setTimeString(processTimeString(quakeItem.getString(ORIGIN_TIME)));
                    }
-                   if(quakeItem.has("magnitude")) {
-                       earthquake.setMag(quakeItem.getDouble("magnitude"));
+                   if(quakeItem.has(MAG)) {
+                       earthquake.setMag(quakeItem.getDouble(MAG));
                    }
-                   if(quakeItem.has("location")) {
-                       JSONObject locationObject = quakeItem.getJSONObject("location");
+                   if(quakeItem.has(LOCATION)) {
+                       JSONObject locationObject = quakeItem.getJSONObject(LOCATION);
                        earthquake.setPlace(locationObject.getString("en"));
                    }
-                   if(quakeItem.has("geoJSON")) {
-                       JSONObject geoJSONObject = quakeItem.getJSONObject("geoJSON");
-                       JSONArray coords = geoJSONObject.getJSONArray("coordinates");
+                   if(quakeItem.has(GEOJSON)) {
+                       JSONObject geoJSONObject = quakeItem.getJSONObject(GEOJSON);
+                       JSONArray coords = geoJSONObject.getJSONArray(COORDINATES);
                        earthquake.setLatitude(coords.getDouble(0));
                        earthquake.setLongitude(coords.getDouble(1));
                    }
