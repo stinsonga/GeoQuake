@@ -60,9 +60,9 @@ public class Utils {
      * @return a string representing the proper fragment to pass to the URL string
      */
     public static String getURLFrag(int quakeSource, int quakeSelection, int durationSelection, Context context) {
-        if(quakeSource == 0) {
+        if (quakeSource == 0) {
             return getUSGSString(context, durationSelection, quakeSelection);
-        } else if(quakeSource == 1) {
+        } else if (quakeSource == 1) {
             //Canada won't filter by magnitude, just date
             return getCanadaQuakeString(context, durationSelection);
         }
@@ -71,15 +71,16 @@ public class Utils {
 
     /**
      * Get USGS string for use in requests
-     * @param context A Context
+     *
+     * @param context           A Context
      * @param durationSelection Duration param selected from dropdown
-     * @param quakeSelection Earthquake intensity selected from dropdown
+     * @param quakeSelection    Earthquake intensity selected from dropdown
      * @return the appropriate string to return for the given duration/intensity
      */
     private static String getUSGSString(Context context, int durationSelection, int quakeSelection) {
-        switch(durationSelection) {
+        switch (durationSelection) {
             case 0:
-                switch(quakeSelection) {
+                switch (quakeSelection) {
                     case 0:
                     default:
                         return context.getString(R.string.significant_hour);
@@ -93,7 +94,7 @@ public class Utils {
                         return context.getString(R.string.all_hour);
                 }
             case 1:
-                switch(quakeSelection) {
+                switch (quakeSelection) {
                     case 0:
                     default:
                         return context.getString(R.string.significant_day);
@@ -107,7 +108,7 @@ public class Utils {
                         return context.getString(R.string.all_day);
                 }
             case 2:
-                switch(quakeSelection) {
+                switch (quakeSelection) {
                     case 0:
                     default:
                         return context.getString(R.string.significant_week);
@@ -121,7 +122,7 @@ public class Utils {
                         return context.getString(R.string.all_week);
                 }
             case 3:
-                switch(quakeSelection) {
+                switch (quakeSelection) {
                     case 0:
                     default:
                         return context.getString(R.string.significant_month);
@@ -139,13 +140,12 @@ public class Utils {
     }
 
     /**
-     *
-     * @param context Context
+     * @param context           Context
      * @param durationSelection Duration param selected from dropdown
      * @return The apropriate string for the chosen duration.
      */
     private static String getCanadaQuakeString(Context context, int durationSelection) {
-        switch(durationSelection) {
+        switch (durationSelection) {
             case 0:
             default:
                 return context.getString(R.string.canada_7_days);
@@ -178,30 +178,30 @@ public class Utils {
     }
 
     public static void hideKeyboard(View view) {
-        if(view == null) return;
+        if (view == null) return;
         InputMethodManager imm = (InputMethodManager) view.getContext()
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
-        if(imm == null) return;
+        if (imm == null) return;
         imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     public static void showKeyboard(View view) {
-        if(view == null) return;
+        if (view == null) return;
         InputMethodManager imm = (InputMethodManager) view.getContext()
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
-        if(imm == null) return;
+        if (imm == null) return;
         imm.showSoftInput(view, InputMethodManager.SHOW_FORCED);
     }
 
     public static ArrayList<Earthquake> convertModelBySource(int source, String json) {
         ArrayList<Earthquake> quakes = new ArrayList<>();
-        if(source == 0) {
+        if (source == 0) {
             FeatureCollection featureCollection = new FeatureCollection(json);
-            for(Feature f : featureCollection.getFeatures()) {
+            for (Feature f : featureCollection.getFeatures()) {
                 quakes.add(new Earthquake(f));
             }
             return quakes;
-        } else if(source == 1) {
+        } else if (source == 1) {
             CanadaQuakes canadaQuakes = new CanadaQuakes(json);
             return canadaQuakes.getEarthquakes();
         }
