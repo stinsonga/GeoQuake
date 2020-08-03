@@ -6,7 +6,6 @@ import android.content.Context
 /**
  * Created by George Stinson on 2017-03-28.
  */
-
 class App : Application() {
 
     override fun onCreate() {
