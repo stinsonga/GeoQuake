@@ -7,7 +7,7 @@ android {
     buildToolsVersion '29.0.2'
     flavorDimensions "default" //added to fix "Error:All flavors must now belong to a named flavor dimension. "
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 29
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -28,13 +28,13 @@ android {
     productFlavors {
         production {
             resValue "string", "app_name", "GeoQuake"
-            minSdkVersion 19
+            minSdkVersion 21
             targetSdkVersion 29
         }
         development {
             applicationIdSuffix = '.dev'
             resValue "string", "app_name", "GeoQuake Dev"
-            minSdkVersion 19
+            minSdkVersion 21
             targetSdkVersion 29
         }
     }
